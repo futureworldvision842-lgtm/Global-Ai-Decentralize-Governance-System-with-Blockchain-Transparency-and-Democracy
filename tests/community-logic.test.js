@@ -1,0 +1,5 @@
+const test=require('node:test');const assert=require('node:assert/strict');const logic=require('../gaigs/community-logic.js');
+test('only committee and admin manage membership',()=>{assert.equal(logic.canManage('admin'),true);assert.equal(logic.canManage('committee'),true);assert.equal(logic.canManage('member'),false);});
+test('rejection requires an auditable reason',()=>{assert.throws(()=>logic.reviewRequest({id:'1'},'rejected','','admin'));const result=logic.reviewRequest({id:'1'},'rejected','Address outside boundary','admin');assert.equal(result.status,'rejected');assert.equal(result.reviewedBy,'admin');});
+test('approval activates a normal member role',()=>{const result=logic.reviewRequest({id:'1'},'approved','Verified','admin');assert.equal(result.status,'active');assert.equal(result.role,'member');});
+test('community input is normalized',()=>{assert.deepEqual(logic.sanitizeCommunity({name:'  Garden Society ',location:' Islamabad ',purpose:'Local action',level:'Society / neighborhood'}),{name:'Garden Society',location:'Islamabad',purpose:'Local action',level:'Society'});});

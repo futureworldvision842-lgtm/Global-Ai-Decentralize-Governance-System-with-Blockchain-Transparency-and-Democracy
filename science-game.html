@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NewDawn — Humanity Lab Physics Simulation</title>
+<style>
+  :root {
+    --bg: #04070d;
+    --panel: #0a1322;
+    --line: #12304a;
+    --cyan: #19e0ff;
+    --green: #39ff9c;
+    --gold: #ffd166;
+    --text: #cfeefb;
+    --muted: #6f93a8;
+  }
+  body, html {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    overflow: hidden; background: var(--bg);
+    color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif;
+  }
+  #canvas-container {
+    width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1;
+  }
+  #canvas-container canvas { touch-action: none; }
+  .overlay {
+    position: absolute; top: 16px; left: 16px; z-index: 10;
+    pointer-events: none; max-width: 320px;
+  }
+  .card {
+    background: rgba(10, 19, 34, 0.85); backdrop-filter: blur(8px);
+    border: 1px solid var(--line); border-radius: 12px; padding: 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5); pointer-events: auto;
+  }
+  h2 { font-size: 15px; margin: 0 0 6px; color: var(--cyan); letter-spacing: 1px; }
+  p { font-size: 11.5px; margin: 0 0 10px; color: var(--muted); line-height: 1.4; }
+  .btn {
+    background: var(--green); color: #04170d; border: none; font-weight: bold;
+    padding: 8px 14px; border-radius: 6px; font-size: 11px; cursor: pointer;
+    transition: 0.15s;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 0 12px rgba(57,255,156,0.4); }
+  .btn.secondary { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); margin-left: 6px; }
+  .controls { display:flex; gap:6px; flex-wrap:wrap; }
+  .status {
+    position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+    z-index: 10; font-family: monospace; font-size: 12px; color: var(--gold);
+    background: rgba(4, 7, 13, 0.9); padding: 8px 18px; border-radius: 20px;
+    border: 1px solid var(--line); pointer-events: none;
+  }
+  #solved-banner {
+    position: absolute; inset: 0; display: none; background: rgba(4,7,13,0.85);
+    z-index: 100; align-items:center; justify-content:center; flex-direction:column;
+    text-align:center; backdrop-filter: blur(10px);
+  }
+  #solved-banner h1 { color: var(--green); font-size: 32px; margin-bottom: 8px; }
+</style>
+<!-- Load Three.js and Cannon-es CDNs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script type="module">
+  import * as CANNON from 'https://cdn.jsdelivr.net/npm/cannon-es@0.21.0/dist/cannon-es.js';
+
+  let scene, camera, renderer, world;
+  let particles = [];
+  let particleMeshes = [];
+  const maxParticles = 60;
+  let deflectorBody, deflectorMesh;
+  let targetBox, targetBody;
+  let score = 0;
+  let isSolved = false;
+  let spawned = 0;
+  const captured = new Set();
+  const startedAt = Date.now();
+  const challengeId = new URLSearchParams(location.search).get('challenge') || 'water-routing-physics';
+
+  // Mouse Raycasting & Dragging
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+  const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0); // drag along z=0 plane
+  let isDragging = false;
+
+  function init() {
+    // 1. Setup Three.js Scene
+    const container = document.getElementById('canvas-container');
+    scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x04070d, 0.015);
+
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 22);
+
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.shadowMap.enabled = true;
+    container.appendChild(renderer.domElement);
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0x112233);
+    scene.add(ambientLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    dirLight.position.set(5, 10, 7);
+    scene.add(dirLight);
+
+    // Grid Floor visual helper
+    const gridHelper = new THREE.GridHelper(30, 30, 0x12304a, 0x0c1322);
+    gridHelper.rotation.x = Math.PI / 2;
+    gridHelper.position.z = -0.5;
+    scene.add(gridHelper);
+
+    // 2. Setup Cannon-es World
+    world = new CANNON.World();
+    world.gravity.set(0, -9.82, 0); // Standard gravity
+
+    // 3. Create deflector obstacle (Draggable Panel)
+    const panelSize = { x: 4, y: 0.6, z: 1.5 };
+    const deflectorGeo = new THREE.BoxGeometry(panelSize.x, panelSize.y, panelSize.z);
+    const deflectorMat = new THREE.MeshStandardMaterial({
+      color: 0x19e0ff,
+      roughness: 0.2,
+      metalness: 0.8,
+      emissive: 0x093a4d
+    });
+    deflectorMesh = new THREE.Mesh(deflectorGeo, deflectorMat);
+    scene.add(deflectorMesh);
+
+    const deflectorShape = new CANNON.Box(new CANNON.Vec3(panelSize.x / 2, panelSize.y / 2, panelSize.z / 2));
+    deflectorBody = new CANNON.Body({ mass: 0, type: CANNON.Body.KINEMATIC }); // Static or Kinematic so it can move on mouse drag
+    deflectorBody.addShape(deflectorShape);
+    deflectorBody.position.set(0, 1, 0);
+    world.addBody(deflectorBody);
+
+    // 4. Create Target Zone (Goal Box)
+    const targetSize = { x: 3, y: 1, z: 2 };
+    const targetGeo = new THREE.BoxGeometry(targetSize.x, targetSize.y, targetSize.z);
+    const targetMat = new THREE.MeshStandardMaterial({
+      color: 0x39ff9c,
+      transparent: true,
+      opacity: 0.3,
+      wireframe: false
+    });
+    targetBox = new THREE.Mesh(targetGeo, targetMat);
+    targetBox.position.set(2.5, -6, 0);
+    scene.add(targetBox);
+
+    // Add target box border outline
+    const outlineGeo = new THREE.EdgesGeometry(targetGeo);
+    const outlineMat = new THREE.LineBasicMaterial({ color: 0x39ff9c, linewidth: 2 });
+    const outline = new THREE.LineSegments(outlineGeo, outlineMat);
+    targetBox.add(outline);
+
+    // 5. Input Listeners for Dragging Deflector
+    renderer.domElement.addEventListener('pointerdown', onPointerDown);
+    renderer.domElement.addEventListener('pointermove', onPointerMove);
+    renderer.domElement.addEventListener('pointerup', onPointerUp);
+    renderer.domElement.addEventListener('pointercancel', onPointerUp);
+    window.addEventListener('resize', onWindowResize);
+
+    deflectorBody.position.set(-4, 0, 0);
+    setDeflectorAngle(-24);
+
+    // Start Simulation Loop
+    animate();
+    
+    // Spawn Particles periodically
+    setInterval(spawnParticle, 300);
+  }
+
+  function spawnParticle() {
+    if (particles.length >= maxParticles) {
+      // Recycle oldest particle
+      const oldBody = particles.shift();
+      const oldMesh = particleMeshes.shift();
+      world.removeBody(oldBody);
+      scene.remove(oldMesh);
+    }
+
+    // Spawn point: top-left area
+    const px = -6 + (Math.random() - 0.5) * 1.2;
+    const py = 7;
+    const radius = 0.28;
+
+    const sphereGeo = new THREE.SphereGeometry(radius, 16, 16);
+    const sphereMat = new THREE.MeshStandardMaterial({
+      color: 0x00a8ff,
+      roughness: 0.1,
+      metalness: 0.1,
+      emissive: 0x004488
+    });
+    const sphereMesh = new THREE.Mesh(sphereGeo, sphereMat);
+    sphereMesh.position.set(px, py, 0);
+    scene.add(sphereMesh);
+    particleMeshes.push(sphereMesh);
+
+    const sphereShape = new CANNON.Sphere(radius);
+    const sphereBody = new CANNON.Body({
+      mass: 0.5,
+      position: new CANNON.Vec3(px, py, 0),
+      shape: sphereShape
+    });
+    sphereBody.linearDamping = 0.05;
+    sphereBody.gaigsId = `drop-${++spawned}`;
+    world.addBody(sphereBody);
+    particles.push(sphereBody);
+  }
+
+  function onPointerDown(e) {
+    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObject(deflectorMesh);
+
+    if (intersects.length > 0) {
+      isDragging = true;
+      renderer.domElement.setPointerCapture?.(e.pointerId);
+    }
+  }
+
+  function onPointerMove(e) {
+    if (!isDragging) return;
+
+    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersectionPoint = new THREE.Vector3();
+    raycaster.ray.intersectPlane(plane, intersectionPoint);
+
+    // Limit deflector boundary movements
+    const limitX = Math.max(-8, Math.min(8, intersectionPoint.x));
+    const limitY = Math.max(-4, Math.min(5, intersectionPoint.y));
+
+    // Update both Cannon Body and Three Mesh positions
+    deflectorBody.position.set(limitX, limitY, 0);
+  }
+
+  function onPointerUp(e) {
+    isDragging = false;
+    renderer.domElement.releasePointerCapture?.(e.pointerId);
+  }
+
+  function setDeflectorAngle(degrees) {
+    const safe = Math.max(-55, Math.min(55, Number(degrees) || 0));
+    deflectorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), safe * Math.PI / 180);
+    document.getElementById('angle-txt').textContent = `Plate angle: ${safe}°`;
+  }
+  window.rotateDeflector = delta => {
+    const q = deflectorBody.quaternion;
+    const current = Math.round(Math.atan2(2 * (q.w * q.z), 1 - 2 * q.z * q.z) * 180 / Math.PI);
+    setDeflectorAngle(current + delta);
+  };
+
+  function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  function checkSuccess() {
+    if (isSolved) return;
+
+    particles.forEach(body => {
+      const p = body.position;
+      if (!captured.has(body.gaigsId) && p.x >= 1.0 && p.x <= 4.0 && p.y >= -7.0 && p.y <= -5.0) {
+        captured.add(body.gaigsId);
+      }
+    });
+
+    score = captured.size;
+    document.getElementById('score-txt').textContent = `Target Capture: ${score}/10`;
+
+    if (score >= 10) {
+      isSolved = true;
+      triggerSuccess();
+    }
+  }
+
+  async function triggerSuccess() {
+    document.getElementById('solved-banner').style.display = 'flex';
+    const solution={challengeId,score,startedAt,completedAt:Date.now(),durationMs:Date.now()-startedAt,engine:'cannon-es-0.21.0',rulesVersion:'water-routing-1.0'};
+    const bytes=new TextEncoder().encode(JSON.stringify(solution));
+    const digest=await crypto.subtle.digest('SHA-256',bytes);
+    const solutionHash=[...new Uint8Array(digest)].map(x=>x.toString(16).padStart(2,'0')).join('');
+    localStorage.setItem(`gaigsChallenge:${challengeId}`,JSON.stringify({...solution,solutionHash,status:'completed_locally'}));
+    const parentOrigin=location.origin==='null'?'*':location.origin;
+    window.parent.postMessage({
+      type: 'gaigs:challenge-completed',
+      ...solution,
+      solutionHash
+    }, parentOrigin);
+  }
+
+  // Physics and Animation Loop
+  const timeStep = 1 / 60;
+  function animate() {
+    requestAnimationFrame(animate);
+
+    // 1. Step the Physics World
+    world.step(timeStep);
+
+    // 2. Synchronize visual mesh locations with Cannon body coordinates
+    deflectorMesh.position.copy(deflectorBody.position);
+    deflectorMesh.quaternion.copy(deflectorBody.quaternion);
+
+    for (let i = 0; i < particles.length; i++) {
+      particleMeshes[i].position.copy(particles[i].position);
+      particleMeshes[i].quaternion.copy(particles[i].quaternion);
+    }
+
+    // 3. Run puzzle status check
+    checkSuccess();
+
+    // 4. Render Scene
+    renderer.render(scene, camera);
+  }
+
+  window.onload = init;
+</script>
+</head>
+<body>
+
+<div class="overlay">
+  <div class="card">
+    <h2>💧 Water Redirection Challenge</h2>
+    <p>Drag the blue deflector plate with mouse or touch, then rotate it to route particles into the green target. Capture 10 particles to complete this physics-learning run.</p>
+    <div style="font-size: 11px; color: var(--gold); font-weight: bold; margin-bottom: 10px;" id="score-txt">Target Capture: 0/10</div>
+    <div style="font-size: 10px; color: var(--muted); margin-bottom: 10px;" id="angle-txt">Plate angle: -24°</div>
+    <div class="controls"><button class="btn" onclick="location.reload()">Restart</button><button class="btn secondary" onclick="rotateDeflector(-6)">Rotate left</button><button class="btn secondary" onclick="rotateDeflector(6)">Rotate right</button></div>
+  </div>
+</div>
+
+<div class="status">CANNON-ES Solver: active</div>
+
+<div id="solved-banner">
+  <h1>✓ CHALLENGE SOLVED</h1>
+  <p style="font-size: 14px; max-width: 430px; color: var(--muted); margin-bottom: 20px;">The local physics objective is complete and a reproducible run receipt was saved. Scientific validity, rewards, or a field pilot require dataset and reviewer approval.</p>
+  <button class="btn" onclick="window.parent.postMessage({type: 'gaigs:close-challenge'}, location.origin==='null'?'*':location.origin)">Back to GAIGS</button>
+</div>
+
+<div id="canvas-container"></div>
+
+</body>
+</html>

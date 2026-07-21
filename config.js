@@ -1,0 +1,24 @@
+// Safe local defaults. AI credentials belong only in the Netlify/Firebase/server environment.
+window.NDCONF={
+  jarvisProxyUrl:'',
+  showSampleData:false,
+  firebaseDemoSync:false,
+  firebaseProductionMode:false,
+  firebase:{
+    apiKey:'YOUR_FIREBASE_WEB_API_KEY',
+    authDomain:'YOUR_PROJECT_ID.firebaseapp.com',
+    projectId:'YOUR_PROJECT_ID',
+    storageBucket:'YOUR_PROJECT_ID.appspot.com',
+    messagingSenderId:'YOUR_SENDER_ID',
+    appId:'YOUR_APP_ID'
+  },
+  ethereum:{
+    chainId:'11155111',
+    chainName:'Sepolia',
+    governorAddress:'',
+    registryAddress:'',
+    projectVaultAddress:'',
+    outcomeAnchorAddress:'',
+    mainnetEnabled:false
+  }
+};

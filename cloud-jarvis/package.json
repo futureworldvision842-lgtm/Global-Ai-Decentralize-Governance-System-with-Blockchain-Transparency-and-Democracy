@@ -1,0 +1,11 @@
+{
+  "name": "cloud-jarvis",
+  "version": "1.0.0",
+  "description": "24/7 WhatsApp JARVIS for a free always-on Linux VM",
+  "main": "index.js",
+  "scripts": { "start": "node index.js" },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.9",
+    "qrcode-terminal": "^0.12.0"
+  }
+}

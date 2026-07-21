@@ -1,0 +1,15 @@
+{
+  "name": "NewDawn — One App for Everything, Owned by Everyone",
+  "short_name": "NewDawn",
+  "description": "People-owned super-app: social + governance + wallet + services + science game. Your phone is the database.",
+  "start_url": "app.html",
+  "display": "standalone",
+  "background_color": "#04070d",
+  "theme_color": "#04070d",
+  "icons": [
+    {"src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%2304070d'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='%2319e0ff'%3E⬡%3C/text%3E%3C/svg%3E",
+     "sizes": "192x192", "type": "image/svg+xml", "purpose": "any"},
+    {"src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%2304070d'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='%2319e0ff'%3E⬡%3C/text%3E%3C/svg%3E",
+     "sizes": "512x512", "type": "image/svg+xml", "purpose": "any"}
+  ]
+}

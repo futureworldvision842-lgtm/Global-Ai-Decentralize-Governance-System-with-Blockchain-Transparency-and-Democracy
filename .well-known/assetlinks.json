@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.netlify.onepiecejourney_crew.twa",
+        "sha256_cert_fingerprints": ["23:24:46:E3:5B:E7:33:A4:CF:31:AD:9C:FF:6C:D0:B3:5C:E0:42:C0:E8:C0:42:7B:29:7E:D3:62:54:02:3D:38"]
+      }
+    }]

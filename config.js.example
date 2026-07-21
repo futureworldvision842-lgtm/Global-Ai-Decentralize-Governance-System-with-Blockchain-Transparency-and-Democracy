@@ -1,0 +1,42 @@
+// NewDawn/GAIGS Local Configuration Template
+// Copy this file to "config.js" and paste your Firebase client config
+// parameters below to enable live-sync mode. AI keys always stay on the server.
+// The repository carries only safe placeholders. Production hosting renders
+// these public Firebase identifiers from environment variables at build time.
+
+window.NDCONF = {
+  // Optional same-origin or trusted development proxy. Never put an AI key or
+  // GAIGS_JARVIS_BRIDGE_TOKEN in this browser file.
+  jarvisProxyUrl: "",
+  // Only the explicit offline sandbox button enables curated sample records.
+  showSampleData: false,
+
+  // Keep false until Firebase Authentication and restrictive Firestore Rules
+  // are deployed. The app remains fully functional in local-first demo mode.
+  firebaseDemoSync: false,
+  // Turn on only after Email/Password Auth, Firestore rules, Storage rules,
+  // indexes and an authorized hosting domain have been deployed.
+  firebaseProductionMode: false,
+
+  // 2. Your Firebase Client Config parameters (for real-time database sync)
+  // Paste these from your Firebase Console (Project Settings -> General -> Web App configuration)
+  firebase: {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  },
+
+  // Optional Ethereum testnet contract addresses. Wallets remain user-owned.
+  ethereum: {
+    chainId: "11155111",
+    chainName: "Sepolia",
+    governorAddress: "",
+    registryAddress: "",
+    projectVaultAddress: "",
+    outcomeAnchorAddress: "",
+    mainnetEnabled: false
+  }
+};

@@ -1,0 +1,9 @@
+module.exports={
+  ...require('./scopedDistribution'),
+  ...require('./governanceLifecycle'),
+  ...require('./marketplaceLifecycle'),
+  ...require('./kycWebhook'),
+  ...require('./societyLifecycle'),
+  ...require('./projectLedgerLifecycle'),
+  ...require('./accountDeletion')
+};

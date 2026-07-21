@@ -1,0 +1,16 @@
+# Render Blueprint — one-click deploy of 24/7 Cloud JARVIS.
+# In Render: New + → Blueprint → pick your repo → it reads this file.
+# Then set GEMINI_KEY in the dashboard (Environment).
+services:
+  - type: web
+    name: cloud-jarvis
+    runtime: node
+    plan: free
+    rootDir: cloud-jarvis
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: GEMINI_KEY
+        sync: false          # set this yourself in the dashboard (kept secret)
+      - key: BOSS_NUMBER
+        value: "REDACTED"

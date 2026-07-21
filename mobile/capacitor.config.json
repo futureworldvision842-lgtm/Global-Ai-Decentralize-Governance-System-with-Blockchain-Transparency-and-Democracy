@@ -1,0 +1,15 @@
+{
+  "appId": "com.futureworldvision.gaigs",
+  "appName": "GAIGS",
+  "webDir": "dist",
+  "android": {
+    "minWebViewVersion": 105,
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  },
+  "server": {"androidScheme": "https"},
+  "plugins": {
+    "Geolocation": {"enableHighAccuracy": false}
+  }
+}

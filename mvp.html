@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Governance Loop MVP — A New Operating System for Humanity</title>
+<style>
+:root{
+  --bg:#04070d; --panel:#0a1322; --panel2:#081020; --line:#12304a;
+  --cyan:#19e0ff; --green:#39ff9c; --gold:#ffd166; --red:#ff5d5d;
+  --text:#cfeefb; --muted:#6f93a8; --mono:Consolas,monospace;
+  --font:'Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh}
+a{color:var(--cyan)}
+nav{display:flex;align-items:center;gap:16px;padding:14px 24px;border-bottom:1px solid var(--line);background:rgba(4,7,13,.9);position:sticky;top:0;z-index:20}
+nav .logo{font-family:var(--mono);color:var(--cyan);font-weight:bold;letter-spacing:2px}
+nav a.back{color:var(--muted);text-decoration:none;font-size:13px}
+nav .who{margin-left:auto;font-family:var(--mono);font-size:12.5px;color:var(--green)}
+.honest{background:rgba(255,209,102,.07);border-bottom:1px dashed rgba(255,209,102,.35);color:var(--gold);
+  font-family:var(--mono);font-size:11.5px;text-align:center;padding:8px 14px;letter-spacing:.5px}
+main{max-width:1150px;margin:0 auto;padding:26px 20px 80px}
+h1{font-size:clamp(22px,3.4vw,32px);margin:18px 0 6px}
+h1 em{font-style:normal;color:var(--green)}
+.sub{color:var(--muted);font-size:14.5px;max-width:720px;margin-bottom:26px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}
+.tab{padding:9px 18px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--muted);cursor:pointer;font-size:13.5px;letter-spacing:.5px}
+.tab.on{color:#04170d;background:var(--green);border-color:var(--green);font-weight:bold}
+.pane{display:none}.pane.on{display:block;animation:fade .35s}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
+.card{background:linear-gradient(160deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:16px}
+.card h3{color:var(--cyan);font-size:16.5px;margin-bottom:10px}
+input,textarea,select{width:100%;background:#061020;border:1px solid var(--line);border-radius:8px;color:var(--text);padding:11px 13px;font-size:14px;margin:6px 0}
+input:focus,textarea:focus{outline:none;border-color:var(--cyan)}
+button{cursor:pointer;border:none;border-radius:8px;padding:11px 20px;font-weight:bold;font-size:13.5px;letter-spacing:.5px;transition:.15s}
+button:hover{transform:translateY(-1px)}
+.b-green{background:var(--green);color:#04170d}
+.b-cyan{background:transparent;border:1px solid var(--cyan);color:var(--cyan)}
+.b-red{background:transparent;border:1px solid var(--red);color:var(--red)}
+.b-gold{background:transparent;border:1px solid var(--gold);color:var(--gold)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:20px;letter-spacing:1px}
+.pill.open{background:rgba(25,224,255,.12);color:var(--cyan)}
+.pill.passed{background:rgba(57,255,156,.12);color:var(--green)}
+.pill.rejected{background:rgba(255,93,93,.12);color:var(--red)}
+.pill.vetoed{background:rgba(255,209,102,.12);color:var(--gold)}
+.prop{border:1px solid var(--line);border-radius:12px;padding:16px;margin:12px 0;background:#071120}
+.prop h4{font-size:15.5px;margin-bottom:4px}
+.prop .meta{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:8px}
+.prop p{color:var(--muted);font-size:13.5px;margin-bottom:12px}
+.votebar{height:9px;border-radius:6px;background:#0c1a2c;overflow:hidden;display:flex;margin:8px 0}
+.votebar .yes{background:var(--green)}.votebar .no{background:var(--red)}.votebar .veto{background:var(--gold)}
+.vcounts{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-bottom:10px}
+.ledger{font-family:var(--mono);font-size:12.3px}
+.ledger .entry{display:flex;gap:12px;padding:9px 6px;border-bottom:1px solid #0c1e30}
+.ledger .t{color:#4d7186;min-width:150px}
+.ledger .a{color:var(--cyan);min-width:110px}
+.ledger .what{color:var(--text)}
+.ledger .amt{margin-left:auto;font-weight:bold}
+.amt.plus{color:var(--green)}.amt.minus{color:var(--red)}
+.hier{font-family:var(--mono);font-size:13px;line-height:2}
+.hier .lvl{color:var(--muted)}
+.hier b{color:var(--cyan)}
+.funds{font-size:26px;font-family:var(--mono);color:var(--green)}
+.note{font-size:12px;color:#4d7186;margin-top:8px}
+.empty{color:var(--muted);font-size:13.5px;font-style:italic;padding:14px 4px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0a2230;border:1px solid var(--cyan);
+  color:var(--cyan);padding:12px 22px;border-radius:10px;font-size:13.5px;z-index:50;opacity:0;transition:.3s;pointer-events:none}
+.toast.show{opacity:1}
+.comment{border-left:2px solid var(--line);padding:6px 12px;margin:6px 0;font-size:13px;color:var(--muted)}
+.comment b{color:var(--text);font-weight:600}
+@media(max-width:600px){.ledger .t{min-width:96px;font-size:10.5px}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">⬡ GOVERNANCE LOOP · MVP</div>
+  <a class="back" href="index.html">← mission</a>
+  <a class="back" href="app.html" style="color:var(--green)">📱 full app →</a>
+  <div class="who" id="whoami"></div>
+</nav>
+<div class="honest">WORKING PROTOTYPE — the core governance loop only (accounts · societies · proposals · votes · veto · open ledger). Data lives in YOUR browser. The full platform (blockchain, mobile, AI utility, science game) is a funded multi-year build — this MVP exists to prove the loop and win that team.</div>
+
+<main>
+  <h1>Your society. Your decisions. <em>Fully transparent.</em></h1>
+  <p class="sub">This is the loop the whole platform is built around: people join a society →
+  anyone can raise a proposal → everyone votes (with a citizen <b style="color:var(--gold)">VETO</b>
+  power) → funds and every action land on an open ledger anyone can audit. Societies federate:
+  society → city → country → global.</p>
+
+  <!-- ONBOARD -->
+  <div class="card" id="onboard">
+    <h3>🪪 Create your account (stored only in your browser)</h3>
+    <div class="row">
+      <div style="flex:1;min-width:220px"><input id="uname" placeholder="Your name — آپ کا نام" maxlength="30"></div>
+      <div style="flex:1;min-width:220px">
+        <select id="usoc"></select>
+      </div>
+      <button class="b-green" onclick="createAccount()">Join your society →</button>
+    </div>
+    <div class="note">No email, no tracking, no server — this MVP runs 100% in your browser (localStorage).</div>
+  </div>
+
+  <div id="app" style="display:none">
+    <div class="tabs">
+      <div class="tab on" data-p="proposals" onclick="tab(this)">🗳️ Proposals &amp; Votes</div>
+      <div class="tab" data-p="ledger" onclick="tab(this)">📖 Open Ledger</div>
+      <div class="tab" data-p="funds" onclick="tab(this)">💰 Society Funds</div>
+      <div class="tab" data-p="hier" onclick="tab(this)">🏛️ Hierarchy</div>
+    </div>
+
+    <!-- PROPOSALS -->
+    <div class="pane on" id="p-proposals">
+      <div class="card">
+        <h3>➕ Raise a proposal in <span id="socName1" style="color:var(--gold)"></span></h3>
+        <input id="ptitle" placeholder="Title — e.g. 'Install solar panels on the community center'" maxlength="90">
+        <textarea id="pdesc" rows="2" placeholder="What, why, and roughly what it costs…" maxlength="400"></textarea>
+        <div class="row">
+          <input id="pcost" type="number" min="0" placeholder="Requested funds (Rs) — optional" style="max-width:260px">
+          <button class="b-green" onclick="addProposal()">Submit proposal</button>
+        </div>
+        <div class="note">Rules of the loop: majority YES passes · but if ≥ 33% of voters hit VETO, the proposal is blocked no matter what — that's the citizens' brake on bad decisions.</div>
+      </div>
+      <div id="propList"></div>
+    </div>
+
+    <!-- LEDGER -->
+    <div class="pane" id="p-ledger">
+      <div class="card">
+        <h3>📖 The Open Ledger — every action, by everyone, forever visible</h3>
+        <p class="note" style="margin-bottom:10px">This is the heart of radical transparency: votes, proposals,
+        funds in, funds out — nothing happens off the record. (In the full platform this becomes an
+        immutable blockchain ledger.)</p>
+        <div class="ledger" id="ledgerList"></div>
+      </div>
+    </div>
+
+    <!-- FUNDS -->
+    <div class="pane" id="p-funds">
+      <div class="grid2">
+        <div class="card">
+          <h3>💰 <span id="socName2"></span> treasury</h3>
+          <div class="funds" id="fundBal">Rs 0</div>
+          <div class="note">Every rupee below is traceable on the ledger. Passed proposals draw from this treasury automatically.</div>
+        </div>
+        <div class="card">
+          <h3>🤲 Contribute (demo)</h3>
+          <div class="row">
+            <input id="donAmt" type="number" min="1" placeholder="Amount (Rs)" style="max-width:180px">
+            <button class="b-green" onclick="donate()">Add funds</button>
+          </div>
+          <div class="note">In the real platform this is a payment rail + escrow; here it demonstrates the transparency loop.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HIERARCHY -->
+    <div class="pane" id="p-hier">
+      <div class="card">
+        <h3>🏛️ Bottom-up federation — society → city → country → global</h3>
+        <p class="note" style="margin-bottom:12px">Decisions start at YOUR society's own center (masjid /
+        community hall). Societies federate upward; each level only handles what the level below
+        can't. This inverts the colonial model — power flows up from people, not down from capitals.</p>
+        <div class="hier" id="hierView"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- state ---------------- */
+const SOCIETIES=[
+  {id:'g11',  name:'G-11/4 Society (Masjid-e-Nabawi Qureshi Hashmi)', city:'Islamabad', country:'Pakistan'},
+  {id:'f10',  name:'F-10 Community Society',  city:'Islamabad', country:'Pakistan'},
+  {id:'joh',  name:'Johar Town Society',      city:'Lahore',    country:'Pakistan'},
+  {id:'glb',  name:'Global Online Society',   city:'—',         country:'Global'},
+];
+const LS='ndos_mvp_v1';
+let S=load();
+function load(){
+  try{const d=JSON.parse(localStorage.getItem(LS));if(d&&d.societies)return d}catch(e){}
+  // seed
+  const soc={};
+  for(const s of SOCIETIES){soc[s.id]={funds:s.id==='g11'?50000:20000,proposals:[],ledger:[
+    {t:Date.now()-864e5*3,actor:'system',what:'Society treasury opened',amt:s.id==='g11'?50000:20000}
+  ]}}
+  soc['g11'].proposals.push({
+    id:1,title:'Water filtration plant for the street',author:'Community',cost:35000,
+    desc:'Clean drinking water point at the masjid gate, maintained by volunteers.',
+    votes:{yes:['Ali','Fatima','Usman'],no:['Bilal'],veto:[]},comments:[
+      {by:'Ali',txt:'Long overdue — the nearest filtered water is 2km away.'}],status:'open'});
+  return {user:null,societies:soc,seq:2}
+}
+function save(){localStorage.setItem(LS,JSON.stringify(S))}
+function soc(){return S.societies[S.user.soc]}
+function socMeta(){return SOCIETIES.find(x=>x.id===S.user.soc)}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+function log(what,amt){soc().ledger.unshift({t:Date.now(),actor:S.user.name,what,amt:amt||0});save()}
+
+/* ---------------- onboarding ---------------- */
+const sel=document.getElementById('usoc');
+for(const s of SOCIETIES){const o=document.createElement('option');o.value=s.id;o.textContent=s.name+' · '+s.city;sel.appendChild(o)}
+function createAccount(){
+  const n=document.getElementById('uname').value.trim();
+  if(!n)return toast('Apna naam likhein, please.');
+  S.user={name:n,soc:sel.value};save();
+  log('joined the society');
+  boot()
+}
+function boot(){
+  if(!S.user)return;
+  document.getElementById('onboard').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('whoami').textContent='⬢ '+S.user.name+' · '+socMeta().name.split('(')[0].trim();
+  document.getElementById('socName1').textContent=socMeta().name;
+  document.getElementById('socName2').textContent=socMeta().name.split('(')[0].trim();
+  render()
+}
+
+/* ---------------- tabs ---------------- */
+function tab(el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');document.getElementById('p-'+el.dataset.p).classList.add('on');
+  render()
+}
+
+/* ---------------- proposals ---------------- */
+function addProposal(){
+  const t=document.getElementById('ptitle').value.trim(),d=document.getElementById('pdesc').value.trim();
+  const c=parseInt(document.getElementById('pcost').value)||0;
+  if(!t)return toast('Proposal ka title likhein.');
+  soc().proposals.unshift({id:S.seq++,title:t,desc:d,cost:c,author:S.user.name,
+    votes:{yes:[],no:[],veto:[]},comments:[],status:'open'});
+  log('raised proposal: "'+t+'"'+(c?' (requesting Rs '+c.toLocaleString()+')':''));
+  document.getElementById('ptitle').value='';document.getElementById('pdesc').value='';document.getElementById('pcost').value='';
+  toast('Proposal live — ab society vote karegi.');render()
+}
+function vote(pid,kind){
+  const p=soc().proposals.find(x=>x.id===pid);if(!p||p.status!=='open')return;
+  for(const k of ['yes','no','veto'])p.votes[k]=p.votes[k].filter(v=>v!==S.user.name);
+  p.votes[kind].push(S.user.name);
+  log((kind==='veto'?'VETOED':'voted '+kind.toUpperCase()+' on')+' "'+p.title+'"');
+  settle(p);render()
+}
+function settle(p){
+  const y=p.votes.yes.length,n=p.votes.no.length,v=p.votes.veto.length,tot=y+n+v;
+  if(tot>=4){ // demo threshold: 4+ votes decides
+    if(v/tot>=0.33){p.status='vetoed';log('proposal "'+p.title+'" BLOCKED by citizen veto ('+v+'/'+tot+')')}
+    else if(y>n){
+      p.status='passed';
+      if(p.cost>0){soc().funds-=p.cost;log('funds released for "'+p.title+'"',-p.cost)}
+      else log('proposal "'+p.title+'" PASSED')
+    }
+    else{p.status='rejected';log('proposal "'+p.title+'" rejected by majority')}
+  }
+  save()
+}
+function comment(pid){
+  const el=document.getElementById('cm'+pid);const txt=el.value.trim();if(!txt)return;
+  const p=soc().proposals.find(x=>x.id===pid);
+  p.comments.push({by:S.user.name,txt});el.value='';
+  log('commented on "'+p.title+'"');render()
+}
+function renderProps(){
+  const box=document.getElementById('propList');box.innerHTML='';
+  const ps=soc().proposals;
+  if(!ps.length){box.innerHTML='<div class="empty">Koi proposal nahi abhi — pehla aap uthao. Be the first voice.</div>';return}
+  for(const p of ps){
+    const y=p.votes.yes.length,n=p.votes.no.length,v=p.votes.veto.length,tot=Math.max(1,y+n+v);
+    const mine=['yes','no','veto'].find(k=>p.votes[k].includes(S.user.name));
+    const div=document.createElement('div');div.className='prop';
+    div.innerHTML=`
+      <span class="pill ${p.status}">${p.status.toUpperCase()}</span>
+      <h4>${esc(p.title)} ${p.cost?`<span style="color:var(--gold);font-size:12.5px;font-family:var(--mono)"> · Rs ${p.cost.toLocaleString()}</span>`:''}</h4>
+      <div class="meta">by ${esc(p.author)} · ${tot} vote${tot===1?'':'s'}${mine?` · you: ${mine.toUpperCase()}`:''}</div>
+      <p>${esc(p.desc||'')}</p>
+      <div class="votebar">
+        <div class="yes" style="width:${y/tot*100}%"></div>
+        <div class="no" style="width:${n/tot*100}%"></div>
+        <div class="veto" style="width:${v/tot*100}%"></div>
+      </div>
+      <div class="vcounts">YES ${y} · NO ${n} · VETO ${v} ${v/tot>=0.33&&tot>=4?'— veto threshold hit':''}</div>
+      ${p.status==='open'?`
+      <div class="row">
+        <button class="b-green" onclick="vote(${p.id},'yes')">👍 YES</button>
+        <button class="b-red"  onclick="vote(${p.id},'no')">👎 NO</button>
+        <button class="b-gold" onclick="vote(${p.id},'veto')">✋ VETO</button>
+      </div>`:''}
+      <div style="margin-top:12px">
+        ${p.comments.map(c=>`<div class="comment"><b>${esc(c.by)}:</b> ${esc(c.txt)}</div>`).join('')}
+        <div class="row" style="margin-top:8px">
+          <input id="cm${p.id}" placeholder="Discuss — awaaz uthao…" style="flex:1;min-width:200px" maxlength="200">
+          <button class="b-cyan" onclick="comment(${p.id})">Post</button>
+        </div>
+      </div>`;
+    box.appendChild(div)
+  }
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+/* ---------------- ledger + funds + hierarchy ---------------- */
+function renderLedger(){
+  const box=document.getElementById('ledgerList');box.innerHTML='';
+  for(const e of soc().ledger.slice(0,80)){
+    const d=new Date(e.t);
+    const row=document.createElement('div');row.className='entry';
+    row.innerHTML=`<span class="t">${d.toLocaleDateString()} ${d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>
+      <span class="a">${esc(e.actor)}</span><span class="what">${esc(e.what)}</span>
+      ${e.amt?`<span class="amt ${e.amt>0?'plus':'minus'}">${e.amt>0?'+':''}Rs ${Math.abs(e.amt).toLocaleString()}</span>`:''}`;
+    box.appendChild(row)
+  }
+}
+function donate(){
+  const a=parseInt(document.getElementById('donAmt').value);
+  if(!a||a<1)return toast('Amount likhein.');
+  soc().funds+=a;log('contributed to treasury',a);
+  document.getElementById('donAmt').value='';toast('Shukriya — ledger par live ho gaya.');render()
+}
+function renderFunds(){document.getElementById('fundBal').textContent='Rs '+soc().funds.toLocaleString()}
+function renderHier(){
+  const m=socMeta();
+  const sibs=SOCIETIES.filter(x=>x.city===m.city&&x.country===m.country);
+  document.getElementById('hierView').innerHTML=
+    `<div class="lvl">GLOBAL</div>└─ <b>${m.country==='Global'?'Global Federation':'World Federation (future)'}</b><br>`+
+    `<div class="lvl" style="padding-left:26px">COUNTRY</div><span style="padding-left:26px">└─ <b>${esc(m.country)}</b></span><br>`+
+    `<div class="lvl" style="padding-left:52px">CITY</div><span style="padding-left:52px">└─ <b>${esc(m.city)}</b></span><br>`+
+    sibs.map(x=>`<span style="padding-left:78px">└─ ${x.id===m.id?'<b style="color:var(--green)">'+esc(x.name)+' ← you</b>':esc(x.name)}</span>`).join('<br>')+
+    `<div class="note" style="margin-top:14px">Each society decides its own affairs at its own center. City-level
+    matters are decided by society delegates; country by cities; global by countries — every level
+    with the same open ledger + citizen veto.</div>`
+}
+function render(){renderProps();renderLedger();renderFunds();renderHier()}
+boot();
+</script>
+</body>
+</html>

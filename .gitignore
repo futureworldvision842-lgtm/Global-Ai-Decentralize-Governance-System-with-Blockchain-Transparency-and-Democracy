@@ -1,0 +1,15 @@
+# Local Netlify folder
+.netlify
+cloud-jarvis/auth
+cloud-jarvis/node_modules
+node_modules
+build
+android/.gradle
+android/local.properties
+android/app/release
+mobile/dist
+dist-web
+*.jks
+*.keystore
+__pycache__/
+*.py[cod]

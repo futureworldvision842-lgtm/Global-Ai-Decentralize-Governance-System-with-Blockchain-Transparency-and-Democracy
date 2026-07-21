@@ -1,0 +1,22 @@
+{
+  "name": "gaigs-platform",
+  "version": "1.0.0-rc.1",
+  "private": true,
+  "engines": {"node": ">=20"},
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "compile:contracts": "node scripts/compile-contracts.js",
+    "build:web": "node mobile/scripts/sync-web.js && node scripts/build-web.js",
+    "build:production": "npm run build:web && node scripts/prepare-production.js",
+    "package:android:production": "npm run build:production && npm --prefix mobile run sync:prepared",
+    "verify": "npm test && npm run compile:contracts && npm run build:web",
+    "deploy:dao": "npm run compile:contracts && node scripts/deploy-dao.js"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.4.0",
+    "ethers": "^6.15.0",
+    "firebase-admin": "^14.2.0"
+  },
+  "devDependencies": {"solc": "^0.8.30"},
+  "overrides": {"uuid": "^11.1.1"}
+}

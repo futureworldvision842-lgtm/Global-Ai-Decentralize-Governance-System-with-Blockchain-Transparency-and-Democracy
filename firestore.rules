@@ -1,0 +1,352 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function owns(uid) { return signedIn() && request.auth.uid == uid; }
+    function verifiedUser() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.kycStatus == 'verified';
+    }
+    function memberOf(communityId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/communities/$(communityId)/members/$(request.auth.uid))
+        && get(/databases/$(database)/documents/communities/$(communityId)/members/$(request.auth.uid)).data.status == 'active';
+    }
+    function adminOf(communityId) {
+      return memberOf(communityId) && get(/databases/$(database)/documents/communities/$(communityId)/members/$(request.auth.uid)).data.role in ['admin','committee'];
+    }
+    function canReadScope(scope, scopeId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && (
+          scope == 'global'
+          || (scope == 'country' && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.country == scopeId)
+          || (scope == 'city' && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.city == scopeId)
+          || (scope == 'society' && memberOf(scopeId))
+        );
+    }
+    function verifiedFormationFounder(proposal) {
+      return signedIn()
+        && proposal.decisionType == 'society_formation'
+        && proposal.societyPetitionId is string
+        && exists(/databases/$(database)/documents/societyPetitions/$(proposal.societyPetitionId)/founders/$(request.auth.uid))
+        && get(/databases/$(database)/documents/societyPetitions/$(proposal.societyPetitionId)/founders/$(request.auth.uid)).data.residenceVerified == true
+        && get(/databases/$(database)/documents/societyPetitions/$(proposal.societyPetitionId)/founders/$(request.auth.uid)).data.inBoundary == true;
+    }
+    function canReadProposal(proposal) {
+      return canReadScope(proposal.scope, proposal.scopeId) || verifiedFormationFounder(proposal);
+    }
+    function eligibleForProposal(proposalId) {
+      let proposal = get(/databases/$(database)/documents/proposals/$(proposalId)).data;
+      let user = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+      return verifiedUser()
+        && proposal.status == 'voting'
+        && (!('votingClosesAt' in proposal) || request.time < proposal.votingClosesAt)
+        && (
+          verifiedFormationFounder(proposal)
+          || proposal.scope == 'global'
+          || (proposal.scope == 'country' && user.country == proposal.scopeId)
+          || (proposal.scope == 'city' && user.city == proposal.scopeId)
+          || (proposal.scope == 'society' && memberOf(proposal.scopeId))
+        );
+    }
+
+    match /users/{uid} {
+      allow read: if owns(uid);
+      allow create: if owns(uid) && request.resource.data.kycStatus == 'pending';
+      allow update: if owns(uid)
+        && request.resource.data.kycStatus == resource.data.kycStatus
+        && request.resource.data.roles == resource.data.roles
+        && (resource.data.kycStatus != 'verified'
+          || (request.resource.data.city == resource.data.city && request.resource.data.country == resource.data.country));
+      match /private/{doc} { allow read, write: if owns(uid); }
+      match /ballotReceipts/{proposalId} { allow read: if owns(uid); allow write: if false; }
+    }
+
+    match /publicProfiles/{uid} {
+      allow read: if signedIn();
+      allow create: if owns(uid)
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid','displayName','city','country','skills','bio','avatarUrl','companyIds','communityIds','locationPublic','updatedAt'])
+        && (!('communityIds' in request.resource.data) || request.resource.data.communityIds.size() == 0);
+      allow update: if owns(uid)
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName','city','country','skills','bio','avatarUrl','companyIds','locationPublic','updatedAt']);
+    }
+
+    match /communities/{communityId} {
+      allow read: if signedIn();
+      allow create: if false;
+      allow update: if adminOf(communityId);
+      match /members/{uid} {
+        allow read: if owns(uid) || adminOf(communityId);
+        allow create: if owns(uid) && (
+          request.resource.data.status == 'pending'
+          || (get(/databases/$(database)/documents/communities/$(communityId)).data.createdBy == request.auth.uid
+            && request.resource.data.status == 'active' && request.resource.data.role == 'admin')
+        );
+        allow update: if adminOf(communityId) || (owns(uid) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['notificationPreferences']));
+      }
+      match /audit/{eventId} {
+        allow read: if memberOf(communityId);
+        allow create: if adminOf(communityId) && request.resource.data.actorId == request.auth.uid;
+        allow update, delete: if false;
+      }
+    }
+
+    match /posts/{postId} {
+      allow read: if canReadProposal(resource.data);
+      allow create: if signedIn() && request.resource.data.authorId == request.auth.uid
+        && request.resource.data.scope in ['society','city','country','global']
+        && canReadScope(request.resource.data.scope, request.resource.data.scopeId);
+      allow update, delete: if signedIn() && resource.data.authorId == request.auth.uid;
+      match /comments/{commentId} {
+        allow read: if canReadScope(get(/databases/$(database)/documents/posts/$(postId)).data.scope, get(/databases/$(database)/documents/posts/$(postId)).data.scopeId);
+        allow create: if signedIn() && request.resource.data.authorId == request.auth.uid
+          && canReadScope(get(/databases/$(database)/documents/posts/$(postId)).data.scope, get(/databases/$(database)/documents/posts/$(postId)).data.scopeId);
+        allow update, delete: if signedIn() && resource.data.authorId == request.auth.uid;
+      }
+      match /reactions/{uid} {
+        allow read: if signedIn();
+        allow create, update, delete: if owns(uid);
+      }
+    }
+
+    match /proposals/{proposalId} {
+      allow read: if canReadScope(resource.data.scope, resource.data.scopeId);
+      allow create: if verifiedUser()
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.status == 'discussion'
+        && request.resource.data.scope in ['society','city','country','global']
+        && request.resource.data.ruleKey in ['standard','constitutional','emergency']
+        && canReadScope(request.resource.data.scope, request.resource.data.scopeId)
+        && request.resource.data.keys().hasAll(['title','summary','scope','scopeId','ruleKey','rulesVersion','status','createdBy','createdAt','discussionClosesAt']);
+      allow update: if false;
+      match /votes/{uid} {
+        allow read: if owns(uid);
+        allow create: if owns(uid)
+          && eligibleForProposal(proposalId)
+          && !exists(/databases/$(database)/documents/proposals/$(proposalId)/votes/$(uid))
+          && request.resource.data.voterId == request.auth.uid
+          && request.resource.data.choice in ['yes','no','abstain']
+          && request.resource.data.keys().hasOnly(['voterId','choice','rulesVersion','clientNonce','createdAt']);
+        allow update, delete: if false;
+      }
+      match /evidence/{evidenceId} {
+        allow read: if canReadProposal(get(/databases/$(database)/documents/proposals/$(proposalId)).data);
+        allow create: if signedIn()
+          && request.resource.data.authorId == request.auth.uid
+          && request.resource.data.status == 'submitted';
+        allow update, delete: if false;
+      }
+      match /audit/{eventId} { allow read: if canReadProposal(get(/databases/$(database)/documents/proposals/$(proposalId)).data); allow write: if false; }
+    }
+
+    match /scopeAssignments/{assignmentId} {
+      allow read: if signedIn() && resource.data.uid == request.auth.uid;
+      allow write: if false;
+    }
+    match /kycEvents/{eventId} {
+      allow read: if signedIn() && resource.data.uid == request.auth.uid;
+      allow write: if false;
+    }
+
+    match /challenges/{challengeId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.createdBy == request.auth.uid && request.resource.data.status == 'design_review';
+      allow update, delete: if false;
+    }
+    match /challengeSubmissions/{submissionId} {
+      allow read: if signedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if signedIn()
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.status == 'submitted_for_review'
+        && request.resource.data.keys().hasOnly(['id','ownerId','challengeId','score','startedAt','completedAt','durationMs','engine','rulesVersion','solutionHash','status','createdAt']);
+      allow update, delete: if false;
+    }
+
+    match /societyPetitions/{petitionId} {
+      allow read: if signedIn();
+      allow create: if verifiedUser()
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.status == 'verification'
+        && request.resource.data.constitutionVersion == 'GAIGS-CONSTITUTION-1.0.0';
+      allow update, delete: if false;
+      match /founders/{uid} {
+        allow read: if owns(uid);
+        allow create: if owns(uid)
+          && request.resource.data.memberId == request.auth.uid
+          && request.resource.data.residenceVerified == false
+          && request.resource.data.inBoundary == false;
+        allow update, delete: if false;
+      }
+      match /boundaryEvidence/{evidenceId} { allow read: if signedIn(); allow write: if false; }
+    }
+
+    match /news/{newsId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.authorId == request.auth.uid
+        && request.resource.data.status == 'published'
+        && request.resource.data.evidenceLevel in ['reported','corroborated']
+        && request.resource.data.keys().hasAll(['title','summary','scope','sourceName','evidenceLevel','authorId','createdAt','status']);
+      allow update, delete: if signedIn() && resource.data.authorId == request.auth.uid;
+    }
+
+    match /projects/{projectId} {
+      allow read: if canReadScope(resource.data.scope, resource.data.scopeId);
+      allow create: if verifiedUser()
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.status == 'planned'
+        && request.resource.data.fundingStatus == 'not_connected'
+        && exists(/databases/$(database)/documents/proposals/$(request.resource.data.proposalId))
+        && get(/databases/$(database)/documents/proposals/$(request.resource.data.proposalId)).data.status == 'approved'
+        && get(/databases/$(database)/documents/proposals/$(request.resource.data.proposalId)).data.scope == request.resource.data.scope
+        && get(/databases/$(database)/documents/proposals/$(request.resource.data.proposalId)).data.scopeId == request.resource.data.scopeId
+        && canReadScope(request.resource.data.scope, request.resource.data.scopeId);
+      allow update, delete: if false;
+      match /contributions/{contributionId} {
+        allow read: if canReadScope(get(/databases/$(database)/documents/projects/$(projectId)).data.scope, get(/databases/$(database)/documents/projects/$(projectId)).data.scopeId);
+        allow create: if signedIn()
+          && request.resource.data.memberId == request.auth.uid
+          && request.resource.data.status == 'awaiting_settlement'
+          && request.resource.data.amount > 0;
+        allow update, delete: if false;
+      }
+      match /milestones/{milestoneId} {
+        allow read: if canReadScope(get(/databases/$(database)/documents/projects/$(projectId)).data.scope, get(/databases/$(database)/documents/projects/$(projectId)).data.scopeId);
+        allow create: if false;
+        allow update: if signedIn()
+          && request.resource.data.evidenceSubmittedBy == request.auth.uid
+          && request.resource.data.status == 'verification'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['evidenceHash','evidenceSummary','providerId','status','evidenceSubmittedBy','evidenceSubmittedAt','filePath','updatedAt']);
+        allow delete: if false;
+        match /verifications/{uid} {
+          allow read: if canReadScope(get(/databases/$(database)/documents/projects/$(projectId)).data.scope, get(/databases/$(database)/documents/projects/$(projectId)).data.scopeId);
+          allow create: if owns(uid)
+            && request.resource.data.verifierId == request.auth.uid
+            && request.auth.uid != get(/databases/$(database)/documents/projects/$(projectId)/milestones/$(milestoneId)).data.providerId
+            && request.auth.uid != get(/databases/$(database)/documents/projects/$(projectId)/milestones/$(milestoneId)).data.createdBy
+            && request.resource.data.evidenceHash == get(/databases/$(database)/documents/projects/$(projectId)/milestones/$(milestoneId)).data.evidenceHash;
+          allow update, delete: if false;
+        }
+      }
+      match /ledger/{entryId} { allow read: if canReadScope(get(/databases/$(database)/documents/projects/$(projectId)).data.scope, get(/databases/$(database)/documents/projects/$(projectId)).data.scopeId); allow write: if false; }
+    }
+
+    match /companies/{companyId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if signedIn() && resource.data.ownerId == request.auth.uid;
+    }
+    match /serviceProfiles/{uid} {
+      allow read: if signedIn();
+      allow create, update: if owns(uid) && request.resource.data.uid == request.auth.uid;
+      allow delete: if owns(uid);
+    }
+    match /serviceRequests/{id} {
+      allow read: if canReadScope(resource.data.scope, resource.data.scopeId);
+      allow create: if signedIn()
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.status == 'open'
+        && request.resource.data.scope in ['city','global']
+        && request.resource.data.budgetMinor is int
+        && request.resource.data.budgetMinor >= 0
+        && canReadScope(request.resource.data.scope, request.resource.data.scopeId);
+      allow update: if signedIn()
+        && resource.data.createdBy == request.auth.uid
+        && resource.data.status == 'open'
+        && request.resource.data.status == 'offer_selected'
+        && exists(/databases/$(database)/documents/serviceRequests/$(id)/offers/$(request.resource.data.selectedOfferId))
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','selectedOfferId','selectedAt']);
+      allow delete: if false;
+      match /offers/{offerId} {
+        allow read: if signedIn() && (resource.data.providerId == request.auth.uid || get(/databases/$(database)/documents/serviceRequests/$(id)).data.createdBy == request.auth.uid);
+        allow create: if signedIn()
+          && request.resource.data.providerId == request.auth.uid
+          && get(/databases/$(database)/documents/serviceRequests/$(id)).data.createdBy != request.auth.uid
+          && get(/databases/$(database)/documents/serviceRequests/$(id)).data.status == 'open'
+          && request.resource.data.status == 'submitted'
+          && request.resource.data.amountMinor is int
+          && request.resource.data.amountMinor > 0;
+        allow update, delete: if false;
+      }
+    }
+    match /serviceOrders/{id} {
+      allow read: if signedIn() && request.auth.uid in resource.data.participants;
+      allow create, delete: if false;
+      allow update: if signedIn() && request.auth.uid in resource.data.participants && (
+        (resource.data.providerId == request.auth.uid && resource.data.status == 'selected' && request.resource.data.status == 'in_progress' && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','updatedAt']))
+        || (resource.data.providerId == request.auth.uid && resource.data.status == 'in_progress' && request.resource.data.status == 'submitted' && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','proofNote','proofUrl','updatedAt']))
+        || (resource.data.requesterId == request.auth.uid && resource.data.status == 'submitted' && request.resource.data.status == 'completed' && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','completedAt','updatedAt']))
+        || (resource.data.status in ['selected','in_progress','submitted'] && request.resource.data.status == 'disputed' && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','disputeReason','updatedAt']))
+      );
+    }
+    match /walletAccounts/{uid} { allow read: if owns(uid); allow write: if false; }
+    match /transferDrafts/{id} {
+      allow read: if signedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.ownerId == request.auth.uid && request.resource.data.status == 'draft';
+      allow update, delete: if signedIn() && resource.data.ownerId == request.auth.uid && resource.data.status == 'draft';
+    }
+    match /connections/{id} {
+      allow create: if signedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow read, update, delete: if signedIn() && resource.data.ownerId == request.auth.uid;
+    }
+    match /follows/{uid}/outgoing/{targetId} { allow read, write: if owns(uid); }
+    match /savedPosts/{uid}/items/{postId} { allow read, write: if owns(uid); }
+    match /blocks/{uid}/items/{targetId} { allow read, write: if owns(uid); }
+    match /reports/{id} {
+      allow create: if signedIn() && request.resource.data.reporterId == request.auth.uid;
+      allow read, update, delete: if false;
+    }
+    match /contentReports/{id} {
+      allow create: if signedIn() && request.resource.data.reporterId == request.auth.uid;
+      allow read, update: if adminOf(resource.data.communityId);
+      allow delete: if false;
+    }
+    match /messages/{id} {
+      allow create: if signedIn()
+        && request.resource.data.senderId == request.auth.uid
+        && request.resource.data.recipientId != request.auth.uid
+        && request.auth.uid in request.resource.data.participants
+        && request.resource.data.recipientId in request.resource.data.participants
+        && request.resource.data.participants.size() == 2
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 2000;
+      allow read: if signedIn() && request.auth.uid in resource.data.participants;
+      allow update: if signedIn()
+        && resource.data.recipientId == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read','readAt']);
+      allow delete: if false;
+    }
+    match /emergencies/{id} {
+      allow read: if canReadScope(resource.data.scope, resource.data.scopeId);
+      allow create: if signedIn()
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.status == 'reported'
+        && request.resource.data.verificationCount == 0
+        && canReadScope(request.resource.data.scope, request.resource.data.scopeId);
+      allow update, delete: if false;
+      match /verifications/{uid} {
+        allow read: if canReadScope(get(/databases/$(database)/documents/emergencies/$(id)).data.scope, get(/databases/$(database)/documents/emergencies/$(id)).data.scopeId);
+        allow create: if owns(uid)
+          && verifiedUser()
+          && get(/databases/$(database)/documents/emergencies/$(id)).data.createdBy != request.auth.uid
+          && request.resource.data.verifierId == request.auth.uid
+          && !exists(/databases/$(database)/documents/emergencies/$(id)/verifications/$(uid));
+        allow update, delete: if false;
+      }
+    }
+    match /emergencyWallets/{id} { allow read: if signedIn(); allow write: if false; }
+    match /ledgerEntries/{id} { allow read: if true; allow create, update, delete: if false; }
+    match /notifications/{uid}/items/{id} {
+      allow read: if owns(uid);
+      allow update: if owns(uid) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read','readAt']);
+      allow create, delete: if false;
+    }
+    match /accountDeletionRequests/{uid} { allow read: if owns(uid); allow write: if false; }
+    match /accountDeletionReceipts/{id} { allow read, write: if false; }
+  }
+}

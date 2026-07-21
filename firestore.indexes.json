@@ -1,0 +1,18 @@
+{
+  "indexes": [
+    {"collectionGroup":"posts","queryScope":"COLLECTION","fields":[{"fieldPath":"scope","order":"ASCENDING"},{"fieldPath":"scopeId","order":"ASCENDING"},{"fieldPath":"createdAt","order":"DESCENDING"}]},
+    {"collectionGroup":"serviceRequests","queryScope":"COLLECTION","fields":[{"fieldPath":"city","order":"ASCENDING"},{"fieldPath":"status","order":"ASCENDING"},{"fieldPath":"createdAt","order":"DESCENDING"}]},
+    {"collectionGroup":"proposals","queryScope":"COLLECTION","fields":[{"fieldPath":"scope","order":"ASCENDING"},{"fieldPath":"scopeId","order":"ASCENDING"},{"fieldPath":"createdAt","order":"DESCENDING"}]},
+    {"collectionGroup":"proposals","queryScope":"COLLECTION","fields":[{"fieldPath":"status","order":"ASCENDING"},{"fieldPath":"discussionClosesAt","order":"ASCENDING"}]},
+    {"collectionGroup":"proposals","queryScope":"COLLECTION","fields":[{"fieldPath":"status","order":"ASCENDING"},{"fieldPath":"votingClosesAt","order":"ASCENDING"}]},
+    {"collectionGroup":"scopeAssignments","queryScope":"COLLECTION","fields":[{"fieldPath":"uid","order":"ASCENDING"},{"fieldPath":"status","order":"ASCENDING"}]},
+    {"collectionGroup":"users","queryScope":"COLLECTION","fields":[{"fieldPath":"kycStatus","order":"ASCENDING"},{"fieldPath":"city","order":"ASCENDING"}]},
+    {"collectionGroup":"users","queryScope":"COLLECTION","fields":[{"fieldPath":"kycStatus","order":"ASCENDING"},{"fieldPath":"country","order":"ASCENDING"}]},
+    {"collectionGroup":"messages","queryScope":"COLLECTION","fields":[{"fieldPath":"participants","arrayConfig":"CONTAINS"},{"fieldPath":"createdAt","order":"DESCENDING"}]},
+    {"collectionGroup":"serviceRequests","queryScope":"COLLECTION","fields":[{"fieldPath":"scope","order":"ASCENDING"},{"fieldPath":"scopeId","order":"ASCENDING"},{"fieldPath":"createdAt","order":"DESCENDING"}]},
+    {"collectionGroup":"serviceOrders","queryScope":"COLLECTION","fields":[{"fieldPath":"participants","arrayConfig":"CONTAINS"},{"fieldPath":"createdAt","order":"DESCENDING"}]},
+    {"collectionGroup":"projects","queryScope":"COLLECTION","fields":[{"fieldPath":"createdBy","order":"ASCENDING"},{"fieldPath":"createdAt","order":"DESCENDING"}]},
+    {"collectionGroup":"emergencies","queryScope":"COLLECTION","fields":[{"fieldPath":"scope","order":"ASCENDING"},{"fieldPath":"scopeId","order":"ASCENDING"},{"fieldPath":"createdAt","order":"DESCENDING"}]}
+  ],
+  "fieldOverrides": []
+}

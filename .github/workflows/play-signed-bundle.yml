@@ -1,0 +1,60 @@
+name: Play signed bundle
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  signed-aab:
+    runs-on: ubuntu-latest
+    environment: play-production
+    env:
+      GAIGS_FIREBASE_API_KEY: ${{ secrets.GAIGS_FIREBASE_API_KEY }}
+      GAIGS_FIREBASE_AUTH_DOMAIN: ${{ secrets.GAIGS_FIREBASE_AUTH_DOMAIN }}
+      GAIGS_FIREBASE_PROJECT_ID: ${{ secrets.GAIGS_FIREBASE_PROJECT_ID }}
+      GAIGS_FIREBASE_STORAGE_BUCKET: ${{ secrets.GAIGS_FIREBASE_STORAGE_BUCKET }}
+      GAIGS_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.GAIGS_FIREBASE_MESSAGING_SENDER_ID }}
+      GAIGS_FIREBASE_APP_ID: ${{ secrets.GAIGS_FIREBASE_APP_ID }}
+      GAIGS_OPERATOR_NAME: ${{ secrets.GAIGS_OPERATOR_NAME }}
+      GAIGS_PRIVACY_EMAIL: ${{ secrets.GAIGS_PRIVACY_EMAIL }}
+      GAIGS_POSTAL_ADDRESS: ${{ secrets.GAIGS_POSTAL_ADDRESS }}
+      GAIGS_JARVIS_PROXY_URL: ${{ secrets.GAIGS_JARVIS_PROXY_URL }}
+      GAIGS_UPLOAD_STORE_PASSWORD: ${{ secrets.GAIGS_UPLOAD_STORE_PASSWORD }}
+      GAIGS_UPLOAD_KEY_ALIAS: ${{ secrets.GAIGS_UPLOAD_KEY_ALIAS }}
+      GAIGS_UPLOAD_KEY_PASSWORD: ${{ secrets.GAIGS_UPLOAD_KEY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v3
+      - name: Install and verify platform
+        run: npm ci && npm run verify
+      - name: Install Android dependencies
+        run: npm --prefix mobile ci
+      - name: Build production web assets and sync Android
+        run: npm run package:android:production
+      - name: Restore protected upload keystore
+        env:
+          GAIGS_UPLOAD_KEYSTORE_B64: ${{ secrets.GAIGS_UPLOAD_KEYSTORE_B64 }}
+        run: |
+          test -n "$GAIGS_UPLOAD_KEYSTORE_B64"
+          echo "$GAIGS_UPLOAD_KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/gaigs-upload.jks"
+      - name: Build signed release bundle
+        working-directory: mobile/android
+        env:
+          GAIGS_UPLOAD_STORE_FILE: ${{ runner.temp }}/gaigs-upload.jks
+        run: ./gradlew bundleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gaigs-play-signed-aab
+          path: mobile/android/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error
+          retention-days: 14

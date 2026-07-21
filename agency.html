@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creator Studio — JARVIS-powered · NewDawn</title>
+<meta name="description" content="Free JARVIS-powered creator & agency panel: AI content studio, content calendar, hashtag & trend research, analytics, client manager. Real services, no bots.">
+<style>
+:root{--bg:#04070d;--panel:#0a1322;--line:#12304a;--cyan:#19e0ff;--green:#39ff9c;--gold:#ffd166;--purple:#c792ff;--red:#ff5d5d;--text:#cfeefb;--muted:#6f93a8;--mono:Consolas,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;padding-bottom:40px;
+ background-image:radial-gradient(700px 340px at 85% -60px,rgba(25,224,255,.1),transparent),radial-gradient(600px 400px at -10% 40%,rgba(199,146,255,.07),transparent)}
+a{color:var(--cyan);text-decoration:none}
+.top{position:sticky;top:0;z-index:20;display:flex;gap:12px;align-items:center;padding:13px 20px;background:rgba(4,7,13,.93);border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+.logo{font-family:var(--mono);font-weight:bold;color:var(--cyan);letter-spacing:2px;text-shadow:0 0 12px var(--cyan)}
+.top a{color:var(--muted);font-size:13px;margin-left:14px}
+.wrap{max-width:1100px;margin:0 auto;padding:18px 16px}
+h1{font-size:24px;margin-bottom:2px}.sub{color:var(--muted);font-size:13.5px;margin-bottom:16px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab{padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--muted);cursor:pointer;font-size:13.5px}
+.tab.on{color:#04170d;background:var(--cyan);border-color:var(--cyan);font-weight:bold}
+.pane{display:none;animation:fade .3s}.pane.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+.card{background:linear-gradient(160deg,var(--panel),#081020);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
+.card h3{color:var(--cyan);font-size:15px;margin-bottom:10px}
+input,textarea,select{width:100%;background:#061020;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:12px;font-size:14px;margin:6px 0;font-family:inherit}
+input:focus,textarea:focus{outline:none;border-color:var(--cyan)}
+button{cursor:pointer;border:none;border-radius:10px;padding:11px 18px;font-weight:bold;font-size:13.5px}
+.b-cyan{background:var(--cyan);color:#04170d}.b-green{background:var(--green);color:#04170d}.b-ghost{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{background:#071120;border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}
+.stat .n{font-size:26px;font-family:var(--mono);color:var(--cyan)}.stat .l{font-size:10.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.out{background:#060d18;border:1px solid var(--line);border-radius:12px;padding:14px;white-space:pre-wrap;font-size:13.8px;line-height:1.65;margin-top:10px;min-height:60px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.chip{padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font-size:12px;cursor:pointer}
+.chip:hover{border-color:var(--cyan);color:var(--cyan)}
+.item{border:1px solid var(--line);border-radius:10px;padding:12px;margin:8px 0;background:#071120;font-size:13.5px}
+.item .mt{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:10px;padding:2px 9px;border-radius:20px;background:rgba(57,255,156,.12);color:var(--green)}
+.typing{color:var(--muted);font-family:var(--mono);animation:blink 1s infinite}@keyframes blink{50%{opacity:.3}}
+.note{font-size:11.5px;color:#4d7186;margin-top:8px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0a2230;border:1px solid var(--cyan);color:var(--cyan);padding:11px 20px;border-radius:12px;font-size:13px;opacity:0;transition:.3s;pointer-events:none;z-index:50}.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="logo">⬡ CREATOR STUDIO</span>
+  <span style="font-size:10.5px;color:var(--gold);font-family:var(--mono);border:1px dashed rgba(255,209,102,.4);padding:2px 8px;border-radius:6px">JARVIS-POWERED · FREE</span>
+  <span style="margin-left:auto"></span>
+  <a href="index.html">Mission</a><a href="app.html">App</a><a href="jarvis.html">JARVIS</a>
+</div>
+
+<div class="wrap">
+  <h1>Creator & Agency Studio</h1>
+  <div class="sub">Real growth, zero bots: AI content, planning, hashtag/trend research, analytics & client management — powered by JARVIS. 100% aligned with the mission: real value for real people.</div>
+
+  <div class="tabs">
+    <div class="tab on" data-p="studio" onclick="tab(this)">✍️ AI Content Studio</div>
+    <div class="tab" data-p="calendar" onclick="tab(this)">📅 Content Calendar</div>
+    <div class="tab" data-p="research" onclick="tab(this)">🔎 Hashtag & Trend Research</div>
+    <div class="tab" data-p="analytics" onclick="tab(this)">📊 Analytics</div>
+    <div class="tab" data-p="clients" onclick="tab(this)">👥 Clients</div>
+  </div>
+
+  <!-- STUDIO -->
+  <div class="pane on" id="p-studio">
+    <div class="card">
+      <h3>✍️ Generate content — scripts, captions, hooks, threads</h3>
+      <div class="row">
+        <select id="ctype">
+          <option value="YouTube Short / Reel script (45-60s, hook+body+CTA)">🎬 Short/Reel script</option>
+          <option value="Instagram caption with hooks + hashtags">📸 Instagram caption</option>
+          <option value="viral hook lines (10 options)">🪝 Viral hooks (x10)</option>
+          <option value="Twitter/X thread (7 tweets)">🧵 X thread</option>
+          <option value="LinkedIn post (professional, mission-driven)">💼 LinkedIn post</option>
+          <option value="YouTube title + description + tags">🏷️ YT metadata</option>
+        </select>
+        <select id="clang" style="max-width:170px">
+          <option>English</option><option>Roman Urdu</option><option>Urdu (Nastaliq)</option>
+        </select>
+      </div>
+      <input id="ctopic" placeholder="Topic — e.g. 'how the colonial system still controls us today'">
+      <div class="chips">
+        <span class="chip" onclick="setTopic('the AI power grab explained')">AI power grab</span>
+        <span class="chip" onclick="setTopic('Attack on Titan walls = real world borders')">AoT walls</span>
+        <span class="chip" onclick="setTopic('why your society should govern itself')">self-governance</span>
+        <span class="chip" onclick="setTopic('the Medina model for the modern world')">Medina model</span>
+      </div>
+      <button class="b-green" onclick="gen()" style="width:100%">⚡ Generate with JARVIS</button>
+      <div class="out" id="genOut">Your generated content appears here. It follows the mission's voice + integrity rules (hook in 2s, one idea, cite facts, no invented stats).</div>
+      <div class="row" style="margin-top:10px">
+        <button class="b-ghost" onclick="copyOut()">📋 Copy</button>
+        <button class="b-cyan" onclick="toCalendar()">📅 Add to calendar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALENDAR -->
+  <div class="pane" id="p-calendar">
+    <div class="card">
+      <h3>📅 Plan your posts (saved on your device)</h3>
+      <div class="row">
+        <input id="calWhen" type="date" style="max-width:200px">
+        <select id="calPlat" style="max-width:150px"><option>YouTube</option><option>Instagram</option><option>TikTok</option><option>X</option><option>LinkedIn</option></select>
+      </div>
+      <input id="calTitle" placeholder="What to post…">
+      <button class="b-green" onclick="addCal()">＋ Schedule</button>
+      <div id="calList"></div>
+      <div class="note">This is your planning calendar. Auto-posting via official platform APIs is a paid-API step for the funded build — planning + reminders are free and real now.</div>
+    </div>
+  </div>
+
+  <!-- RESEARCH -->
+  <div class="pane" id="p-research">
+    <div class="card">
+      <h3>🔎 Hashtag, keyword & trend research</h3>
+      <input id="resTopic" placeholder="Niche/topic — e.g. 'Pakistani history shorts'">
+      <button class="b-green" onclick="research()" style="width:100%">🔎 Research with JARVIS</button>
+      <div class="out" id="resOut">Get hashtag sets, keyword angles, content ideas and posting-time tips.</div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS -->
+  <div class="pane" id="p-analytics">
+    <div class="card">
+      <h3>📊 Channel snapshot</h3>
+      <div class="grid">
+        <div class="stat"><div class="n">9M+</div><div class="l">Afkaar views</div></div>
+        <div class="stat"><div class="n">3K+</div><div class="l">Subscribers</div></div>
+        <div class="stat"><div class="n" id="postsN">0</div><div class="l">Planned posts</div></div>
+        <div class="stat"><div class="n" id="clientsN">0</div><div class="l">Clients</div></div>
+      </div>
+      <div class="note">Connect official platform APIs (YouTube Data API is free) to pull live subscriber/view stats — that wiring is the next free step. Numbers above reflect your real Afkaar traction + this panel's data.</div>
+    </div>
+    <div class="card">
+      <h3>🧠 Ask JARVIS to analyze your strategy</h3>
+      <input id="anQ" placeholder="e.g. 'how do I grow Afkaar to 100k subs?'">
+      <button class="b-green" onclick="analyze()" style="width:100%">Analyze</button>
+      <div class="out" id="anOut">JARVIS gives a concrete, mission-aligned growth plan.</div>
+    </div>
+  </div>
+
+  <!-- CLIENTS -->
+  <div class="pane" id="p-clients">
+    <div class="card">
+      <h3>👥 Client manager (your agency)</h3>
+      <div class="row">
+        <input id="clN" placeholder="Client name">
+        <input id="clS" placeholder="Service (e.g. YouTube management)">
+        <input id="clF" type="number" placeholder="Fee (Rs)" style="max-width:130px">
+      </div>
+      <button class="b-green" onclick="addClient()">＋ Add client</button>
+      <div id="clList"></div>
+      <div class="note">Run a real agency: manage clients, services, and fees. Payments happen your way (bank/wallet) — no fake engagement, only real content & real ad management.</div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="config.js"></script>
+<script>
+const SYS="You are JARVIS, Muhammad Qureshi's creator & marketing AI. Mission: people-owned platform, decentralized governance, freeing the world (Medina model + AI + blockchain). Content rules: hook in 2s, ONE idea, Dhruv-Rathee/friend tone, cite facts, never invent stats, label interpretation as argument, faith respectful, AI-control=warning not prophecy. ONLY real, ethical growth advice — never fake followers/bots. Be concrete and complete.";
+const LS='creatorstudio_v1';
+let S=(()=>{try{return JSON.parse(localStorage.getItem(LS))||{}}catch(e){return{}}})();
+S.cal=S.cal||[];S.clients=S.clients||[];
+function save(){localStorage.setItem(LS,JSON.stringify(S))}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function tab(el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));el.classList.add('on');document.getElementById('p-'+el.dataset.p).classList.add('on');render()}
+function setTopic(t){document.getElementById('ctopic').value=t}
+async function jarvis(prompt){
+  const useFn=!location.hostname.includes('localhost')&&location.protocol!=='file:';
+  const body={system_instruction:{parts:[{text:SYS}]},contents:[{role:'user',parts:[{text:prompt}]}]};
+  if(!useFn)throw new Error('Serve this tool through the authenticated GAIGS server; browser AI keys are disabled.');
+  const r=await fetch('/.netlify/functions/jarvis-v2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,scope:'personal',context:{view:'creator-studio'}})});
+  const j=await r.json();
+  return j.answer||(j.error?'(JARVIS: '+String(j.error).slice(0,80)+')':'(no response)');
+}
+async function gen(){
+  const t=document.getElementById('ctopic').value.trim();if(!t)return toast('Topic likhein.');
+  const out=document.getElementById('genOut');out.innerHTML='<span class="typing">JARVIS writing…</span>';
+  out.textContent=await jarvis(`Create a ${document.getElementById('ctype').value} in ${document.getElementById('clang').value} about: "${t}". Full ready-to-use package.`);
+}
+function copyOut(){navigator.clipboard.writeText(document.getElementById('genOut').textContent);toast('Copied!')}
+function toCalendar(){S._draft=document.getElementById('genOut').textContent.slice(0,80);document.querySelector('[data-p=calendar]').click();document.getElementById('calTitle').value=S._draft;toast('Loaded into calendar — pick a date.')}
+function addCal(){const w=document.getElementById('calWhen').value,ti=document.getElementById('calTitle').value.trim();if(!ti)return toast('Kya post karna hai?');S.cal.unshift({w,plat:document.getElementById('calPlat').value,ti});save();document.getElementById('calTitle').value='';render();toast('Scheduled!')}
+async function research(){const t=document.getElementById('resTopic').value.trim();if(!t)return toast('Niche likhein.');const o=document.getElementById('resOut');o.innerHTML='<span class="typing">researching…</span>';o.textContent=await jarvis(`For the niche "${t}", give: 15 relevant hashtags (mix big+niche), 5 keyword angles, 5 content ideas, and best posting times. Concrete and practical.`);}
+async function analyze(){const q=document.getElementById('anQ').value.trim()||'how do I grow my channel?';const o=document.getElementById('anOut');o.innerHTML='<span class="typing">analyzing…</span>';o.textContent=await jarvis(`As my growth strategist: ${q}. Give a concrete step-by-step plan (real, ethical growth only, no bots).`);}
+function addClient(){const n=document.getElementById('clN').value.trim();if(!n)return toast('Client naam?');S.clients.unshift({n,s:document.getElementById('clS').value,f:document.getElementById('clF').value||'0'});save();['clN','clS','clF'].forEach(i=>document.getElementById(i).value='');render();toast('Client added!')}
+function render(){
+  document.getElementById('calList').innerHTML=S.cal.map((c,i)=>`<div class="item"><span class="pill">${c.plat}</span> <b>${c.ti}</b><div class="mt">${c.w||'no date'} · <span style="cursor:pointer;color:var(--red)" onclick="S.cal.splice(${i},1);save();render()">remove</span></div></div>`).join('')||'<div class="note">No posts planned yet.</div>';
+  document.getElementById('clList').innerHTML=S.clients.map((c,i)=>`<div class="item"><b>${c.n}</b> — ${c.s||'service'} <span class="pill">Rs ${c.f}</span><div class="mt"><span style="cursor:pointer;color:var(--red)" onclick="S.clients.splice(${i},1);save();render()">remove</span></div></div>`).join('')||'<div class="note">No clients yet — add your first.</div>';
+  const p=document.getElementById('postsN'),cl=document.getElementById('clientsN');if(p)p.textContent=S.cal.length;if(cl)cl.textContent=S.clients.length;
+}
+render();
+</script>
+</body>
+</html>

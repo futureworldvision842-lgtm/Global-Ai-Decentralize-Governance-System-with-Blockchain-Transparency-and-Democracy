@@ -1,0 +1,6 @@
+{
+  "functions":{"source":"functions","runtime":"nodejs22"},
+  "firestore":{"rules":"firestore.rules","indexes":"firestore.indexes.json"},
+  "storage":{"rules":"storage.rules"},
+  "hosting":{"public":"dist-web","ignore":["firebase.json","**/.*","**/node_modules/**"]}
+}

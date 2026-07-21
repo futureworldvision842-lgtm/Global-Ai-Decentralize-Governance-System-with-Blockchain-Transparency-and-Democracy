@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A New Operating System for Humanity — Muhammad Qureshi</title>
+<meta name="description" content="A people-owned platform: decentralized governance + blockchain transparency + AI that informs (never decides) + a global science game. The mission started from Masjid-e-Nabawi Qureshi Hashmi, Islamabad.">
+<style>
+:root{
+  --bg:#04070d; --bg2:#070d18; --panel:#0a1322; --line:#12304a;
+  --cyan:#19e0ff; --cyan-dim:#0d7a99; --green:#39ff9c; --gold:#ffd166;
+  --red:#ff5d5d; --text:#cfeefb; --muted:#6f93a8;
+  --font:'Segoe UI',system-ui,sans-serif; --mono:Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);overflow-x:hidden}
+canvas#stars{position:fixed;inset:0;z-index:0;opacity:.6}
+.wrap{position:relative;z-index:1}
+section{max-width:1100px;margin:0 auto;padding:90px 24px}
+h1,h2,h3{line-height:1.15}
+h2{font-size:clamp(26px,4vw,40px);margin-bottom:14px}
+h2 .neon{color:var(--green)}
+p.lead{color:var(--muted);font-size:clamp(15px,2vw,18px);max-width:760px}
+.kicker{font-family:var(--mono);color:var(--cyan);letter-spacing:3px;font-size:12px;text-transform:uppercase;margin-bottom:10px}
+a{color:var(--cyan)}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;gap:18px;align-items:center;
+    padding:14px 26px;background:rgba(4,7,13,.82);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav .logo{font-family:var(--mono);color:var(--cyan);font-weight:bold;letter-spacing:2px;text-shadow:0 0 12px var(--cyan)}
+nav .links{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}
+nav a{color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:1px}
+nav a:hover{color:var(--cyan)}
+nav a.cta{color:#04070d;background:var(--green);padding:6px 14px;border-radius:6px;font-weight:bold}
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 20px 60px}
+.hero .day{font-family:var(--mono);color:var(--green);letter-spacing:4px;font-size:13px;animation:pulse 2.4s infinite}
+.hero h1{font-size:clamp(34px,6.5vw,72px);margin:18px 0 10px;text-shadow:0 0 30px rgba(25,224,255,.35)}
+.hero h1 em{font-style:normal;color:var(--cyan)}
+.hero .urdu{font-size:clamp(18px,3vw,26px);color:var(--gold);margin:6px 0 18px;font-family:'Jameel Noori Nastaleeq','Urdu Typesetting',serif}
+.hero p{max-width:680px;color:var(--muted);font-size:clamp(15px,2vw,18px)}
+.hero .btns{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.btn{display:inline-block;padding:13px 26px;border-radius:8px;text-decoration:none;font-weight:bold;letter-spacing:1px;transition:.2s}
+.btn.primary{background:var(--green);color:#04170d;box-shadow:0 0 24px rgba(57,255,156,.35)}
+.btn.primary:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(57,255,156,.6)}
+.btn.ghost{border:1px solid var(--cyan);color:var(--cyan)}
+.btn.ghost:hover{background:rgba(25,224,255,.08)}
+.scroll-hint{margin-top:60px;color:var(--muted);font-family:var(--mono);font-size:12px;animation:bob 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(34px);transition:opacity .8s ease,transform .8s ease}
+.reveal.on{opacity:1;transform:none}
+/* CARDS */
+.grid{display:grid;gap:18px;margin-top:34px}
+.grid.c3{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid.c2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.card{background:linear-gradient(160deg,var(--panel),#081020);border:1px solid var(--line);border-radius:14px;padding:24px;position:relative;overflow:hidden}
+.card:hover{border-color:var(--cyan-dim)}
+.card .ico{font-size:30px;margin-bottom:12px}
+.card h3{color:var(--cyan);font-size:18px;margin-bottom:8px}
+.card p{color:var(--muted);font-size:14px;line-height:1.65}
+.card .tag{position:absolute;top:14px;right:14px;font-family:var(--mono);font-size:10px;color:var(--green);letter-spacing:2px}
+/* TIMELINE */
+.timeline{margin-top:40px;border-left:2px solid var(--line);padding-left:28px}
+.tstep{position:relative;padding-bottom:38px}
+.tstep::before{content:'';position:absolute;left:-37px;top:4px;width:16px;height:16px;border-radius:50%;
+  background:var(--bg);border:2px solid var(--cyan);box-shadow:0 0 12px var(--cyan)}
+.tstep h3{color:var(--gold);font-size:17px;margin-bottom:6px}
+.tstep p{color:var(--muted);font-size:14.5px;line-height:1.7;max-width:720px}
+.tstep .arg{color:#4d7186;font-size:12.5px;font-style:italic;margin-top:6px}
+/* ANIME */
+.anime .card{border-color:#2a1a3a}
+.anime .card h3{color:#c792ff}
+.anime .card .tag{color:#c792ff}
+/* PILLARS */
+.pillar{display:flex;gap:18px;align-items:flex-start}
+.pillar .num{font-family:var(--mono);font-size:34px;color:var(--green);opacity:.9;min-width:52px;text-shadow:0 0 14px rgba(57,255,156,.5)}
+/* JARVIS */
+.jarvis-band{background:linear-gradient(180deg,transparent,rgba(25,224,255,.05),transparent);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stat-row{display:flex;gap:34px;flex-wrap:wrap;margin-top:26px}
+.stat{font-family:var(--mono)}
+.stat .n{font-size:34px;color:var(--cyan)}
+.stat .l{font-size:12px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+/* QUOTES */
+.quote{border-left:3px solid var(--gold);padding:14px 20px;background:rgba(255,209,102,.05);margin:18px 0;border-radius:0 10px 10px 0}
+.quote p{font-size:15.5px;color:var(--text);font-style:italic}
+.quote cite{display:block;margin-top:8px;color:var(--muted);font-size:12.5px;font-style:normal;font-family:var(--mono)}
+/* MVP CTA */
+.mvp-cta{background:linear-gradient(140deg,#07231a,#04170f);border:1px solid #1a5c40;border-radius:18px;padding:40px;margin-top:36px;text-align:center}
+.mvp-cta h3{color:var(--green);font-size:26px;margin-bottom:10px}
+.mvp-cta p{color:var(--muted);max-width:640px;margin:0 auto 24px}
+.honest{display:inline-block;margin-top:16px;font-family:var(--mono);font-size:11.5px;color:var(--gold);border:1px dashed rgba(255,209,102,.4);padding:8px 14px;border-radius:8px}
+/* JOIN */
+.channels{display:flex;gap:14px;flex-wrap:wrap;margin-top:26px}
+.chan{border:1px solid var(--line);border-radius:10px;padding:14px 20px;text-decoration:none;color:var(--text);font-size:14px;background:var(--panel)}
+.chan:hover{border-color:var(--cyan)}
+.chan span{display:block;font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:3px}
+footer{border-top:1px solid var(--line);padding:40px 24px;text-align:center;color:var(--muted);font-size:13px}
+footer .integrity{max-width:720px;margin:0 auto 16px;font-size:12.5px;color:#4d7186;line-height:1.7}
+@media(max-width:640px){nav .links a:not(.cta){display:none}}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="wrap">
+
+<nav>
+  <div class="logo">⬡ NEW DAWN</div>
+  <div class="links">
+    <a href="#question">The Question</a>
+    <a href="#pattern">The Pattern</a>
+    <a href="#anime">Anime Decoder</a>
+    <a href="#solution">The Solution</a>
+    <a href="#jarvis">JARVIS</a>
+    <a href="#journey">Journey</a>
+    <a href="jarvis.html" style="color:var(--purple)">✦ Talk to JARVIS</a>
+    <a href="gaigs/index.html" style="color:var(--gold)">🏛️ G.A.I.G.S. v3</a>
+    <a href="agency.html" style="color:var(--cyan)">🎬 Creator Studio</a>
+    <a class="cta" href="app.html">📱 Open the App</a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="day" id="dayCounter">DAY X OF BUILDING A NEW SYSTEM</div>
+  <h1>A New <em>Operating System</em><br>for Humanity</h1>
+  <div class="urdu">اِن تازہ خداؤں میں بڑا سب سے وطن ہے — اقبال</div>
+  <p>Every system humans build eventually concentrates power at the top and fails the many.
+     I'm Muhammad Qureshi — naib imam, AI researcher, author, builder — and my life's work is
+     to give that power back: a people-owned platform combining decentralized governance,
+     blockchain transparency, AI that informs (never decides), and a global science game.</p>
+  <div class="btns">
+    <a class="btn primary" href="app.html">📱 Open the App — Live Demo →</a>
+    <a class="btn ghost" href="mvp.html">Governance MVP</a>
+    <a class="btn ghost" href="#question">Start the Journey ↓</a>
+  </div>
+  <div class="scroll-hint">▼ scroll — سفر شروع کریں</div>
+</header>
+
+<!-- ============ THE QUESTION ============ -->
+<section id="question" class="reveal">
+  <div class="kicker">01 · The Question</div>
+  <h2>The whole world can <span class="neon">see</span> it.<br>So why can't anyone <span class="neon">act</span>?</h2>
+  <p class="lead">Wars nobody voted for. Public money nobody can trace. Vetoes by a handful of
+  states deciding for eight billion people. Everyone raises their voice on social media — and
+  then nothing changes, because the platforms belong to the same concentrated powers, and there
+  is no other option on the table.</p>
+
+  <div class="quote">
+    <p>"We have destabilized the Middle East… they lied. They said there were weapons of mass
+    destruction — there were none."</p>
+    <cite>— Donald Trump, Republican primary debate, 13 Feb 2016 (CBS)</cite>
+  </div>
+  <div class="quote">
+    <p>"Were there not an Israel, the United States of America would have to invent an Israel
+    to protect her interests in the region."</p>
+    <cite>— Joe Biden, US Senate, 1986 (C-SPAN)</cite>
+  </div>
+
+  <p class="lead" style="margin-top:22px">These are their own words, on the record. The question
+  isn't whether the current order serves ordinary people — the question is:
+  <b style="color:var(--text)">what's the alternative?</b> This site is that answer, being built
+  in public, one day at a time.</p>
+</section>
+
+<!-- ============ THE PATTERN ============ -->
+<section id="pattern" class="reveal">
+  <div class="kicker">02 · The Pattern — تاریخ کا سبق</div>
+  <h2>Humans keep making <span class="neon">power</span> into a god</h2>
+  <p class="lead">Read history end to end and one loop repeats: a system is built to manage scale
+  — then it concentrates power — then it rots. And each time, the counter-pattern arrives to break
+  humans out of serving humans. (Historical events below are facts; the readings are our argument.)</p>
+
+  <div class="timeline">
+    <div class="tstep"><h3>Namrud → Ibrahim (عليه السلام)</h3>
+      <p>A king declares himself god. The answer isn't a bigger king — it's the call that no human
+      owns another human.</p></div>
+    <div class="tstep"><h3>Firaun → Musa (عليه السلام)</h3>
+      <p>Power claims divinity again; an entire people are kept as a permanent underclass. The
+      pattern of liberation repeats.</p></div>
+    <div class="tstep"><h3>Rome &amp; Persia → Medina</h3>
+      <p>Two superpower blocs run the known world on conquest and hierarchy. In Medina, the Prophet
+      Muhammad ﷺ builds something else first: <b style="color:var(--gold)">a masjid as the community's
+      operating system</b> — decisions, justice, welfare, education, all at the community's own hub.
+      From that model, knowledge flourishes; Baghdad becomes a center of science the world learns from.</p></div>
+    <div class="tstep"><h3>The Colonial Machine</h3>
+      <p>Empires industrialize control: extract resources, install obedient elites, and — the deepest
+      move — redesign education itself (Macaulay, 1835) so colonised people are trained as clerks of
+      the system rather than owners of their own affairs.</p>
+      <p class="arg">The events are documented history; "designed to control" is our argument — many
+      historians make it, others contest it. We show sources and let you judge.</p></div>
+    <div class="tstep"><h3>1945 → The Locked Order</h3>
+      <p>Hiroshima and Nagasaki end WWII (fact). The victors write the rulebook — UN veto seats, IMF,
+      World Bank — and control shifts from armies to <b style="color:var(--gold)">money</b>: debt,
+      sanctions, reserve currency.</p>
+      <p class="arg">"Done to become the superpower" is an interpretation — a widely argued one.</p></div>
+    <div class="tstep"><h3>Now → The AI Fork</h3>
+      <p>AI is the biggest concentration-of-power event in history. If a few corporations and states
+      monopolize it, control could become permanent — ordinary people locked out for good.
+      <b style="color:var(--red)">This is a warning of risk, not a prophecy.</b> The fork is open,
+      and which way it goes depends on what gets built right now.</p></div>
+  </div>
+</section>
+
+<!-- ============ ANIME DECODER ============ -->
+<section id="anime" class="anime reveal">
+  <div class="kicker" style="color:#c792ff">03 · Anime Decoder — you already know this story</div>
+  <h2>Your favorite anime has been <span style="color:#c792ff">warning you</span> all along</h2>
+  <p class="lead">Two billion people watch these stories and feel the truth in them. The parallels
+  below are metaphors — but they're the sharpest lens Gen-Z already owns.</p>
+  <div class="grid c3">
+    <div class="card"><span class="tag">ONE PIECE</span><div class="ico">👑</div>
+      <h3>The Five Elders = Veto Powers</h3>
+      <p>A handful of unelected elders rule the world from shadows, and an entire century of history
+      is erased — the Void Century. Ask yourself: who writes our textbooks, and what got left out?</p></div>
+    <div class="card"><span class="tag">ATTACK ON TITAN</span><div class="ico">🧱</div>
+      <h3>The Walls = Colonial Borders</h3>
+      <p>People live caged inside walls they were born into, taught the outside is only monsters.
+      The real horror was never the titans — it was who built the walls, and why.</p></div>
+    <div class="card"><span class="tag">NARUTO</span><div class="ico">♻️</div>
+      <h3>The Cycle of Hatred = Manufactured War</h3>
+      <p>Villages farm child soldiers for wars arranged by the powerful, generation after generation.
+      Breaking the cycle takes someone who refuses the game itself.</p></div>
+    <div class="card"><span class="tag">DEATH NOTE</span><div class="ico">📓</div>
+      <h3>Light's Notebook = Unaccountable Power</h3>
+      <p>Give one brilliant man absolute, invisible power to judge — watch him become the thing he
+      hunted. Now give that notebook to an algorithm. Who audits it?</p></div>
+    <div class="card"><span class="tag">CODE GEASS</span><div class="ico">♟️</div>
+      <h3>Geass = Power vs Legitimacy</h3>
+      <p>Lelouch can force obedience — but obedience is not consent. Systems that rule without
+      genuine consent always need more force, until they break.</p></div>
+    <div class="card"><span class="tag">THE FORK</span><div class="ico">⚔️</div>
+      <h3>Every arc ends the same way</h3>
+      <p>The people stop waiting for a hero and build their own system. That's not fiction strategy.
+      That's this website.</p></div>
+  </div>
+</section>
+
+<!-- ============ THE WALLS (animated AoT ⇄ real world) ============ -->
+<section id="walls" class="reveal" style="text-align:center">
+  <div class="kicker" style="text-align:center;color:#ff8fa3">03.5 · The Walls Are Real</div>
+  <h2>You were born inside <span style="color:#ff5d5d">walls</span> you never chose</h2>
+  <p class="lead" style="margin:0 auto">In Attack on Titan, humanity lives caged behind three walls,
+  taught the outside is only monsters. Look at the real map: the walls exist — they're just invisible.</p>
+
+  <svg viewBox="0 0 700 430" style="max-width:700px;width:100%;margin-top:30px" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="glow" cx="50%" cy="50%"><stop offset="0%" stop-color="#39ff9c" stop-opacity=".9"/><stop offset="100%" stop-color="#39ff9c" stop-opacity="0"/></radialGradient>
+    </defs>
+    <style>
+      .wallring{fill:none;stroke-width:14;transform-origin:350px 200px}
+      .w1{stroke:#5a2430;animation:wpulse 3s ease-in-out infinite}
+      .w2{stroke:#4a1e28;animation:wpulse 3s ease-in-out .5s infinite}
+      .w3{stroke:#3a1820;animation:wpulse 3s ease-in-out 1s infinite}
+      @keyframes wpulse{0%,100%{stroke-opacity:.95}50%{stroke-opacity:.55}}
+      .wlabel{font:11px Consolas,monospace;fill:#ff8fa3;letter-spacing:1px}
+      .human{animation:breathe 2.4s ease-in-out infinite;transform-origin:350px 200px}
+      @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+      .crack{stroke:#39ff9c;stroke-width:4;fill:none;stroke-dasharray:240;stroke-dashoffset:240;
+        animation:crackopen 4s ease-out 1s infinite}
+      @keyframes crackopen{0%{stroke-dashoffset:240;opacity:0}30%{opacity:1}70%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:.4}}
+      .escape{font:bold 13px Consolas,monospace;fill:#39ff9c;animation:fadeglow 4s ease-out 1s infinite}
+      @keyframes fadeglow{0%,25%{opacity:0}60%,85%{opacity:1}100%{opacity:.5}}
+      .beacon{animation:beacpulse 2s ease-in-out infinite}
+      @keyframes beacpulse{0%,100%{r:26;opacity:.5}50%{r:40;opacity:.15}}
+    </style>
+    <!-- three walls -->
+    <circle class="wallring w3" cx="350" cy="200" r="165"/>
+    <circle class="wallring w2" cx="350" cy="200" r="115"/>
+    <circle class="wallring w1" cx="350" cy="200" r="65"/>
+    <text class="wlabel" x="350" y="24" text-anchor="middle">WALL MARIA — colonial borders &amp; visa regimes</text>
+    <text class="wlabel" x="350" y="74" text-anchor="middle">WALL ROSE — debt, sanctions &amp; currency control</text>
+    <text class="wlabel" x="350" y="124" text-anchor="middle">WALL SINA — media, algorithms &amp; education</text>
+    <!-- the human -->
+    <g class="human"><circle cx="350" cy="192" r="7" fill="#cfeefb"/><rect x="345" y="200" width="10" height="18" rx="4" fill="#cfeefb"/></g>
+    <!-- the crack out -->
+    <path class="crack" d="M395 185 L470 160 L530 150 L600 140"/>
+    <circle class="beacon" cx="612" cy="138" r="26" fill="url(#glow)"/>
+    <circle cx="612" cy="138" r="9" fill="#39ff9c"/>
+    <text class="escape" x="612" y="112" text-anchor="middle">THE WAY OUT</text>
+    <text class="escape" x="612" y="180" text-anchor="middle" style="font-size:10px">GLOBAL AI DECENTRALIZED</text>
+    <text class="escape" x="612" y="194" text-anchor="middle" style="font-size:10px">GOVERNANCE · AI + BLOCKCHAIN</text>
+  </svg>
+
+  <p class="lead" style="margin:26px auto 0">The Survey Corps didn't wait for permission to see the ocean.
+  Neither do we. The crack in the wall is <b style="color:var(--green)">a system where communities govern
+  themselves</b> — AI informs, blockchain proves, people decide.</p>
+</section>
+
+<!-- ============ THE SOLUTION ============ -->
+<section id="solution" class="reveal">
+  <div class="kicker">04 · The Solution — مدینہ ماڈل × AI × Blockchain</div>
+  <h2>Five pillars of a <span class="neon">people-owned</span> platform</h2>
+  <p class="lead">Inspired by the early Medina community — where the community's hub ran decisions,
+  justice, welfare and education — rebuilt for the AI era. One platform, with the everyday features
+  people already use (social, marketplace, payments) <i>plus</i> the governance layer nobody has
+  given them.</p>
+
+  <div class="grid c2" style="margin-top:30px">
+    <div class="card pillar"><div class="num">01</div><div>
+      <h3>Decentralized, bottom-up governance</h3>
+      <p>Every society decides its own affairs at its own center — masjid, community hall, town hub.
+      Societies federate upward: society → city → country → global. Decisions flow up from people,
+      not down from capitals.</p></div></div>
+    <div class="card pillar"><div class="num">02</div><div>
+      <h3>Radical transparency</h3>
+      <p>Every public rupee on an open ledger. Every project's funds live-trackable by anyone.
+      And when leaders decide wrong — citizens can <b style="color:var(--green)">vote to veto</b>.</p></div></div>
+    <div class="card pillar"><div class="num">03</div><div>
+      <h3>AI that informs — never decides</h3>
+      <p>AI as a public utility: impact analysis, evidence summaries, fraud detection — presented to
+      humans, decided by humans. The notebook stays out of anyone's single hands.</p></div></div>
+    <div class="card pillar"><div class="num">04</div><div>
+      <h3>The Science Game</h3>
+      <p>A PUBG/GTA-scale world running real physics and real-world problems — turning 2B+ gamers
+      into distributed problem-solvers. Play the game, push human knowledge.</p></div></div>
+    <div class="card pillar" style="grid-column:1/-1"><div class="num">05</div><div>
+      <h3>Education that frees</h3>
+      <p>The colonial model trained clerks. This layer trains owners: learn by governing your own
+      society, by playing real science, by building — not by memorizing for someone else's exam.</p></div></div>
+  </div>
+
+  <div class="mvp-cta">
+    <h3>⚡ The Governance Loop — Working MVP</h3>
+    <p>Don't take our word for it. Create an account, join a society, raise a proposal, vote,
+    veto, and watch every action land on the transparent ledger — the core loop, running in your
+    browser right now.</p>
+    <a class="btn primary" href="mvp.html">Launch the MVP →</a><br>
+    <span class="honest">HONEST SCOPE: this is a working prototype of the core governance loop —
+    not the finished platform. The full build needs a funded team. The MVP's job is to prove the
+    loop and win that team.</span>
+  </div>
+</section>
+
+<!-- ============ JARVIS ============ -->
+<section id="jarvis" class="jarvis-band reveal" style="max-width:none"><div style="max-width:1100px;margin:0 auto;padding:0 24px">
+  <div class="kicker">05 · Proof of Capability</div>
+  <h2>I built a real <span class="neon">Iron-Man JARVIS</span> to prove one thing</h2>
+  <p class="lead">One determined person + AI can now build what used to need a whole company.
+  J.A.R.V.I.S. is my AI operating system for Windows — open-source, self-installing, running my
+  work and life every day. The same builder energy is aimed at the platform above.</p>
+
+  <div class="stat-row">
+    <div class="stat"><div class="n">100+</div><div class="l">Integrated tools</div></div>
+    <div class="stat"><div class="n">1</div><div class="l">Builder</div></div>
+    <div class="stat"><div class="n">∞</div><div class="l">Self-upgrades</div></div>
+  </div>
+
+  <div class="grid c3">
+    <div class="card"><div class="ico">🎙️</div><h3>Real-time Voice</h3>
+      <p>Full duplex conversation (Gemini Live native audio) — Urdu/English mix, noise-proof
+      detection, wake-up briefing: weather, PC health, gold/oil/crypto, world headlines.</p></div>
+    <div class="card"><div class="ico">💬</div><h3>WhatsApp Command Bridge</h3>
+      <p>Text or send a voice note to yourself on WhatsApp — JARVIS transcribes it, executes on the
+      PC with full tools, and replies back on WhatsApp.</p></div>
+    <div class="card"><div class="ico">🖥️</div><h3>Full PC Control + Vision</h3>
+      <p>Apps, files, browser, screen analysis, desktop automation — plus a futuristic HUD, phone
+      remote, and an ops dashboard.</p></div>
+    <div class="card"><div class="ico">🧠</div><h3>Memory + Boss Brain</h3>
+      <p>Permanent memory, short-term working memory, and a distilled "Boss Brain" trained on my
+      books and mission — so it thinks with my worldview and my integrity rules.</p></div>
+    <div class="card"><div class="ico">🌍</div><h3>World Monitor + Markets</h3>
+      <p>Live intelligence from 60+ curated feeds, gold desk-analysis briefs delivered to WhatsApp
+      on schedule, deep research via multi-agent frameworks.</p></div>
+    <div class="card"><div class="ico">⚙️</div><h3>Self-Upgrading</h3>
+      <p>Ask for an ability it doesn't have and it writes itself a new skill, compile-checks it, and
+      installs it. It edits full videos with AI. It literally builds itself.</p></div>
+  </div>
+
+  <div style="margin-top:26px">
+    <a class="btn ghost" href="https://github.com/futureworldvision842-lgtm/Muhammad-s-Jarvis" target="_blank">⭐ JARVIS on GitHub — clone → install.bat → run.bat</a>
+  </div>
+</div></section>
+
+<!-- ============ LIVE APP (phone mockup) ============ -->
+<section id="liveapp" class="reveal" style="text-align:center">
+  <div class="kicker" style="text-align:center">05.5 · Try it right now</div>
+  <h2>The app is <span class="neon">alive</span> — on this page</h2>
+  <p class="lead" style="margin:0 auto">No download, no signup wall. This is the real working demo
+  running inside the phone below — create your wallet, join a society, vote, tip a creator.
+  Your data never leaves your device.</p>
+  <div style="display:flex;justify-content:center;margin-top:36px">
+    <div style="width:315px;background:#0a0f18;border:3px solid #1a3a55;border-radius:42px;padding:12px 10px;
+      box-shadow:0 0 60px rgba(25,224,255,.18), inset 0 0 20px rgba(0,0,0,.6);position:relative">
+      <div style="width:110px;height:22px;background:#0a0f18;border-radius:0 0 14px 14px;position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:2;border:1px solid #142c42;border-top:none"></div>
+      <iframe src="app.html" title="NewDawn app live demo"
+        style="width:100%;height:600px;border:none;border-radius:30px;background:#04070d"></iframe>
+    </div>
+  </div>
+  <div class="btns" style="margin-top:28px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap">
+    <a class="btn primary" href="gaigs/index.html">🏛️ Open GAIGS App →</a>
+    <a class="btn ghost" href="app.html">📱 NewDawn App</a>
+    <a class="btn ghost" href="#download">⬇ Download</a>
+  </div>
+
+  <div id="download" class="card" style="max-width:680px;margin:40px auto 0;text-align:left">
+    <h3 style="color:var(--green);font-size:20px">⬇ Install NewDawn on your phone — free, 10 seconds</h3>
+    <p style="color:var(--muted);font-size:14px;margin:10px 0">No app store, no permissions, no tracking.
+    The app installs from the web and works offline — your data lives on YOUR device.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:14px">
+      <div style="border:1px solid var(--line);border-radius:12px;padding:14px">
+        <b style="color:var(--cyan)">🤖 Android</b>
+        <p style="color:var(--muted);font-size:12.5px;margin-top:6px">Open the <a href="app.html">app</a> in Chrome → menu ⋮ → <b>"Add to Home Screen"</b> / Install</p></div>
+      <div style="border:1px solid var(--line);border-radius:12px;padding:14px">
+        <b style="color:var(--cyan)">🍎 iPhone</b>
+        <p style="color:var(--muted);font-size:12.5px;margin-top:6px">Open the <a href="app.html">app</a> in Safari → Share ⬆ → <b>"Add to Home Screen"</b></p></div>
+      <div style="border:1px solid var(--line);border-radius:12px;padding:14px">
+        <b style="color:var(--cyan)">💻 Desktop</b>
+        <p style="color:var(--muted);font-size:12.5px;margin-top:6px">Open the <a href="app.html">app</a> in Chrome/Edge → install icon ⊕ in the address bar</p></div>
+    </div>
+    <p style="color:#4d7186;font-size:11.5px;margin-top:12px;font-family:var(--mono)">⬡ App icon appears on your home screen — full-screen, works offline.</p>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line);text-align:center">
+      <a class="btn primary" href="/GAIGS.apk" download>⬇ Download Android APK (2.3 MB)</a>
+      <p style="color:#4d7186;font-size:11px;margin-top:8px;font-family:var(--mono)">Signed .apk — tap to install. Allow "install from this source" if Android asks. Opens full-screen.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ JOURNEY ============ -->
+<section id="journey" class="reveal">
+  <div class="kicker">06 · The Journey — روزانہ کا سفر</div>
+  <h2>Day X of building a new system — <span class="neon">in public</span></h2>
+  <p class="lead">This is a mission diary, not a launch. Every day: one build update, one system
+  truth, one step. The mission started from <b style="color:var(--gold)">Jamia Masjid-e-Nabawi
+  Qureshi Hashmi</b> — a fully volunteer-run masjid in G-11/4 Islamabad, run on the Medina model —
+  where a community already makes its own decisions at its own center. The platform digitizes that.</p>
+
+  <div class="timeline" style="margin-top:34px">
+    <div class="tstep"><h3>✅ Phase 0 — Proof of one-man capability</h3>
+      <p>JARVIS built and open-sourced. Books written. Channels launched (9M+ views on shorts).
+      The community model running physically at the masjid.</p></div>
+    <div class="tstep"><h3>✅ Phase 1 — The MVP governance loop</h3>
+      <p>Accounts → societies → proposals → votes → citizen veto → transparent ledger. Working in
+      your browser today. <a href="mvp.html">Try it.</a></p></div>
+    <div class="tstep"><h3>🔨 Phase 2 — The team &amp; the pilot</h3>
+      <p>Like-minded builders + seed investment. First pilot: real societies running real decisions
+      with real transparent funds — starting from the masjid network.</p></div>
+    <div class="tstep"><h3>🔭 Phase 3 — The full platform</h3>
+      <p>Mobile apps, blockchain ledger at scale, AI public utility, and the science game. A
+      multi-year build — stated honestly, planned openly.</p></div>
+  </div>
+
+  <div class="channels">
+    <a class="chan" href="https://futureoworldvision.netlify.app/" target="_blank">🌐 Future World Vision <span>global site</span></a>
+    <a class="chan" href="https://masjidenabvimodel.netlify.app/community" target="_blank">🕌 Masjid-e-Nabawi Model <span>مسلم کمیونٹی سائٹ</span></a>
+    <a class="chan" href="https://www.youtube.com/@Afkaar-Urdu/shorts" target="_blank">▶️ Afkaar Urdu <span>9M+ views · shorts</span></a>
+    <a class="chan" href="https://www.linkedin.com/in/muhammad-qureshi-9939b1383/" target="_blank">💼 LinkedIn <span>Muhammad Qureshi</span></a>
+    <a class="chan" href="https://github.com/futureworldvision842-lgtm/Muhammad-s-Jarvis" target="_blank">⭐ JARVIS <span>open-source</span></a>
+  </div>
+</section>
+
+<!-- ============ ONE PIECE JOURNEY (animated) ============ -->
+<section id="setout" class="reveal" style="text-align:center;overflow:hidden">
+  <div class="kicker" style="text-align:center;color:#ffd166">07 · Set Sail</div>
+  <h2>The <span style="color:#ffd166">One Piece</span> was never treasure.<br>It was <span class="neon">freedom</span>.</h2>
+  <p class="lead" style="margin:0 auto">Roger's era ended. Ours begins. A captain has set the course —
+  the ship is real, the map is real, and there's a seat with your name on it.</p>
+
+  <div style="position:relative;height:150px;margin-top:34px">
+    <div style="position:absolute;left:0;width:200%;bottom:34px;font-size:26px;letter-spacing:-4px;color:#0d7a99;opacity:.7;white-space:nowrap;animation:waves 9s linear infinite">
+      〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜</div>
+    <div style="position:absolute;left:0;width:200%;bottom:18px;font-size:26px;letter-spacing:-4px;color:#125e75;opacity:.5;white-space:nowrap;animation:waves 13s linear infinite reverse">
+      〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜</div>
+    <div style="position:absolute;bottom:44px;left:-80px;font-size:52px;animation:sail 14s linear infinite;filter:drop-shadow(0 0 14px rgba(25,224,255,.5))">⛵</div>
+    <div style="position:absolute;bottom:96px;left:-80px;font-size:15px;animation:sail 14s linear infinite">🏴‍☠️</div>
+  </div>
+  <style>
+    @keyframes waves{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+    @keyframes sail{0%{left:-90px;transform:rotate(-2deg)}50%{transform:rotate(3deg)}100%{left:105%;transform:rotate(-2deg)}}
+  </style>
+
+  <div class="btns" style="margin-top:8px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap">
+    <a class="btn primary" href="app.html">⚓ Join the Crew — claim your share →</a>
+    <a class="btn ghost" href="app.html">📱 Board the ship (open the app)</a>
+  </div>
+  <p style="color:var(--muted);font-family:var(--mono);font-size:12px;margin-top:18px">
+    CREW OWN 50% · USERS 25% · CONTRIBUTORS 25% — the ship belongs to everyone who sails her.</p>
+</section>
+
+<!-- ============ JOIN ============ -->
+<section id="join" class="reveal" style="text-align:center;padding-bottom:70px">
+  <div class="kicker" style="text-align:center">07 · Join</div>
+  <h2>The people in every story <span class="neon">stopped waiting</span>.<br>Your move.</h2>
+  <p class="lead" style="margin:0 auto">Builder, investor, scholar, gamer, or just tired of shouting
+  into the void — there is a seat at this table. Start by trying the MVP, then reach out on any
+  channel above. <span style="color:var(--gold)">جس سے انسانیت کا پورا نیا مستقبل بننے والا ہے — so join us.</span></p>
+  <div class="btns" style="margin-top:30px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+    <a class="btn primary" href="mvp.html">⚡ Enter the MVP</a>
+    <a class="btn ghost" href="https://www.linkedin.com/in/muhammad-qureshi-9939b1383/" target="_blank">🤝 Join the mission</a>
+  </div>
+</section>
+
+<footer>
+  <div class="integrity">INTEGRITY NOTE — Historical events cited here are documented facts; where we
+  read motive or design into them, we label it as our argument. Faith statements are the founder's
+  sincere belief, offered respectfully. The AI-control scenario is a warning of risk, not a prediction.
+  The MVP is a working prototype of the governance loop — the full platform is a multi-year build and
+  is never claimed as finished. We would rather be accurate than impressive.</div>
+  <div>© <span id="yr"></span> Muhammad Qureshi · Jamia Masjid-e-Nabawi Qureshi Hashmi, G-11/4 Islamabad · Built with JARVIS</div>
+</footer>
+
+</div>
+<script>
+/* starfield */
+const cv=document.getElementById('stars'),cx=cv.getContext('2d');let W,H,stars=[];
+function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;stars=Array.from({length:Math.min(160,W/8)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.2,s:Math.random()*.35+.05,tw:Math.random()*Math.PI*2}))}
+resize();addEventListener('resize',resize);
+(function loop(){cx.clearRect(0,0,W,H);for(const st of stars){st.y+=st.s;st.tw+=.03;if(st.y>H)st.y=0;const a=.4+Math.sin(st.tw)*.3;cx.fillStyle=`rgba(25,224,255,${a})`;cx.beginPath();cx.arc(st.x,st.y,st.r,0,7);cx.fill()}requestAnimationFrame(loop)})();
+/* reveal on scroll */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+/* day counter — mission diary day since 1 Jan 2026 */
+const d0=new Date('2026-01-01'),days=Math.max(1,Math.floor((Date.now()-d0)/86400000));
+document.getElementById('dayCounter').textContent=`DAY ${days} OF BUILDING A NEW SYSTEM`;
+document.getElementById('yr').textContent=new Date().getFullYear();
+</script>
+</body>
+</html>

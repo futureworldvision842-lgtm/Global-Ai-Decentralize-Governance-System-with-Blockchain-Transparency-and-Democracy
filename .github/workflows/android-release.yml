@@ -1,0 +1,35 @@
+name: Android release candidate
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main", "codex/**", "agent/play-ready-gaigs"]
+  pull_request:
+    branches: ["main"]
+permissions:
+  contents: read
+jobs:
+  verify-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 22, cache: npm}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: 21}
+      - uses: android-actions/setup-android@v3
+      - name: Verify web logic and contracts
+        run: npm ci && npm run verify
+      - name: Install Android dependencies
+        working-directory: mobile
+        run: npm ci
+      - name: Sync native project
+        working-directory: mobile
+        run: npm run sync:android
+      - name: Build unsigned release bundle for QA
+        working-directory: mobile/android
+        run: ./gradlew bundleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gaigs-release-candidate-aab
+          path: mobile/android/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error

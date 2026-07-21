@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#07111d" />
+  <title>NewDawn G.A.I.G.S. — One App for Humanity</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="icon" href="icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="GAIGS" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="../config.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-functions-compat.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+
+  <section id="authScreen" class="auth-screen">
+    <div class="auth-backdrop"></div>
+    <div class="auth-shell">
+      <div class="brand-panel">
+        <div class="auth-brandline">
+          <span class="auth-logo">G</span>
+          <div><b>NewDawn G.A.I.G.S.</b><small>One network for people, places and progress</small></div>
+        </div>
+        <div class="auth-visual" aria-hidden="true">
+          <div class="world-orbit orbit-one"><i></i><i></i><i></i></div>
+          <div class="world-orbit orbit-two"><i></i><i></i></div>
+          <div class="world-sphere"><span class="world-grid"></span><b>G</b></div>
+          <div class="world-beam beam-one"></div><div class="world-beam beam-two"></div>
+          <div class="visual-chip chip-community"><small>COMMUNITY</small><strong>Decide together</strong></div>
+          <div class="visual-chip chip-skills"><small>SKILLS</small><strong>Work nearby</strong></div>
+          <div class="visual-chip chip-proof"><small>PROOF</small><strong>Verify impact</strong></div>
+        </div>
+        <div class="eyebrow">YOUR WORLD · YOUR VOICE · YOUR FUTURE</div>
+        <h1>Take control of your world.<br><span>Build it together.</span></h1>
+        <p class="mission-copy">Turn local problems into visible action. Connect with people around you, shape community decisions, offer your skills and follow every contribution from idea to verified result.</p>
+        <div class="mission-promises">
+          <div><b>Be heard.</b><span>Your voice becomes discussion, evidence and democratic action.</span></div>
+          <div><b>Find your people.</b><span>Discover societies, work and missions around your real location.</span></div>
+          <div><b>See the truth.</b><span>Track decisions, funds and results through transparent public records.</span></div>
+        </div>
+        <div class="flow-line">
+          <span>YOUR VOICE</span><i>→</i><span>PEOPLE CONNECT</span><i>→</i><span>ACTION BEGINS</span><i>→</i><span>IMPACT IS PROVEN</span>
+        </div>
+        <div class="trust-bar" id="platformStatus">
+          <span class="trust-pulse"></span>
+          <div><b>Built around your consent.</b><small>Your identity, location, vote and wallet actions stay under your control.</small></div>
+        </div>
+      </div>
+
+      <div class="auth-card">
+        <div class="auth-card-brand"><span>G</span><div><b>GAIGS</b><small>Humanity network</small></div></div>
+        <div class="auth-tabs">
+          <button class="active" data-auth-tab="signup">Create account</button>
+          <button data-auth-tab="login">Log in</button>
+        </div>
+
+        <form id="signupForm" class="auth-form active">
+          <div class="auth-steps" aria-label="Account setup steps"><span class="active">1</span><i></i><span>2</span><i></i><span>3</span><small>Identity</small><small>Verify</small><small>Personalize</small></div>
+          <h2>Create your place in the world</h2>
+          <p class="muted">One secure identity for your community, work, decisions and positive impact.</p>
+          <div class="two-col">
+            <label>Full name<input id="signupName" required autocomplete="name" /></label>
+            <label>Mobile number<input id="signupPhone" required autocomplete="tel" placeholder="+92 300 1234567" /></label>
+          </div>
+          <label>Email<input id="signupEmail" type="email" required autocomplete="email" /></label>
+          <div class="two-col">
+            <label>Password<input id="signupPassword" type="password" minlength="8" required autocomplete="new-password" /></label>
+            <label>CNIC<input id="signupCnic" inputmode="numeric" pattern="[0-9-]{13,15}" placeholder="XXXXX-XXXXXXX-X" required /></label>
+          </div>
+          <div class="identity-shield"><span>✓</span><div><b>Private identity check</b><small>Your full CNIC is never shown on your profile or written to blockchain. Only masked verification status is retained.</small></div></div>
+          <div class="two-col">
+            <label>Country<select id="signupCountry"><option>Pakistan</option><option>India</option><option>United States</option><option>United Kingdom</option></select></label>
+            <label>City<select id="signupCity"><option>Islamabad</option><option>Rawalpindi</option><option>Lahore</option><option>Karachi</option><option>Delhi</option><option>Mumbai</option></select></label>
+          </div>
+          <label class="consent"><input type="checkbox" id="locationConsent" checked /> Use my location to suggest nearby communities, services and alerts. I control what is public.</label>
+          <p class="auth-legal">By continuing, you agree to the <a href="../terms.html" target="_blank" rel="noopener">Terms</a> and acknowledge the <a href="../privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</p>
+          <button class="primary wide auth-main-cta" type="submit"><span>Create secure account</span><b>→</b></button>
+          <div class="auth-divider"><span>or look around first</span></div>
+          <button class="secondary wide preview-btn" id="demoLogin" type="button">Explore the interactive preview</button>
+        </form>
+
+        <form id="loginForm" class="auth-form">
+          <h2>Welcome back, world builder</h2>
+          <p class="muted">Your community, opportunities and missions are waiting.</p>
+          <label>Email<input id="loginEmail" type="email" autocomplete="email" /></label>
+          <label>Password<input id="loginPassword" type="password" autocomplete="current-password" /></label>
+          <button class="primary wide" type="submit">Log in</button>
+          <button class="secondary wide" id="forgotPasswordBtn" type="button">Forgot password?</button>
+          <button class="secondary wide" id="resendVerificationBtn" type="button">Resend verification email</button>
+          <p class="micro" id="loginModeHint">Email verification protects every account before it can join shared spaces.</p>
+        </form>
+
+        <form id="otpForm" class="auth-form">
+          <h2>Verify your account</h2>
+          <p class="muted" id="verificationCopy">Complete verification to protect your identity and community access.</p>
+          <label>Verification code<input id="otpCode" maxlength="6" inputmode="numeric" autocomplete="one-time-code" /></label>
+          <button class="primary wide" type="submit">Verify and continue</button>
+        </form>
+
+        <form id="onboardingForm" class="auth-form">
+          <h2>Personalize your mission</h2>
+          <p class="muted">JARVIS will use these choices only to personalize your dashboard.</p>
+          <label>Your skills<input id="skillInput" value="AI research, video production, community organizing" /></label>
+          <label>What do you want help with?<select id="missionSelect"><option>Building communities and governance</option><option>Finding nearby work and services</option><option>Understanding news and public policy</option><option>Learning AI and science</option><option>Creating content and missions</option></select></label>
+          <div class="nearby-preview">
+            <div class="section-label">Suggested nearby communities</div>
+            <label class="community-option"><input type="radio" name="community" value="Jamia Masjid Nabvi Qureshi Hashmi" checked /><span><b>Jamia Masjid Nabvi Qureshi Hashmi</b><small>G-11/4 · 0.8 km · 1,284 members</small></span></label>
+            <label class="community-option"><input type="radio" name="community" value="G-11 Citizens Forum" /><span><b>G-11 Citizens Forum</b><small>G-11 Markaz · 1.4 km · 842 members</small></span></label>
+            <label class="community-option"><input type="radio" name="community" value="Islamabad AI Builders" /><span><b>Islamabad AI Builders</b><small>F-10 · 3.8 km · 516 members</small></span></label>
+          </div>
+          <button class="primary wide" type="submit">Create my dashboard</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <div id="app" class="app hidden">
+    <header class="topbar">
+      <div class="top-left">
+        <button class="icon-btn mobile-only" id="openNav">☰</button>
+        <div class="brand-inline"><span class="brand-mark small">G</span><div><b>NewDawn G.A.I.G.S.</b><small>Unified civic operating system</small></div></div>
+      </div>
+      <nav class="top-nav desktop-only">
+        <button data-view="overview" class="active">Ops Center</button>
+        <button data-view="global">Global Pulse</button>
+        <button data-view="news">News</button>
+        <button data-view="governance">Governance</button>
+        <button data-view="services">Market</button>
+        <button data-view="science">Humanity Lab</button>
+      </nav>
+      <div class="top-actions">
+        <button class="status-pill"><span></span> Demo Online</button>
+        <button class="icon-btn" id="notificationsBtn">🔔<em>4</em></button>
+        <button class="wallet-chip" data-view="treasury"><small>Demo wallet</small><b>₨ 84,650</b></button>
+        <button class="profile-chip" data-view="profile"><span>MQ</span><div><b id="topUserName">Muhammad</b><small>Founding crew</small></div></button>
+      </div>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="scope-switcher">
+        <button class="scope-btn active" data-scope="personal">Personal</button>
+        <button class="scope-btn" data-scope="society">Society</button>
+        <button class="scope-btn" data-scope="city">City</button>
+        <button class="scope-btn" data-scope="country">Country</button>
+        <button class="scope-btn" data-scope="global">Global</button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Workspace</div>
+        <button class="side-link active" data-view="overview">◫ <span>Overview</span></button>
+        <button class="side-link" data-view="feed">◉ <span>Action Feed</span></button>
+        <button class="side-link" data-view="messages">✉ <span>Messages</span></button>
+        <button class="side-link" data-view="map">◎ <span>World Map</span></button>
+        <button class="side-link" data-view="communities">⌂ <span>Communities</span></button>
+        <button class="side-link" data-view="constitution">§ <span>Constitution</span></button>
+        <button class="side-link" data-view="communityAdmin">▣ <span>Society Admin</span></button>
+        <button class="side-link" data-view="operations">◈ <span>Authority & Ops</span></button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Build</div>
+        <button class="side-link" data-view="governance">◆ <span>Proposals & Votes</span><i>3</i></button>
+        <button class="side-link" data-view="projects">▣ <span>Projects & Proof</span></button>
+        <button class="side-link" data-view="treasury">◈ <span>Wallet & Treasury</span></button>
+        <button class="side-link" data-view="services">↗ <span>Services Market</span></button>
+        <button class="side-link" data-view="companies">▤ <span>Companies</span></button>
+        <button class="side-link" data-view="dao">Ξ <span>Ethereum DAO</span></button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Humanity</div>
+        <button class="side-link" data-view="emergency">⚠ <span>Emergency Response</span><i class="red">1</i></button>
+        <button class="side-link" data-view="news">◍ <span>News & Evidence</span></button>
+        <button class="side-link" data-view="science">✦ <span>Humanity Lab</span></button>
+        <button class="side-link" data-view="crew">♜ <span>Founding Crew</span></button>
+      </div>
+      <div class="sidebar-foot">
+        <div class="integrity-card"><span>✓</span><div><b>Audit chain verified</b><small>Last checkpoint 14 Jul 2026</small></div></div>
+        <button class="side-link" data-view="settings">⚙ <span>Settings</span></button>
+        <button class="side-link" id="logoutBtn">↩ <span>Log out</span></button>
+      </div>
+    </aside>
+
+    <main class="main" id="mainContent"></main>
+
+    <aside class="jarvis-panel" id="jarvisPanel">
+      <div class="jarvis-head">
+        <div class="jarvis-orb mini"><span></span></div>
+        <div><b>JARVIS</b><small>Personal civic intelligence</small></div>
+        <button id="closeJarvis">×</button>
+      </div>
+      <div class="jarvis-context">
+        <span>Context</span><b id="jarvisContext">Personal dashboard</b>
+      </div>
+      <div class="jarvis-chat" id="jarvisChat">
+        <div class="ai-msg">Good morning. One community vote closes today, two nearby issues need evidence, and three service opportunities match your skills. What should we work on?</div>
+      </div>
+      <div class="quick-prompts">
+        <button data-prompt="Explain the water proposal">Explain active proposal</button>
+        <button data-prompt="Show where community funds went">Audit community funds</button>
+        <button data-prompt="Find work near me">Find nearby work</button>
+        <button data-prompt="Draft a new problem report">Draft a problem report</button>
+      </div>
+      <form id="jarvisForm" class="jarvis-input">
+        <button type="button" id="voiceBtn">🎙</button>
+        <input id="jarvisInput" placeholder="Ask JARVIS to explain or help..." />
+        <button type="submit">➤</button>
+      </form>
+      <div class="jarvis-disclaimer">Voice AI explains and assists. People approve every publication, vote and transfer.</div>
+    </aside>
+
+    <button class="jarvis-fab" id="jarvisFab"><div class="jarvis-orb"><span></span></div><small>Ask JARVIS</small></button>
+
+    <nav class="bottom-nav mobile-only">
+      <button class="active" data-view="overview">⌂<span>Home</span></button>
+      <button data-view="map">◎<span>Explore</span></button>
+      <button id="mobileCreate" class="create-btn">＋</button>
+      <button data-view="treasury">◈<span>Wallet</span></button>
+      <button data-view="profile">◉<span>Profile</span></button>
+    </nav>
+  </div>
+
+  <div class="modal" id="actionModal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+      <button class="modal-close">×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script src="vendor/ethers.umd.min.js"></script>
+  <script src="app.js"></script>
+  <script src="platform-core.js"></script>
+  <script src="social-logic.js"></script>
+  <script src="social-core.js"></script>
+  <script src="community-logic.js"></script>
+  <script src="constitution-logic.js"></script>
+  <script src="community-admin.js"></script>
+  <script src="governance-logic.js"></script>
+  <script src="access-logic.js"></script>
+  <script src="governance-core.js"></script>
+  <script src="operations-core.js"></script>
+  <script src="humanity-lab-core.js"></script>
+  <script src="jarvis-core.js"></script>
+  <script src="map-core.js"></script>
+  <script src="emergency-core.js"></script>
+  <script src="notifications-core.js"></script>
+  <script src="messaging-core.js"></script>
+  <script src="marketplace-logic.js"></script>
+  <script src="project-logic.js"></script>
+  <script src="marketplace-core.js"></script>
+  <script src="dashboard-core.js"></script>
+  <script src="civic-core.js"></script>
+  <script src="enterprise-news-core.js"></script>
+  <script src="project-controls-core.js"></script>
+  <script src="dao-core.js"></script>
+  <script src="policy-core.js"></script>
+</body>
+</html>
