@@ -9,6 +9,7 @@ android/local.properties
 android/app/release
 mobile/dist
 dist-web
+dist
 *.jks
 *.keystore
 __pycache__/
