@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="GAIGS" />
-  <link rel="stylesheet" href="styles.css?v=22" />
+  <link rel="stylesheet" href="styles.css?v=29" />
   <script src="../config.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -33,28 +33,35 @@
           <div><b>NewDawn G.A.I.G.S.</b><small>One network for people, places and progress</small></div>
         </div>
         <div class="auth-visual" aria-hidden="true">
+          <div class="world-halo halo-one"></div><div class="world-halo halo-two"></div>
           <div class="world-orbit orbit-one"><i></i><i></i><i></i></div>
           <div class="world-orbit orbit-two"><i></i><i></i></div>
-          <div class="world-sphere"><span class="world-grid"></span><b>G</b></div>
+          <div class="world-orbit orbit-three"><i></i><i></i><i></i></div>
+          <div class="world-sphere"><span class="world-grid"></span><span class="world-node node-one"></span><span class="world-node node-two"></span><span class="world-node node-three"></span><b>G</b></div>
           <div class="world-beam beam-one"></div><div class="world-beam beam-two"></div>
           <div class="visual-chip chip-community"><small>COMMUNITY</small><strong>Decide together</strong></div>
           <div class="visual-chip chip-skills"><small>SKILLS</small><strong>Work nearby</strong></div>
           <div class="visual-chip chip-proof"><small>PROOF</small><strong>Verify impact</strong></div>
+          <div class="visual-chip chip-ai"><small>JARVIS AI</small><strong>Guide every mission</strong></div>
+          <div class="visual-chip chip-dao"><small>PEOPLE-OWNED DAO</small><strong>Power stays distributed</strong></div>
         </div>
-        <div class="eyebrow">YOUR WORLD · YOUR VOICE · YOUR FUTURE</div>
-        <h1>Take control of your world.<br><span>Build it together.</span></h1>
-        <p class="mission-copy">Turn local problems into visible action. Connect with people around you, shape community decisions, offer your skills and follow every contribution from idea to verified result.</p>
+        <div class="eyebrow">ONE PLATFORM · EVERY HUMAN SYSTEM · PEOPLE IN CONTROL</div>
+        <h1>Your world. Your decisions.<br><span>Your power to act.</span></h1>
+        <p class="mission-copy">GAIGS brings social connection, local services, work, maps, verified news, community decisions, transparent project funds and AI guidance into one people-owned network. Share the real problem, build the solution and follow it all the way to proof.</p>
         <div class="mission-promises">
-          <div><b>Be heard.</b><span>Your voice becomes discussion, evidence and democratic action.</span></div>
-          <div><b>Find your people.</b><span>Discover societies, work and missions around your real location.</span></div>
-          <div><b>See the truth.</b><span>Track decisions, funds and results through transparent public records.</span></div>
+          <div><b>Voice becomes action.</b><span>Post the problem, gather evidence and organize the response.</span></div>
+          <div><b>Everything nearby.</b><span>Find people, societies, work, services and missions around you.</span></div>
+          <div><b>Decisions stay yours.</b><span>AI explains and prepares. Verified members discuss and decide.</span></div>
+          <div><b>Trust you can inspect.</b><span>Follow rules, votes, funds, milestones and proof in one audit trail.</span></div>
         </div>
+        <div class="platform-universe" aria-label="GAIGS connected capabilities"><span>SOCIAL</span><span>WORK</span><span>MAPS</span><span>SERVICES</span><span>COMMUNITIES</span><span>AI</span><span>DAO</span><span>WALLETS</span></div>
+        <p class="auth-manifesto">Not another feed built to keep you scrolling. A shared operating system that moves humanity from attention to coordinated action.</p>
         <div class="flow-line">
-          <span>YOUR VOICE</span><i>→</i><span>PEOPLE CONNECT</span><i>→</i><span>ACTION BEGINS</span><i>→</i><span>IMPACT IS PROVEN</span>
+          <span>SHARE THE PROBLEM</span><i>→</i><span>CONNECT PEOPLE & SKILLS</span><i>→</i><span>DECIDE TOGETHER</span><i>→</i><span>FUND THE PLAN</span><i>→</i><span>PROVE THE RESULT</span>
         </div>
         <div class="trust-bar" id="platformStatus">
           <span class="trust-pulse"></span>
-          <div><b>Built around your consent.</b><small>Your identity, location, vote and wallet actions stay under your control.</small></div>
+          <div><b>One platform for your whole world—without giving it your power.</b><small>Your identity, location, publications, vote and wallet actions remain under your control.</small></div>
         </div>
       </div>
 
@@ -79,6 +86,11 @@
             <label>CNIC<input id="signupCnic" inputmode="numeric" pattern="[0-9-]{13,15}" placeholder="XXXXX-XXXXXXX-X" required /></label>
           </div>
           <div class="identity-shield"><span>✓</span><div><b>Private identity check</b><small>Your full CNIC is never shown on your profile or written to blockchain. Only masked verification status is retained.</small></div></div>
+          <div class="account-foundation">
+            <div><span>ID</span><p><b>One verified profile</b><small>For social action, work, communities and decisions.</small></p></div>
+            <div><span>DV</span><p><b>User-owned device vault</b><small>Your phone keeps a private local workspace and can sync approved records.</small></p></div>
+            <div><span>DAO</span><p><b>Wallet & DAO ready</b><small>Keys, voting and real settlement activate separately—never silently at signup.</small></p></div>
+          </div>
           <div class="two-col">
             <label>Country<select id="signupCountry"><option>Pakistan</option><option>India</option><option>United States</option><option>United Kingdom</option></select></label>
             <label>City<select id="signupCity"><option>Islamabad</option><option>Rawalpindi</option><option>Lahore</option><option>Karachi</option><option>Delhi</option><option>Mumbai</option></select></label>
@@ -133,8 +145,8 @@
       </div>
       <nav class="top-nav desktop-only">
         <button data-view="overview" class="active">Ops Center</button>
-        <button data-view="global">Global Pulse</button>
-        <button data-view="news">News</button>
+        <button data-view="mission">Mission Desk</button>
+        <button data-view="library">Creator Library</button>
         <button data-view="governance">Governance</button>
         <button data-view="services">Market</button>
         <button data-view="science">Humanity Lab</button>
@@ -177,6 +189,8 @@
       </div>
       <div class="nav-group">
         <div class="nav-label">Humanity</div>
+        <button class="side-link" data-view="mission">◎ <span>JARVIS Mission Desk</span></button>
+        <button class="side-link" data-view="library">▶ <span>Creator Library</span></button>
         <button class="side-link" data-view="emergency">⚠ <span>Emergency Response</span><i class="red">1</i></button>
         <button class="side-link" data-view="news">◍ <span>News & Evidence</span></button>
         <button class="side-link" data-view="science">✦ <span>Humanity Lab</span></button>
@@ -221,7 +235,7 @@
 
     <nav class="bottom-nav mobile-only">
       <button class="active" data-view="overview">⌂<span>Home</span></button>
-      <button data-view="map">◎<span>Explore</span></button>
+      <button data-view="mission">◎<span>Mission</span></button>
       <button id="mobileCreate" class="create-btn">＋</button>
       <button data-view="treasury">◈<span>Wallet</span></button>
       <button data-view="profile">◉<span>Profile</span></button>
@@ -238,9 +252,9 @@
 
   <script src="vendor/ethers.umd.min.js"></script>
   <script src="app.js"></script>
-  <script src="platform-core.js?v=22"></script>
+  <script src="platform-core.js?v=23"></script>
   <script src="social-logic.js"></script>
-  <script src="social-core.js?v=22"></script>
+  <script src="social-core.js?v=23"></script>
   <script src="community-logic.js"></script>
   <script src="constitution-logic.js"></script>
   <script src="community-admin.js"></script>
@@ -257,11 +271,13 @@
   <script src="marketplace-logic.js"></script>
   <script src="project-logic.js"></script>
   <script src="marketplace-core.js"></script>
-  <script src="dashboard-core.js?v=22"></script>
+  <script src="dashboard-core.js?v=23"></script>
   <script src="civic-core.js"></script>
   <script src="enterprise-news-core.js"></script>
   <script src="project-controls-core.js"></script>
   <script src="dao-core.js"></script>
   <script src="policy-core.js"></script>
+  <script src="creator-library-data.js?v=24"></script>
+  <script src="mission-library-core.js?v=29"></script>
 </body>
 </html>
