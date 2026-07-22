@@ -26,9 +26,9 @@
     const hint=document.getElementById('loginModeHint');
     if(hint)hint.textContent=cloudReady()?'Email verification is required before login.':'Public account access begins on the secure release. Explore the complete interactive preview now.';
     const pill=document.querySelector('.status-pill');
-    if(pill)pill.innerHTML=`<span></span> ${cloudReady()?'Network Online':'Preview Mode'}`;
+    if(pill)pill.innerHTML=`<span></span> ${cloudReady()?'Network online':'Private preview'}`;
     const wallet=document.querySelector('.wallet-chip');
-    if(wallet)wallet.innerHTML=`<small>${cloudReady()?'Platform account':'Preview account'}</small><b>${money(state.wallet?.available||0)}</b>`;
+    if(wallet)wallet.innerHTML=cloudReady()?`<small>Platform account</small><b>${money(state.wallet?.available||0)}</b>`:'<small>Wallet</small><b>Not connected</b>';
     const integrity=document.querySelector('.integrity-card');
     if(integrity){const anchored=(state.transactions||[]).filter(item=>item.blockchainTxHash).length;integrity.innerHTML=`<span>${anchored?'✓':'i'}</span><div><b>${anchored?'Anchor receipt available':'Ledger not blockchain-anchored'}</b><small>${anchored?`${anchored} network receipt${anchored===1?'':'s'} to inspect`:'Local/cloud records only'}</small></div>`;}
   }
