@@ -102,7 +102,7 @@
   async function ensureMissionBrief(force=false){
     if(!force&&['loading','ready','error'].includes(mission.status))return;if(!force&&loadCachedBrief())return;
     mission.status='loading';mission.error='';if(state.view==='mission')render();
-    try{const endpoint=window.NDCONF?.missionApiUrl||(window.Capacitor?'https://gaigs-humanity-platform.qw01.chatgpt.site/api/mission-brief':'/api/mission-brief'),response=await fetch(endpoint,{headers:{accept:'application/json'},cache:'no-store'}),payload=await response.json().catch(()=>null);if(!response.ok||!payload||!Array.isArray(payload.signals))throw new Error(payload?.error||`Source service returned ${response.status}.`);mission.status='ready';mission.brief=payload;localStorage.setItem(cacheKey,JSON.stringify({savedAt:Date.now(),brief:payload}));}
+    try{const endpoint=window.NDCONF?.missionApiUrl||(window.Capacitor?'https://futureworldvision842-lgtm.github.io/gaigs/api/mission-brief':'../api/mission-brief'),response=await fetch(endpoint,{headers:{accept:'application/json'},cache:'no-store'}),payload=await response.json().catch(()=>null);if(!response.ok||!payload||!Array.isArray(payload.signals))throw new Error(payload?.error||`Source service returned ${response.status}.`);mission.status='ready';mission.brief=payload;localStorage.setItem(cacheKey,JSON.stringify({savedAt:Date.now(),brief:payload}));}
     catch(error){mission.status='error';mission.error=error.message||'Official sources could not be reached.';}
     if(state.view==='mission')render();
   }

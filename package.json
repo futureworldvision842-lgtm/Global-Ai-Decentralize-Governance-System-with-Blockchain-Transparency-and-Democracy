@@ -8,6 +8,7 @@
     "compile:contracts": "node scripts/compile-contracts.js",
     "build:web": "node mobile/scripts/sync-web.js && node scripts/build-web.js",
     "build:sites": "npm run build:web && node scripts/build-sites.js",
+    "build:pages": "npm run build:sites && node scripts/build-pages.js",
     "verify:sites": "node scripts/verify-sites-bundle.js",
     "build:production": "npm run build:web && node scripts/prepare-production.js",
     "package:android:production": "npm run build:production && npm --prefix mobile run sync:prepared",
