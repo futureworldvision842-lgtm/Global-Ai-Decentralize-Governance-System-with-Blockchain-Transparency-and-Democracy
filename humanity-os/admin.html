@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101e19">
+  <meta name="description" content="Humanity OS constitutional protocol steward console."><title>Humanity OS · Protocol Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <aside class="admin-rail">
+      <a class="brand" href="index.html"><span class="brand-mark">H</span><span>Protocol <b>Console</b></span></a>
+      <div class="admin-role"><small>Current session</small><b>Local protocol steward</b><span id="adminDevice">Starting signed device…</span></div>
+      <nav><button class="active" data-admin-view="overview">◫ Overview</button><button data-admin-view="moderation">◉ Moderation</button><button data-admin-view="roles">♙ Roles & scopes</button><button data-admin-view="proposals">✓ Protocol actions</button><button data-admin-view="integrity">◇ Integrity</button></nav>
+      <div class="admin-warning"><b>No hidden superpowers</b><p>This console drafts signed actions. Network-wide effect needs configured identity, scope rules, threshold approval and a deployed executor.</p></div>
+      <a class="back-link" href="index.html">← Back to Humanity OS</a>
+    </aside>
+    <main class="admin-main">
+      <header class="admin-top"><div><p class="eyebrow">Constitutional operations</p><h1>Stewardship, not control.</h1></div><div class="admin-health"><i></i><span><b>Device node healthy</b><small id="adminClock">Local time</small></span></div></header>
+
+      <section class="admin-view active" data-admin-page="overview">
+        <div class="admin-banner"><span class="brand-mark">H</span><div><b>Every consequential action must be visible, attributable and reversible.</b><p>Stewards can queue moderation, manage time-bound role assignments and propose protocol changes. They cannot cast member ballots, take custody of personal funds or rewrite signed history.</p></div></div>
+        <div class="admin-metrics"><article><small>Local records</small><b id="metricRecords">0</b><span>device vault</span></article><article><small>Signed events</small><b id="metricEvents">0</b><span id="metricIntegrity">checking integrity</span></article><article><small>Pending reviews</small><b>3</b><span>source previews</span></article><article><small>Executable actions</small><b>0</b><span>threshold not met</span></article></div>
+        <div class="admin-grid two"><section class="admin-panel"><div class="panel-head"><div><p class="eyebrow">Network boundary</p><h2>What is truly connected</h2></div></div><div class="boundary-list"><span><i class="ok"></i><b>Device vault</b><small>IndexedDB local persistence</small></span><span><i class="ok"></i><b>Signed event chain</b><small>ECDSA P-256 + SHA-256</small></span><span><i class="ok"></i><b>Portable peer bundles</b><small>Verified import/export</small></span><span><i class="wait"></i><b>Shared identity network</b><small>provider not configured</small></span><span><i class="wait"></i><b>Public-chain executor</b><small>contracts not deployed</small></span><span><i class="wait"></i><b>Regulated payment custody</b><small>not enabled</small></span></div></section><section class="admin-panel"><div class="panel-head"><div><p class="eyebrow">Action queue</p><h2>Needs another steward</h2></div><button data-admin-view="proposals">Open all</button></div><div id="overviewActions"></div></section></div>
+      </section>
+
+      <section class="admin-view" data-admin-page="moderation">
+        <div class="admin-page-head"><div><p class="eyebrow">Evidence before enforcement</p><h2>Moderation queue</h2><p>Reported content is reviewed against published reasons. Shared removal becomes a signed tombstone, never silent deletion.</p></div><button class="admin-primary" id="newPolicy">Propose policy change</button></div>
+        <div class="moderation-table"><div class="table-head"><span>Record</span><span>Reason</span><span>Scope</span><span>Status</span><span>Action</span></div><div class="table-row"><span><b>Rain emergency fundraiser</b><small>External wallet unverified</small></span><span>Financial safety</span><span>Country</span><span class="review-pill">Review</span><button data-moderate="fundraiser">Inspect</button></div><div class="table-row"><span><b>Water pressure photo</b><small>Reporter requested privacy check</small></span><span>Possible house number</span><span>Society</span><span class="review-pill">Review</span><button data-moderate="water-photo">Inspect</button></div><div class="table-row"><span><b>Imported creator clip</b><small>Consent not yet confirmed</small></span><span>Rights review</span><span>Personal</span><span class="review-pill hold">Hold</span><button data-moderate="creator-clip">Inspect</button></div></div>
+      </section>
+
+      <section class="admin-view" data-admin-page="roles">
+        <div class="admin-page-head"><div><p class="eyebrow">Least power · exact scope · automatic expiry</p><h2>Roles and assignments</h2><p>Assignments grant specific operational permissions. They do not transfer member votes or wallet authority.</p></div><button class="admin-primary" id="draftRole">Draft assignment</button></div>
+        <div class="role-cards"><article><span class="role-icon">G</span><div><b>Global protocol steward</b><small>Publishes releases and co-signs emergency protocol actions</small></div><em>2 of 3 threshold</em></article><article><span class="role-icon">C</span><div><b>City operations clerk</b><small>Directories, agendas and verified service escalation</small></div><em>90-day term</em></article><article><span class="role-icon">S</span><div><b>Society membership clerk</b><small>Reviews boundary evidence and join requests</small></div><em>Recallable</em></article><article><span class="role-icon">M</span><div><b>Safety moderator</b><small>Queues signed hide proposals under public policy</small></div><em>No deletion right</em></article></div>
+        <section class="admin-panel"><div class="panel-head"><div><p class="eyebrow">Current local directory</p><h2>Claimable assignments</h2></div></div><div class="assignment-row"><span class="mini-avatar">MQ</span><span><b>Muhammad Qureshi</b><small>Founder source profile</small></span><span>Protocol steward candidate</span><span>Unverified identity</span><button data-role-review="mq">Review</button></div><div class="assignment-row"><span class="mini-avatar">AH</span><span><b>Ahmed</b><small>Claim invitation pending</small></span><span>No role</span><span>Unclaimed</span><button data-role-review="ahmed">Review</button></div><div class="assignment-row"><span class="mini-avatar">HM</span><span><b>Hamid</b><small>Claim invitation pending</small></span><span>No role</span><span>Unclaimed</span><button data-role-review="hamid">Review</button></div></section>
+      </section>
+
+      <section class="admin-view" data-admin-page="proposals">
+        <div class="admin-page-head"><div><p class="eyebrow">Threshold administration</p><h2>Protocol action queue</h2><p>One device can propose or approve once. Execution remains blocked until independent stewards and the configured network executor confirm eligibility.</p></div><button class="admin-primary" id="newProtocolAction">＋ New protocol action</button></div>
+        <div id="protocolActions" class="protocol-actions"></div>
+      </section>
+
+      <section class="admin-view" data-admin-page="integrity">
+        <div class="admin-page-head"><div><p class="eyebrow">Independent verification</p><h2>Integrity and audit</h2><p>Verify the device chain, export an audit copy, or inspect signatures without trusting this interface.</p></div><div class="button-row"><button class="secondary-button" id="exportAudit">Export audit</button><button class="admin-primary" id="adminVerify">Verify all</button></div></div>
+        <div class="integrity-hero"><div class="mesh-ring"><span id="adminIntegrityScore">100</span><small>integrity</small></div><div><h2 id="adminIntegrityText">Waiting to verify</h2><p id="adminIntegrityDetail">The verifier recomputes event hashes, checks ECDSA signatures and follows previous-event links for every device chain.</p></div></div><div id="adminLedger" class="ledger-table"></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="adminDialog" class="sheet-dialog"><form method="dialog" class="dialog-card" id="adminActionForm"><div class="dialog-head"><div><p class="eyebrow">Signed steward proposal</p><h2 id="adminDialogTitle">New protocol action</h2></div><button value="cancel" class="close-button">×</button></div><label>Action type<select name="type"><option value="role.assignment">Time-bound role assignment</option><option value="content.tombstone">Content hide / tombstone</option><option value="protocol.setting">Protocol configuration</option><option value="emergency.freeze">Emergency executor freeze</option></select></label><label>Exact scope<select name="scope"><option>society</option><option>city</option><option>country</option><option>global</option></select></label><label>Public reason<textarea name="reason" rows="4" required minlength="20" placeholder="Evidence, rule and intended effect…"></textarea></label><label>Expiry or review date<input name="expires" type="date" required></label><label class="consent-check"><input name="confirm" type="checkbox" required><span>I understand this device provides only one approval. Execution needs an independent threshold and configured network executor.</span></label><div class="dialog-actions"><button value="cancel" class="secondary-button">Cancel</button><button class="admin-primary" value="default">Sign proposal</button></div></form></dialog>
+  <div class="toast-region" id="toasts" aria-live="polite"></div>
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

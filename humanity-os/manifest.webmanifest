@@ -1,0 +1,20 @@
+{
+  "name": "Humanity OS",
+  "short_name": "Humanity",
+  "description": "A local-first system for people, problems, work and shared decisions.",
+  "start_url": "./index.html#today",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4f1ea",
+  "theme_color": "#173f32",
+  "categories": ["social", "productivity", "business"],
+  "icons": [
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Explore nearby", "url": "./index.html#explore" },
+    { "name": "Ask JARVIS", "url": "./index.html#jarvis" },
+    { "name": "Protocol console", "url": "./admin.html" }
+  ]
+}

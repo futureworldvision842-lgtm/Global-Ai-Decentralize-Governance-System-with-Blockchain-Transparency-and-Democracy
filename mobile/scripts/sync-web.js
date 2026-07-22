@@ -11,4 +11,6 @@ for(const name of ['config.js','privacy.html','delete-account.html','terms.html'
 const visionSource=path.join(projectRoot,'index.html');if(fs.existsSync(visionSource))fs.copyFileSync(visionSource,path.join(dist,'vision.html'));
 fs.writeFileSync(path.join(dist,'index.html'),'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=gaigs/index.html"><title>Opening GAIGS</title></head><body><p><a href="gaigs/index.html">Open GAIGS</a></p><script>location.replace("gaigs/index.html")<\/script></body></html>');
 fs.cpSync(path.join(projectRoot,'gaigs'),path.join(dist,'gaigs'),{recursive:true});
+const humanitySource=path.join(projectRoot,'humanity-os');
+if(fs.existsSync(humanitySource))fs.cpSync(humanitySource,path.join(dist,'humanity-os'),{recursive:true});
 console.log('Synced reviewed GAIGS web assets into the Android bundle.');

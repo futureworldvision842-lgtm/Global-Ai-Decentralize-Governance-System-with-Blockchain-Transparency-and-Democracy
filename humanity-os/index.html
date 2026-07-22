@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f4f1ea">
+  <meta name="description" content="Humanity OS connects people, problems, work and shared decisions through a local-first civic super-app.">
+  <meta property="og:title" content="Humanity OS — Your world, one living system">
+  <meta property="og:description" content="People, problems, work and decisions in one local-first mobile system.">
+  <meta property="og:image" content="https://gaigs-humanity-platform.qw01.chatgpt.site/humanity-os/assets/og.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3ynhYzzICuMZ0RmQ2Wz6qsJ1JkY+M=" crossorigin="">
+  <link rel="stylesheet" href="styles.css">
+  <title>Humanity OS</title>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="app-shell">
+    <aside class="rail" aria-label="Primary navigation">
+      <button class="brand" data-view="today" aria-label="Humanity OS home"><span class="brand-mark">H</span><span>Humanity <b>OS</b></span></button>
+      <nav class="rail-nav">
+        <button class="nav-item active" data-view="today"><span class="nav-icon">⌂</span><span>Today</span></button>
+        <button class="nav-item" data-view="explore"><span class="nav-icon">◎</span><span>Explore</span></button>
+        <button class="nav-item" data-view="work"><span class="nav-icon">↗</span><span>Work</span></button>
+        <button class="nav-item" data-view="communities"><span class="nav-icon">◉</span><span>Communities</span></button>
+        <button class="nav-item" data-view="governance"><span class="nav-icon">✓</span><span>Decisions</span></button>
+        <button class="nav-item" data-view="wallet"><span class="nav-icon">◇</span><span>Wallet</span></button>
+      </nav>
+      <div class="rail-foot">
+        <button class="status-chip" data-view="mesh"><i class="status-dot"></i><span>Device vault</span></button>
+        <a class="admin-link" href="admin.html">Protocol console ↗</a>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <button class="mobile-brand brand" data-view="today"><span class="brand-mark">H</span><span>Humanity <b>OS</b></span></button>
+        <div class="scope-switch" role="tablist" aria-label="World scope">
+          <button class="scope-arrow" id="scopePrev" aria-label="Previous scope">‹</button>
+          <button class="scope-current" id="scopeCurrent" aria-haspopup="listbox"><small>Your world</small><strong>Personal</strong></button>
+          <button class="scope-arrow" id="scopeNext" aria-label="Next scope">›</button>
+          <div class="scope-menu" id="scopeMenu" role="listbox" hidden></div>
+        </div>
+        <div class="top-actions">
+          <button class="icon-button" id="searchButton" aria-label="Search">⌕</button>
+          <button class="icon-button has-dot" data-view="inbox" aria-label="Inbox">✦</button>
+          <button class="avatar-button" data-view="profile" aria-label="Your profile">MQ</button>
+        </div>
+      </header>
+
+      <main id="main" tabindex="-1">
+        <section class="view active" data-page="today" aria-labelledby="todayTitle">
+          <div class="page-intro">
+            <div><p class="eyebrow" id="greeting">Wednesday · Islamabad</p><h1 id="todayTitle">Your world today.</h1><p>What needs your attention, what can move forward, and who is nearby to help.</p></div>
+            <button class="primary-button desktop-create" data-open-compose="post">＋ Share something</button>
+          </div>
+
+          <button class="jarvis-strip" data-view="jarvis">
+            <span class="jarvis-orb"><i></i></span>
+            <span><small>JARVIS · local assistant</small><strong id="jarvisPrompt">Ask what needs attention near you</strong></span>
+            <span class="voice-wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          </button>
+
+          <section class="priority-grid" aria-label="Priority overview">
+            <article class="mosaic-card urgent-card" data-view="explore">
+              <div class="card-top"><span class="signal urgent">Urgent nearby</span><span>1.4 km</span></div>
+              <h2>Water pressure drops every evening</h2>
+              <p>3 lanes reporting · evidence gathering</p>
+              <div class="people-row"><span class="mini-avatar">SK</span><span class="mini-avatar">AR</span><span class="mini-avatar">+9</span><b>12 discussing</b></div>
+            </article>
+            <article class="mosaic-card work-card" data-view="work">
+              <div class="card-top"><span class="signal work">Matched to you</span><span>Today</span></div>
+              <h2>Mobile video editor</h2><p>Paid pilot · Islamabad hybrid</p>
+              <div class="skill-line"><span>Editing</span><span>Storytelling</span></div>
+            </article>
+            <article class="mosaic-card vote-card" data-view="governance">
+              <div class="card-top"><span class="signal vote">Vote open</span><span>2d 4h</span></div>
+              <h2>Independent water inspection</h2><p>72 yes · 11 no · quorum in progress</p>
+              <div class="progress"><i style="width:62%"></i></div>
+            </article>
+            <article class="mosaic-card community-card" data-view="communities">
+              <div class="card-top"><span class="signal community">Your community</span><span>86 members</span></div>
+              <h2>Jamia Masjid Nabvi</h2><p>New construction record and community update</p>
+              <span class="text-link">Open transparent record →</span>
+            </article>
+          </section>
+
+          <div class="section-heading"><div><p class="eyebrow">Living feed</p><h2>People are moving things forward</h2></div><button class="filter-button" id="feedFilter">All activity⌄</button></div>
+          <div class="feed-layout">
+            <div class="feed" id="feed"></div>
+            <aside class="context-panel">
+              <section class="side-card map-preview"><div class="side-card-head"><div><small>Live context</small><h3>Around Islamabad</h3></div><button data-view="explore">Expand</button></div><div id="miniMap" aria-label="Map of nearby activity"></div><div class="map-legend"><span><i class="pin problem"></i>Problems</span><span><i class="pin skill"></i>Skills</span><span><i class="pin work"></i>Work</span></div></section>
+              <section class="side-card"><div class="side-card-head"><div><small>Fast action</small><h3>What can you offer?</h3></div></div><div class="quick-skills"><button data-open-compose="service">A skill</button><button data-open-compose="need">A need</button><button data-open-compose="job">A job</button><button data-open-compose="problem">A problem</button></div></section>
+              <section class="side-card world-pulse"><div class="side-card-head"><div><small>World pulse</small><h3>Verified signals</h3></div><button data-scope="global">World</button></div><p><span>Weather watch</span> Confirm local conditions with official sources before action.</p><p><span>Relief wallets</span> Live donations remain disabled until verified custody and contracts are configured.</p></section>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" data-page="explore"><div class="page-intro compact"><div><p class="eyebrow">Explore your world</p><h1>Problems, people and possibilities.</h1><p>See what is happening on the map and move between local and global scope.</p></div><button class="primary-button" id="locateButton">◎ Use my location</button></div><div class="explore-grid"><section class="map-card"><div id="worldMap" aria-label="Interactive activity map"></div></section><section class="results-card"><div class="search-field"><span>⌕</span><input id="exploreSearch" placeholder="Search skills, needs, places…"></div><div class="chip-row" id="exploreFilters"><button class="active" data-kind="all">All</button><button data-kind="problem">Problems</button><button data-kind="service">Skills</button><button data-kind="job">Jobs</button></div><div id="exploreResults"></div></section></div></section>
+
+        <section class="view" data-page="work"><div class="page-intro compact"><div><p class="eyebrow">Human marketplace</p><h1>Work that finds the right people.</h1><p>Offer a skill, ask for help, publish a job, or form a local team.</p></div><button class="primary-button" data-open-compose="service">＋ Offer a service</button></div><div class="stat-strip"><span><b>4</b> nearby matches</span><span><b>2</b> open needs</span><span><b>0</b> active escrows</span><span><b>Device</b> private drafts</span></div><div class="work-grid" id="workGrid"></div></section>
+
+        <section class="view" data-page="communities"><div class="page-intro compact"><div><p class="eyebrow">Neighbourhood to humanity</p><h1>Communities with memory.</h1><p>Membership, problems, evidence, votes and funds stay connected to one transparent record.</p></div><button class="primary-button" data-open-compose="community">＋ Form a community</button></div><div class="community-grid" id="communityGrid"></div></section>
+
+        <section class="view" data-page="governance"><div class="page-intro compact"><div><p class="eyebrow">One verified member · one vote</p><h1>Decisions you can trace.</h1><p>Discussion, evidence, ballots and outcomes become signed records. Token wealth never increases voting power.</p></div><button class="primary-button" data-open-compose="proposal">＋ Start a proposal</button></div><div class="governance-grid" id="proposalGrid"></div><section class="constitutional-note"><span class="brand-mark small">H</span><div><h3>Power is a temporary permission, not ownership.</h3><p>Clerks coordinate published rules. They cannot vote for members, move personal money or silently edit outcomes. Every protocol action creates an audit event.</p></div><a href="admin.html">Open protocol console →</a></section></section>
+
+        <section class="view" data-page="wallet"><div class="page-intro compact"><div><p class="eyebrow">Account & value layer</p><h1>Your wallet, under your control.</h1><p>The app keeps no seed phrase. Connect an external wallet for supported test networks; device ledger works without one.</p></div><button class="primary-button" id="connectWallet">Connect external wallet</button></div><div class="wallet-grid"><section class="balance-card"><small>Platform balance</small><h2>PKR 0</h2><span>Live deposits disabled until regulated payment custody is configured</span><div class="balance-actions"><button disabled>Send</button><button disabled>Add funds</button><button data-view="mesh">Audit trail</button></div></section><section class="chain-card"><div class="chain-orbit"><i></i><i></i><i></i><span>H</span></div><div><small>Integrity network</small><h2 id="chainStatus">Device ledger active</h2><p id="walletAddress">No external wallet connected.</p><ul><li>Signed on this device</li><li>Portable peer-sync bundles</li><li>Optional public-chain anchoring</li></ul></div></section></div><div class="section-heading"><div><p class="eyebrow">Recent receipts</p><h2>Signed device activity</h2></div><button data-view="mesh" class="filter-button">Verify all</button></div><div id="walletReceipts" class="receipt-list"></div></section>
+
+        <section class="view" data-page="jarvis"><div class="jarvis-stage"><div class="jarvis-visual"><span></span><i></i><i></i></div><p class="eyebrow">JARVIS · privacy-first command layer</p><h1 id="jarvisHeading">What should we move forward?</h1><p id="jarvisResponse">I can navigate, search nearby work, open communities, create a problem report, or explain your signed ledger. Voice recognition stays on the browser path exposed by your device.</p><button class="mic-button" id="voiceButton"><span>◉</span><b>Hold the world in one conversation</b></button><form id="jarvisForm" class="jarvis-input"><input id="jarvisInput" placeholder="Try “show water problems near me”" autocomplete="off"><button>Ask</button></form><div class="prompt-row"><button>Show nearby needs</button><button>Open my community</button><button>Verify my ledger</button><button>Create a job</button></div></div></section>
+
+        <section class="view" data-page="inbox"><div class="page-intro compact"><div><p class="eyebrow">Inbox</p><h1>Conversations with context.</h1><p>Every thread can stay attached to a need, project, job or proposal.</p></div></div><div class="inbox-shell"><div class="thread-list"><button class="thread active"><span class="mini-avatar">SK</span><span><b>Water pressure group</b><small>Sara: I can inspect tomorrow…</small></span><time>12m</time></button><button class="thread"><span class="mini-avatar">AR</span><span><b>Ali Raza</b><small>Shared a solar assessment</small></span><time>2h</time></button><button class="thread"><span class="mini-avatar">MN</span><span><b>Masjid community</b><small>Construction update posted</small></span><time>1d</time></button></div><div class="conversation"><div class="conversation-head"><span class="mini-avatar">SK</span><div><b>Water pressure group</b><small>Problem-linked room · 12 people</small></div></div><div class="messages"><p class="message other">I can inspect pressure at the main inlet tomorrow at 6 pm. We need readings from two more lanes.<time>12:31</time></p><p class="message mine">I’ll ask JARVIS to notify residents within the boundary.<time>12:34</time></p><div class="context-note">Attached to: Water pressure drops every evening</div></div><form class="message-form" id="messageForm"><input placeholder="Write a message…"><button>Send</button></form></div></div></section>
+
+        <section class="view" data-page="profile"><div class="profile-hero"><div class="profile-avatar">MQ</div><div><span class="source-badge">Source-linked founder profile</span><h1>Muhammad Qureshi</h1><p>Founder, Fikr o Nizam · GAIGS builder · Islamabad</p><div class="skill-line"><span>Systems thinking</span><span>Community governance</span><span>AI workflows</span></div></div><button class="secondary-button" id="editProfile">Edit private details</button></div><div class="profile-grid"><section class="panel"><p class="eyebrow">Your identity</p><h2>One person, many roles.</h2><div class="identity-list"><button data-view="work"><b>Professional profile</b><span>4 skills · available nearby</span></button><button data-open-compose="company"><b>Company & page</b><span>Create a public organization</span></button><button data-view="communities"><b>Community memberships</b><span>1 joined · 1 pending</span></button><button data-view="wallet"><b>Wallet & receipts</b><span>Device ledger active</span></button></div></section><section class="panel"><p class="eyebrow">Creator studio</p><h2>Your public source library.</h2><p>Drive items appear as source-linked drafts. Review rights, context and consent before publishing them into the feed.</p><button class="primary-button" data-view="creator">Open creator library</button></section><section class="panel"><p class="eyebrow">Invited collaborators</p><h2>Claimable, never impersonated.</h2><div class="claim-row"><span class="mini-avatar">AH</span><div><b>Ahmed</b><small>Invitation not yet claimed</small></div><button>Copy invite</button></div><div class="claim-row"><span class="mini-avatar">HM</span><div><b>Hamid</b><small>Invitation not yet claimed</small></div><button>Copy invite</button></div></section></div></section>
+
+        <section class="view" data-page="creator"><div class="page-intro compact"><div><p class="eyebrow">Creator studio</p><h1>Turn your archive into useful stories.</h1><p>Linked sources stay in Drive. Humanity OS stores your review state and publication record on this device.</p></div><a class="primary-button" href="https://drive.google.com/drive/folders/1Jr_BeXJ-oZaSM3qPmAUvAOFy5GTpwZFX?usp=sharing" target="_blank" rel="noopener">Open Drive ↗</a></div><div class="creator-grid" id="creatorGrid"></div></section>
+
+        <section class="view" data-page="mesh"><div class="page-intro compact"><div><p class="eyebrow">Local-first integrity</p><h1>Your phone keeps a real copy.</h1><p>Changes are hashed, signed by a device key and portable. Same-origin tabs sync instantly; devices can exchange verified JSON bundles without a central account.</p></div><button class="primary-button" id="verifyLedger">Verify ledger</button></div><div class="mesh-grid"><section class="mesh-health"><div class="mesh-ring"><span id="integrityScore">100</span><small>integrity</small></div><div><p class="eyebrow">Device vault</p><h2 id="vaultSummary">Starting secure storage…</h2><p id="deviceId">Generating device identity…</p></div></section><section class="panel"><p class="eyebrow">Peer sync</p><h2>Carry your data between devices.</h2><p>Export a signed bundle, share it directly, then import it on another Humanity OS device. Imported events are verified before acceptance.</p><div class="button-row"><button class="primary-button" id="exportBundle">Export bundle</button><label class="secondary-button file-button">Import bundle<input id="importBundle" type="file" accept="application/json"></label></div><p class="fine-print">Media is excluded from portable bundles by default to keep them small and intentional.</p></section><section class="panel"><p class="eyebrow">Storage control</p><h2>Device data belongs to you.</h2><p id="storageEstimate">Checking available storage…</p><div class="button-row"><button class="secondary-button" id="persistStorage">Protect offline copy</button><button class="danger-button" id="clearLocalDrafts">Clear drafts</button></div></section></div><div class="section-heading"><div><p class="eyebrow">Cryptographic log</p><h2>Events on this device</h2></div><span id="peerStatus" class="status-chip"><i class="status-dot"></i>Mesh ready</span></div><div class="ledger-table" id="ledgerTable"></div></section>
+      </main>
+    </div>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Mobile navigation">
+    <button class="active" data-view="today"><span>⌂</span><small>Today</small></button>
+    <button data-view="explore"><span>◎</span><small>Explore</small></button>
+    <button class="create-nav" data-open-compose="post" aria-label="Create"><span>＋</span></button>
+    <button data-view="jarvis"><span>◉</span><small>JARVIS</small></button>
+    <button data-view="profile"><span>MQ</span><small>Me</small></button>
+  </nav>
+
+  <dialog id="composeDialog" class="sheet-dialog">
+    <form method="dialog" class="dialog-card" id="composeForm">
+      <div class="dialog-head"><div><p class="eyebrow">Create a living record</p><h2 id="composeTitle">Share something</h2></div><button value="cancel" class="close-button" aria-label="Close">×</button></div>
+      <div class="type-grid" id="composeTypes"><button type="button" class="active" data-type="post">Update</button><button type="button" data-type="problem">Problem</button><button type="button" data-type="need">Need</button><button type="button" data-type="service">Service</button><button type="button" data-type="job">Job</button><button type="button" data-type="proposal">Proposal</button></div>
+      <label>Title<input name="title" required maxlength="120" placeholder="Give people a clear reason to care"></label>
+      <label>Details<textarea name="body" required maxlength="1200" rows="5" placeholder="What happened, what evidence exists, and what should happen next?"></textarea></label>
+      <div class="form-row"><label>Visibility<select name="scope"><option value="personal">My network</option><option value="nearby">Nearby</option><option value="society">Society</option><option value="city">City</option><option value="country">Country</option><option value="global">Global</option></select></label><label>Location<input name="location" placeholder="Optional · never added silently"></label></div>
+      <label class="upload-zone">Photo or video<input id="mediaInput" name="media" type="file" accept="image/*,video/*"><span>Choose from this device · maximum 20 MB · stored locally</span></label>
+      <label class="consent-check"><input name="truth" type="checkbox" required><span>I have the right to share this and understand the local copy is signed to my device log.</span></label>
+      <div class="dialog-actions"><button value="cancel" class="secondary-button">Cancel</button><button type="submit" value="default" class="primary-button">Sign & publish locally</button></div>
+    </form>
+  </dialog>
+  <dialog id="detailDialog" class="sheet-dialog"><div class="dialog-card" id="detailContent"></div></dialog>
+  <div class="toast-region" id="toasts" aria-live="polite"></div>
+  <input type="file" id="hiddenImport" hidden accept="application/json">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
