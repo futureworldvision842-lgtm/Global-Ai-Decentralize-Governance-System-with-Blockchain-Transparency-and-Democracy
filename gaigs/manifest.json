@@ -1,8 +1,8 @@
 {
   "id": "/gaigs/",
-  "name": "NewDawn GAIGS — One App for Humanity",
-  "short_name": "NewDawn",
-  "description": "A people-owned civic operating system: profiles, communities, transparent treasuries, voting, services and a personalized JARVIS. Connect. Decide. Build. Verify.",
+  "name": "GAIGS JARVIS — Personal Intelligence for Human Action",
+  "short_name": "GAIGS JARVIS",
+  "description": "A people-owned mobile platform with personal voice assistance, encrypted device memory, source-linked media, peer sync, communities, work and transparent decisions.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
