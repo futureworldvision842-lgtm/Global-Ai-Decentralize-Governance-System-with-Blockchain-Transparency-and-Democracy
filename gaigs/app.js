@@ -326,7 +326,7 @@ function bindDynamic(){
   $$('.filter-btn').forEach(b=>b.addEventListener('click',()=>{$$('.filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');toast(`${b.textContent.trim()} feed loaded.`)}));
   $$('#mainContent input[type="checkbox"]').forEach((b,i)=>b.addEventListener('change',()=>{state.settings['toggle'+i]=b.checked;save();toast('Preference saved on this device.')}));
   $$('#mainContent select').forEach((b,i)=>b.addEventListener('change',()=>{state.settings['select'+i]=b.value;save();toast(`${b.value} preference saved.`)}));
-  $$('#mainContent button').filter(b=>!b.dataset.view&&!b.dataset.action&&!b.dataset.vote&&!b.dataset.communityOpen&&!b.dataset.projectProof&&!b.dataset.serviceView&&!b.dataset.challengeEnter&&!Object.keys(b.dataset).some(k=>['social','admin','member','report'].some(prefix=>k.startsWith(prefix)))&&!b.classList.contains('filter-btn')).forEach(b=>b.addEventListener('click',()=>{
+  $$('#mainContent button').filter(b=>!b.dataset.view&&!b.dataset.action&&!b.dataset.vote&&!b.dataset.communityOpen&&!b.dataset.projectProof&&!b.dataset.serviceView&&!b.dataset.challengeEnter&&!Object.keys(b.dataset).some(k=>['social','admin','member','report','jarvis','video'].some(prefix=>k.startsWith(prefix)))&&!b.classList.contains('filter-btn')).forEach(b=>b.addEventListener('click',()=>{
     const label=b.textContent.trim();
     if(label.includes('Register a community'))return action('community');
     if(label.includes('Ask JARVIS'))return action('jarvis');

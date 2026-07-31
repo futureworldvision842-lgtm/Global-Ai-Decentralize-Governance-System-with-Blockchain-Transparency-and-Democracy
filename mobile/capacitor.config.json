@@ -1,6 +1,6 @@
 {
-  "appId": "com.futureworldvision.gaigs",
-  "appName": "GAIGS",
+  "appId": "com.futureworldvision.gaigs.jarvis",
+  "appName": "GAIGS JARVIS",
   "webDir": "dist",
   "android": {
     "minWebViewVersion": 105,
@@ -10,6 +10,6 @@
   },
   "server": {"androidScheme": "https"},
   "plugins": {
-    "Geolocation": {"enableHighAccuracy": false}
+    "Geolocation": {"enableHighAccuracy": true}
   }
 }

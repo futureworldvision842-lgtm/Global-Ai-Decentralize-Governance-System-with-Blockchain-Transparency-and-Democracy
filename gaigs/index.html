@@ -4,14 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#07111d" />
-  <title>NewDawn G.A.I.G.S. — One App for Humanity</title>
+  <title>GAIGS JARVIS v2 — Your World, Your Intelligence</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="icon" href="icon-192.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="GAIGS" />
-  <link rel="stylesheet" href="styles.css?v=30" />
+  <link rel="stylesheet" href="styles.css?v=32" />
   <script src="../config.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -45,16 +45,16 @@
           <div class="visual-chip chip-ai"><small>JARVIS AI</small><strong>Guide every mission</strong></div>
           <div class="visual-chip chip-dao"><small>PEOPLE-OWNED DAO</small><strong>Power stays distributed</strong></div>
         </div>
-        <div class="eyebrow">ONE PLATFORM · EVERY HUMAN SYSTEM · PEOPLE IN CONTROL</div>
+        <div class="eyebrow">ONE PLATFORM · PERSONAL JARVIS · PEOPLE IN CONTROL</div>
         <h1>Your world. Your decisions.<br><span>Your power to act.</span></h1>
-        <p class="mission-copy">GAIGS brings social connection, local services, work, maps, verified news, community decisions, transparent project funds and AI guidance into one people-owned network. Share the real problem, build the solution and follow it all the way to proof.</p>
+        <p class="mission-copy">GAIGS brings social connection, local services, work, maps, verified news, community decisions, transparent project funds and your own private JARVIS into one people-owned network. Online or offline, share the real problem, build the solution and follow it all the way to proof.</p>
         <div class="mission-promises">
           <div><b>Voice becomes action.</b><span>Post the problem, gather evidence and organize the response.</span></div>
           <div><b>Everything nearby.</b><span>Find people, societies, work, services and missions around you.</span></div>
-          <div><b>Decisions stay yours.</b><span>AI explains and prepares. Verified members discuss and decide.</span></div>
+          <div><b>Your JARVIS learns with you.</b><span>Voice, encrypted device memory and adaptive tools—without taking your decisions.</span></div>
           <div><b>Trust you can inspect.</b><span>Follow rules, votes, funds, milestones and proof in one audit trail.</span></div>
         </div>
-        <div class="platform-universe" aria-label="GAIGS connected capabilities"><span>SOCIAL</span><span>WORK</span><span>MAPS</span><span>SERVICES</span><span>COMMUNITIES</span><span>AI</span><span>DAO</span><span>WALLETS</span></div>
+        <div class="platform-universe" aria-label="GAIGS connected capabilities"><span>SOCIAL</span><span>VIDEO</span><span>WORK</span><span>MAPS</span><span>SERVICES</span><span>COMMUNITIES</span><span>JARVIS</span><span>PEER MESH</span><span>DAO</span><span>WALLETS</span></div>
         <p class="auth-manifesto">Not another feed built to keep you scrolling. A shared operating system that moves humanity from attention to coordinated action.</p>
         <div class="flow-line">
           <span>SHARE THE PROBLEM</span><i>→</i><span>CONNECT PEOPLE & SKILLS</span><i>→</i><span>DECIDE TOGETHER</span><i>→</i><span>FUND THE PLAN</span><i>→</i><span>PROVE THE RESULT</span>
@@ -100,7 +100,7 @@
           <button class="primary wide auth-main-cta" type="submit"><span>Create secure account</span><b>→</b></button>
           <div class="auth-divider"><span>or look around first</span></div>
           <button class="secondary wide preview-btn" id="demoLogin" type="button">Explore the interactive preview</button>
-          <a class="apk-download wide" href="../downloads/GAIGS-v1.0.0-rc.1-preview.apk" download><span>ANDROID APK</span><b>Download GAIGS preview</b><small>10 MB · Android 7.0+ · direct install</small></a>
+          <a class="apk-download wide" href="../downloads/GAIGS-JARVIS-v2-preview.apk" download><span>ANDROID V2</span><b>Download GAIGS JARVIS</b><small>Android preview · voice, local memory and peer sync</small></a>
         </form>
 
         <form id="loginForm" class="auth-form">
@@ -146,15 +146,16 @@
       </div>
       <nav class="top-nav desktop-only">
         <button data-view="overview" class="active">Ops Center</button>
+        <button data-view="jarvisHub">JARVIS</button>
         <button data-view="mission">Mission Desk</button>
-        <button data-view="library">Creator Library</button>
+        <button data-view="videoFeed">Video Feed</button>
         <button data-view="governance">Governance</button>
         <button data-view="services">Market</button>
         <button data-view="science">Humanity Lab</button>
       </nav>
       <div class="top-actions">
-        <a class="header-apk-download desktop-only" href="../downloads/GAIGS-v1.0.0-rc.1-preview.apk" download title="Download GAIGS Android APK">↓ APK</a>
-        <button class="status-pill" title="This device is using the private preview workspace"><span></span> Private preview</button>
+        <a class="header-apk-download desktop-only" href="../downloads/GAIGS-JARVIS-v2-preview.apk" download title="Download GAIGS JARVIS Android APK">↓ APK v2</a>
+        <button class="status-pill" title="Private local memory and human approval controls are active"><span></span> JARVIS v2</button>
         <button class="icon-btn" id="notificationsBtn">🔔<em>4</em></button>
         <button class="wallet-chip" data-view="treasury"><small>Wallet</small><b>Not connected</b></button>
         <button class="profile-chip" data-view="profile"><span>MQ</span><div><b id="topUserName">Muhammad</b><small>Personal space</small></div></button>
@@ -172,6 +173,7 @@
       <div class="nav-group">
         <div class="nav-label">Workspace</div>
         <button class="side-link active" data-view="overview">◫ <span>Overview</span></button>
+        <button class="side-link" data-view="jarvisHub">✦ <span>Personal JARVIS</span></button>
         <button class="side-link" data-view="feed">◉ <span>Action Feed</span></button>
         <button class="side-link" data-view="messages">✉ <span>Messages</span></button>
         <button class="side-link" data-view="map">◎ <span>World Map</span></button>
@@ -192,6 +194,7 @@
       <div class="nav-group">
         <div class="nav-label">Humanity</div>
         <button class="side-link" data-view="mission">◎ <span>JARVIS Mission Desk</span></button>
+        <button class="side-link" data-view="videoFeed">▶ <span>Humanity Video Feed</span></button>
         <button class="side-link" data-view="library">▶ <span>Creator Library</span></button>
         <button class="side-link" data-view="emergency">⚠ <span>Emergency Response</span><i class="red">1</i></button>
         <button class="side-link" data-view="news">◍ <span>News & Evidence</span></button>
@@ -210,14 +213,14 @@
     <aside class="jarvis-panel" id="jarvisPanel">
       <div class="jarvis-head">
         <div class="jarvis-orb mini"><span></span></div>
-        <div><b>JARVIS</b><small>Personal civic intelligence</small></div>
+        <div><b>JARVIS v2</b><small>Voice · private memory · agent hub</small></div>
         <button id="closeJarvis">×</button>
       </div>
       <div class="jarvis-context">
         <span>Context</span><b id="jarvisContext">Personal dashboard</b>
       </div>
       <div class="jarvis-chat" id="jarvisChat">
-        <div class="ai-msg">Good morning. One community vote closes today, two nearby issues need evidence, and three service opportunities match your skills. What should we work on?</div>
+        <div class="ai-msg">I am your personal JARVIS. I can navigate, remember approved preferences on this device, explain source-backed missions and connect to your local agents after you pair them. What should we work on?</div>
       </div>
       <div class="quick-prompts">
         <button data-prompt="Explain the water proposal">Explain active proposal</button>
@@ -237,7 +240,7 @@
 
     <nav class="bottom-nav mobile-only">
       <button class="active" data-view="overview">⌂<span>Home</span></button>
-      <button data-view="mission">◎<span>Mission</span></button>
+      <button data-view="videoFeed">▶<span>Videos</span></button>
       <button id="mobileCreate" class="create-btn">＋</button>
       <button data-view="treasury">◈<span>Wallet</span></button>
       <button data-view="profile">◉<span>Profile</span></button>
@@ -280,6 +283,9 @@
   <script src="dao-core.js"></script>
   <script src="policy-core.js"></script>
   <script src="creator-library-data.js?v=24"></script>
-  <script src="mission-library-core.js?v=30"></script>
+  <script src="mission-library-core.js?v=32"></script>
+  <script src="peer-mesh-v2.js?v=32"></script>
+  <script src="video-feed-v2.js?v=32"></script>
+  <script src="personal-jarvis-v2.js?v=32"></script>
 </body>
 </html>
