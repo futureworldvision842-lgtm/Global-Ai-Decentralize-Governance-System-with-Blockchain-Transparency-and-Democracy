@@ -20,6 +20,9 @@ test("personal memory uses non-extractable AES-GCM encryption", () => {
   assert.match(source, /generateKey\([^;]+false, \["encrypt", "decrypt"\]/s);
   assert.match(source, /Erase every encrypted JARVIS memory/);
   assert.doesNotMatch(source, /localStorage\.setItem\([^\n]+prompt/);
+  assert.match(source, /gaigs-jarvis-v2\.qw01\.chatgpt\.site/);
+  assert.match(source, /\/api\/agent-hub/);
+  assert.match(source, /setInterval/);
 });
 
 test("peer sync signs packets and requires explicit WebRTC pairing", () => {
