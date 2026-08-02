@@ -50,7 +50,9 @@ test("Android background mode is visible and never always-listening", () => {
   const plugin = read("mobile/android/app/src/main/java/com/futureworldvision/gaigs/JarvisDevicePlugin.java");
   const config = JSON.parse(read("mobile/capacitor.config.json"));
   assert.match(service, /startForeground/);
-  assert.match(service, /voice listens only when you press the microphone/);
+  assert.match(service, /scheduleWithFixedDelay/);
+  assert.match(service, /\/api\/agent-hub/);
+  assert.match(service, /5, TimeUnit\.MINUTES/);
   assert.match(plugin, /alwaysListening", false/);
   assert.equal(config.appId, "com.futureworldvision.gaigs.jarvis");
   assert.equal(config.android.allowMixedContent, false);
