@@ -201,16 +201,6 @@ async function readJson(url) {
 }
 
 async function missionBrief(request) {
-  let edgeCache = null;
-  try { edgeCache = globalThis.caches && globalThis.caches.default; } catch (error) { edgeCache = null; }
-  const cacheKey = new Request(request.url, { method: "GET" });
-  if (edgeCache) {
-    try {
-      const hit = await edgeCache.match(cacheKey);
-      if (hit) return hit;
-    } catch (error) { edgeCache = null; }
-  }
-
   const [nasa, gdacs] = await Promise.allSettled([
     readJson("https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=8&days=30"),
     readJson("https://www.gdacs.org/gdacsapi/api/events/geteventlist/EVENTS4APP"),
@@ -246,9 +236,6 @@ async function missionBrief(request) {
     ...(unavailable ? { error: "Official mission sources are temporarily unavailable." } : {}),
   });
   const response = new Response(body, { status: unavailable ? 503 : 200, headers: jsonHeaders });
-  if (edgeCache && !unavailable) {
-    try { await edgeCache.put(cacheKey, response.clone()); } catch (error) { /* Cache is optional on Sites. */ }
-  }
   return response;
 }
 
