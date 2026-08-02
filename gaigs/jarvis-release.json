@@ -1,0 +1,14 @@
+{
+  "versionCode": 5,
+  "versionName": "2.3.0-preview",
+  "releasedAt": "2026-08-02T10:58:00Z",
+  "downloadUrl": "https://gaigs-jarvis-v2.qw01.chatgpt.site/downloads/GAIGS-JARVIS-v2-preview.apk",
+  "sha256": "81434015D53931CF6DD892FDCE949DBA8A3912FD55829B810D72A18AA761DF6A",
+  "channel": "reviewed-preview",
+  "notes": [
+    "Visible Android mobile core with pause and refresh controls",
+    "Real device status and allow-listed settings commands",
+    "Connected mission assistant and verified public disaster signals",
+    "Reviewed APK update channel with a published checksum"
+  ]
+}

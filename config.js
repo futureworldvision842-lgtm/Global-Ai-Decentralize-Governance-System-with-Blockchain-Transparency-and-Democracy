@@ -1,6 +1,6 @@
 // Safe local defaults. AI credentials belong only in the Netlify/Firebase/server environment.
 window.NDCONF={
-  jarvisProxyUrl:'',
+  jarvisProxyUrl:'https://gaigs-jarvis-v2.qw01.chatgpt.site/api/jarvis-assist',
   showSampleData:false,
   firebaseDemoSync:false,
   firebaseProductionMode:false,
