@@ -42,12 +42,19 @@ const path = require("node:path");
     throw new Error("Unexpected source URL: " + url);
   };
 
+  const cachesDescriptor = Object.getOwnPropertyDescriptor(globalThis, "caches");
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    get() { throw new Error("Default cache is unavailable in this Sites runtime."); },
+  });
   const missionResponse = await worker.fetch(
     new Request("https://gaigs.example/api/mission-brief", {
       headers: { accept: "application/json" },
     }),
     {},
   );
+  if (cachesDescriptor) Object.defineProperty(globalThis, "caches", cachesDescriptor);
+  else delete globalThis.caches;
   globalThis.fetch = originalFetch;
   assert.equal(missionResponse.status, 200);
   assert.equal(missionResponse.headers.get("access-control-allow-origin"), "*");

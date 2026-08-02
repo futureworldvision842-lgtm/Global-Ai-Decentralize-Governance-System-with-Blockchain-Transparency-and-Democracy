@@ -201,11 +201,14 @@ async function readJson(url) {
 }
 
 async function missionBrief(request) {
-  const edgeCache = globalThis.caches && globalThis.caches.default;
+  let edgeCache = null;
+  try { edgeCache = globalThis.caches && globalThis.caches.default; } catch (error) { edgeCache = null; }
   const cacheKey = new Request(request.url, { method: "GET" });
   if (edgeCache) {
-    const hit = await edgeCache.match(cacheKey);
-    if (hit) return hit;
+    try {
+      const hit = await edgeCache.match(cacheKey);
+      if (hit) return hit;
+    } catch (error) { edgeCache = null; }
   }
 
   const [nasa, gdacs] = await Promise.allSettled([
@@ -243,7 +246,9 @@ async function missionBrief(request) {
     ...(unavailable ? { error: "Official mission sources are temporarily unavailable." } : {}),
   });
   const response = new Response(body, { status: unavailable ? 503 : 200, headers: jsonHeaders });
-  if (edgeCache && !unavailable) await edgeCache.put(cacheKey, response.clone());
+  if (edgeCache && !unavailable) {
+    try { await edgeCache.put(cacheKey, response.clone()); } catch (error) { /* Cache is optional on Sites. */ }
+  }
   return response;
 }
 
