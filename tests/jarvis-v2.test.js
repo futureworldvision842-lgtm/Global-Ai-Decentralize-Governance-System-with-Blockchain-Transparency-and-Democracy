@@ -53,8 +53,27 @@ test("Android background mode is visible and never always-listening", () => {
   assert.match(service, /scheduleWithFixedDelay/);
   assert.match(service, /\/api\/agent-hub/);
   assert.match(service, /5, TimeUnit\.MINUTES/);
+  assert.match(service, /ACTION_STOP/);
+  assert.match(service, /ACTION_REFRESH/);
+  assert.match(service, /START_STICKY/);
   assert.match(plugin, /alwaysListening", false/);
+  assert.match(plugin, /executeSafeCommand/);
+  assert.match(plugin, /open_wifi_settings/);
+  assert.doesNotMatch(plugin, /Runtime\.getRuntime|ProcessBuilder|\bsu\b/);
   assert.equal(config.appId, "com.futureworldvision.gaigs.jarvis");
   assert.equal(config.android.allowMixedContent, false);
   assert.equal(config.android.webContentsDebuggingEnabled, false);
+});
+
+test("mobile command center uses verified APIs and a reviewed release channel", () => {
+  const personal = read("gaigs/personal-jarvis-v2.js");
+  const builder = read("scripts/build-sites.js");
+  const release = JSON.parse(read("gaigs/jarvis-release.json"));
+  assert.match(personal, /MOBILE COMMAND CENTER/);
+  assert.match(personal, /\/api\/mission-brief/);
+  assert.match(personal, /executeSafeCommand/);
+  assert.match(personal, /jarvis-release\.json/);
+  assert.match(builder, /\/api\/jarvis-assist/);
+  assert.equal(release.versionCode, 5);
+  assert.match(release.downloadUrl, /^https:\/\/gaigs-jarvis-v2\.qw01\.chatgpt\.site\//);
 });
