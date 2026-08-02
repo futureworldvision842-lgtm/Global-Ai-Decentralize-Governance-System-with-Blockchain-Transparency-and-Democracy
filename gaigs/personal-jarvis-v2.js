@@ -6,6 +6,7 @@
   const DB_VERSION = 1;
   const usageKey = "gaigsJarvisUsageV2";
   const preferencesKey = "gaigsJarvisPreferencesV2";
+  const CLOUD_HUB_URL = "https://gaigs-jarvis-v2.qw01.chatgpt.site";
   const hub = {
     checking: false,
     lastChecked: 0,
@@ -93,8 +94,13 @@
   };
 
   function preferences() {
-    try { return { proactiveBrief: true, rememberPrompts: true, background: false, bridgeUrl: "http://192.168.100.238:8090", ...JSON.parse(localStorage.getItem(preferencesKey) || "{}") }; }
-    catch (error) { return { proactiveBrief: true, rememberPrompts: true, background: false, bridgeUrl: "http://192.168.100.238:8090" }; }
+    const defaults = { proactiveBrief: true, rememberPrompts: true, background: false, bridgeUrl: CLOUD_HUB_URL };
+    try {
+      const stored = { ...defaults, ...JSON.parse(localStorage.getItem(preferencesKey) || "{}") };
+      if (stored.bridgeUrl === "http://192.168.100.238:8090") stored.bridgeUrl = CLOUD_HUB_URL;
+      return stored;
+    }
+    catch (error) { return defaults; }
   }
 
   function savePreferences(next) { localStorage.setItem(preferencesKey, JSON.stringify({ ...preferences(), ...next })); }
@@ -123,6 +129,13 @@
     return result && (result.data || result);
   }
 
+  function isPrivateBridge(endpoint) {
+    try {
+      const host = new URL(endpoint).hostname;
+      return host === "localhost" || host === "127.0.0.1" || host === "::1" || /^10\./.test(host) || /^192\.168\./.test(host) || /^172\.(1[6-9]|2\d|3[01])\./.test(host);
+    } catch (error) { return false; }
+  }
+
   async function webAgentHub(endpoint) {
     const url = new URL(endpoint, location.href);
     if (!/^https?:$/.test(url.protocol)) throw new Error("Use an HTTP or HTTPS bridge URL.");
@@ -144,9 +157,13 @@
     };
     hub.agents = localCapabilities;
     try {
-      const remote = await nativeAgentHub(prefs.bridgeUrl) || await webAgentHub(prefs.bridgeUrl);
+      let remote = null;
+      if (window.Capacitor && isPrivateBridge(prefs.bridgeUrl)) remote = await nativeAgentHub(prefs.bridgeUrl).catch(() => null);
+      if (!remote) remote = await webAgentHub(prefs.bridgeUrl);
       for (const agent of remote.agents || []) hub.agents[agent.id || agent.name.toLowerCase()] = agent;
-      hub.message = `Connected securely to ${remote.name || "your JARVIS PC bridge"}. Commands still require confirmation.`;
+      hub.message = remote.online === false
+        ? (remote.message || "JARVIS cloud heartbeat is waiting for the PC supervisor.")
+        : `Live heartbeat received from ${remote.name || "your JARVIS PC bridge"}. Commands still require confirmation.`;
     } catch (error) {
       hub.message = window.Capacitor ? `Personal mobile JARVIS is active. PC agents are not paired: ${error.message}` : "Personal web JARVIS is active. A local PC bridge can be paired from the Android app or a secure HTTPS endpoint.";
     }
@@ -223,7 +240,7 @@
     if (actionName === "refreshAgents") { hub.lastChecked = 0; await refreshAgents(true); return; }
     if (actionName === "connectBridge") {
       const prefs = preferences();
-      openModal(`<h2>Pair your JARVIS PC bridge</h2><p class="muted">Enter the local bridge address shown by your PC. The Android app uses a native allow-listed connection; browser pages need HTTPS.</p><label class="modal-label">Bridge address<input id="jarvisBridgeUrl" value="${esc(prefs.bridgeUrl)}" placeholder="http://192.168.1.10:8090"></label><button class="action-btn" data-jarvis-action="saveBridge">Save and test</button>`);
+      openModal(`<h2>Choose your JARVIS connection</h2><p class="muted">The public GAIGS cloud URL receives status-only heartbeats. On your home Wi-Fi, you may instead enter the private PC bridge address for direct status checks.</p><label class="modal-label">Bridge address<input id="jarvisBridgeUrl" value="${esc(prefs.bridgeUrl)}" placeholder="${CLOUD_HUB_URL}"></label><button class="action-btn" data-jarvis-action="saveBridge">Save and test</button>`);
       return;
     }
     if (actionName === "saveBridge") {
@@ -308,5 +325,6 @@
   if (window.GAIGSPeerMesh) window.GAIGSPeerMesh.on(event => { if (event.type === "state" || event.type === "message" || event.type === "queued") window.GAIGSPeerMesh.stats().then(stats => { hub.mesh = stats; if (state.view === "jarvisHub") render(); }); });
   window.GAIGSPersonalJarvis = { vault, refreshAgents, preferences };
   refreshAgents(false).catch(() => {});
+  setInterval(() => { if (!document.hidden && state.view === "jarvisHub") refreshAgents(true).catch(() => {}); }, 30000);
   if (state.user) render();
 })();

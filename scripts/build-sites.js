@@ -22,6 +22,25 @@ const worker = `const jsonHeaders = {
   "access-control-allow-origin": "*",
 };
 
+const heartbeatHeaders = {
+  "content-type": "application/json; charset=utf-8",
+  "cache-control": "no-store",
+  "x-content-type-options": "nosniff",
+  "access-control-allow-origin": "*",
+};
+
+function jsonResponse(value, status = 200, headers = heartbeatHeaders) {
+  return new Response(JSON.stringify(value), { status, headers });
+}
+
+async function ensureHeartbeatSchema(db) {
+  await db.prepare(\`CREATE TABLE IF NOT EXISTS jarvis_heartbeat (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    updated_at INTEGER NOT NULL,
+    payload TEXT NOT NULL
+  )\`).run();
+}
+
 function plainText(value, limit = 320) {
   return String(value || "")
     .replace(/<[^>]+>/g, " ")
@@ -30,6 +49,76 @@ function plainText(value, limit = 320) {
     .replace(/\\s+/g, " ")
     .trim()
     .slice(0, limit);
+}
+
+function safeAgent(agent) {
+  const status = ["online", "ready", "offline", "degraded"].includes(String(agent?.status || "").toLowerCase())
+    ? String(agent.status).toLowerCase()
+    : "offline";
+  return {
+    id: plainText(agent?.id, 60) || "agent",
+    name: plainText(agent?.name, 80) || "JARVIS service",
+    status,
+    detail: plainText(agent?.detail, 220) || "No status detail received.",
+    ...(agent?.lastSeen ? { lastSeen: plainText(agent.lastSeen, 60) } : {}),
+  };
+}
+
+function safeHeartbeat(raw) {
+  return {
+    name: plainText(raw?.name, 80) || "Muhammad's JARVIS",
+    generatedAt: plainText(raw?.generatedAt, 60) || new Date().toISOString(),
+    privacy: "status-only",
+    agents: Array.isArray(raw?.agents) ? raw.agents.slice(0, 20).map(safeAgent) : [],
+  };
+}
+
+async function tokenMatches(request, expected) {
+  if (!expected) return false;
+  const supplied = (request.headers.get("authorization") || "").replace(/^Bearer\\s+/i, "");
+  if (!supplied) return false;
+  const encoder = new TextEncoder();
+  const [left, right] = await Promise.all([
+    crypto.subtle.digest("SHA-256", encoder.encode(supplied)),
+    crypto.subtle.digest("SHA-256", encoder.encode(expected)),
+  ]);
+  const a = new Uint8Array(left);
+  const b = new Uint8Array(right);
+  let difference = a.length ^ b.length;
+  for (let index = 0; index < Math.min(a.length, b.length); index += 1) difference |= a[index] ^ b[index];
+  return difference === 0;
+}
+
+async function receiveHeartbeat(request, env) {
+  if (!env.DB) return jsonResponse({ error: "Heartbeat storage is unavailable." }, 503);
+  if (!(await tokenMatches(request, env.JARVIS_HEARTBEAT_TOKEN))) return jsonResponse({ error: "Unauthorized." }, 401);
+  const length = Number(request.headers.get("content-length") || 0);
+  if (length > 65536) return jsonResponse({ error: "Heartbeat is too large." }, 413);
+  let body;
+  try { body = await request.json(); } catch (error) { return jsonResponse({ error: "Invalid JSON." }, 400); }
+  const heartbeat = safeHeartbeat(body);
+  if (!heartbeat.agents.length) return jsonResponse({ error: "At least one service status is required." }, 400);
+  await ensureHeartbeatSchema(env.DB);
+  const now = Date.now();
+  await env.DB.prepare(\`INSERT INTO jarvis_heartbeat (id, updated_at, payload)
+    VALUES (1, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET updated_at = excluded.updated_at, payload = excluded.payload\`)
+    .bind(now, JSON.stringify(heartbeat))
+    .run();
+  return jsonResponse({ ok: true, acceptedAt: new Date(now).toISOString() });
+}
+
+async function readHeartbeat(env) {
+  if (!env.DB) return jsonResponse({ name: "Muhammad's JARVIS", privacy: "status-only", online: false, agents: [], message: "Cloud heartbeat storage is not configured." });
+  await ensureHeartbeatSchema(env.DB);
+  const row = await env.DB.prepare("SELECT updated_at, payload FROM jarvis_heartbeat WHERE id = 1").first();
+  if (!row) return jsonResponse({ name: "Muhammad's JARVIS", privacy: "status-only", online: false, agents: [], message: "Waiting for the first JARVIS PC heartbeat." });
+  const ageMs = Math.max(0, Date.now() - Number(row.updated_at || 0));
+  let payload;
+  try { payload = safeHeartbeat(JSON.parse(row.payload)); } catch (error) { payload = safeHeartbeat({}); }
+  const online = ageMs < 120000;
+  if (!online) payload.agents = payload.agents.map(agent => ({ ...agent, status: "offline", detail: agent.id === "heartbeat" ? "Cloud heartbeat is stale; the PC supervisor may be stopped." : agent.detail }));
+  return jsonResponse({ ...payload, online, heartbeatAgeSeconds: Math.round(ageMs / 1000), receivedAt: new Date(Number(row.updated_at || 0)).toISOString() });
 }
 
 function priorityFor(text) {
@@ -161,6 +250,15 @@ async function missionBrief(request) {
 const worker = {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === "/api/jarvis-heartbeat" && request.method === "POST") {
+      return receiveHeartbeat(request, env);
+    }
+    if (url.pathname === "/api/agent-hub" && request.method === "GET") {
+      return readHeartbeat(env);
+    }
+    if (url.pathname === "/api/jarvis-heartbeat" && request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: { ...heartbeatHeaders, "access-control-allow-methods": "POST, OPTIONS", "access-control-allow-headers": "authorization, content-type" } });
+    }
     if (request.method === "GET" && url.pathname === "/api/mission-brief") {
       return missionBrief(request);
     }

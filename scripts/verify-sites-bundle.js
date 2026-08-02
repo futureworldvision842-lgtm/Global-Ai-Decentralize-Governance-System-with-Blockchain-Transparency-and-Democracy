@@ -56,6 +56,39 @@ const path = require("node:path");
   assert.match(missionBrief.signals[0].suggestedAction, /local authorities/i);
   assert.deepEqual(missionBrief.sourceStatus.map(item => item.ok), [true, true]);
 
+  const offlineHubResponse = await worker.fetch(
+    new Request("https://gaigs.example/api/agent-hub", { headers: { accept: "application/json" } }),
+    {},
+  );
+  assert.equal(offlineHubResponse.status, 200);
+  const offlineHub = await offlineHubResponse.json();
+  assert.equal(offlineHub.online, false);
+  assert.equal(offlineHub.privacy, "status-only");
+
+  let heartbeatRow = null;
+  const fakeDb = {
+    prepare(sql) {
+      let bindings = [];
+      return {
+        bind(...values) { bindings = values; return this; },
+        async run() {
+          if (/INSERT INTO jarvis_heartbeat/i.test(sql)) heartbeatRow = { updated_at: bindings[0], payload: bindings[1] };
+          return { success: true };
+        },
+        async first() { return /SELECT updated_at/i.test(sql) ? heartbeatRow : null; },
+      };
+    },
+  };
+  const heartbeatPayload = { name: "Test JARVIS", agents: [{ id: "voice", name: "Voice Listener", status: "online", detail: "Listening with visible controls" }] };
+  const rejectedHeartbeat = await worker.fetch(new Request("https://gaigs.example/api/jarvis-heartbeat", { method: "POST", body: JSON.stringify(heartbeatPayload), headers: { "content-type": "application/json" } }), { DB: fakeDb, JARVIS_HEARTBEAT_TOKEN: "test-token" });
+  assert.equal(rejectedHeartbeat.status, 401);
+  const acceptedHeartbeat = await worker.fetch(new Request("https://gaigs.example/api/jarvis-heartbeat", { method: "POST", body: JSON.stringify(heartbeatPayload), headers: { "content-type": "application/json", authorization: "Bearer test-token" } }), { DB: fakeDb, JARVIS_HEARTBEAT_TOKEN: "test-token" });
+  assert.equal(acceptedHeartbeat.status, 200);
+  const onlineHubResponse = await worker.fetch(new Request("https://gaigs.example/api/agent-hub"), { DB: fakeDb });
+  const onlineHub = await onlineHubResponse.json();
+  assert.equal(onlineHub.online, true);
+  assert.equal(onlineHub.agents[0].id, "voice");
+
   const response = await worker.fetch(
     new Request("https://gaigs.example/community/society", {
       headers: { accept: "text/html" },
@@ -77,7 +110,7 @@ const path = require("node:path");
 
   assert.equal(response.status, 200);
   assert.match(await response.text(), /<title>GAIGS<\/title>/);
-  console.log("Sites worker serves GAIGS, application routes, and source-backed mission briefs.");
+  console.log("Sites worker serves GAIGS, mission briefs, and a safe JARVIS heartbeat endpoint.");
 })().catch((error) => {
   console.error(error);
   process.exitCode = 1;
