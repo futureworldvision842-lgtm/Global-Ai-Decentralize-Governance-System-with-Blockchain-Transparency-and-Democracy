@@ -11,11 +11,27 @@ test("JARVIS v2 scripts are wired into the isolated app shell", () => {
   const html = read("gaigs/index.html");
   const worker = read("gaigs/sw.js");
   for (const asset of ["peer-mesh-v2.js", "video-feed-v2.js", "personal-jarvis-v2.js"]) assert.match(html, new RegExp(asset.replaceAll(".", "\\.")));
-  assert.match(worker, /gaigs-jarvis-v35/);
+  assert.match(worker, /gaigs-jarvis-v36/);
   assert.match(worker, /network-core\.js\?v=35/);
   assert.match(worker, /request\.mode==='navigate'/);
   assert.match(html, /data-view="jarvisHub"/);
   assert.match(html, /data-view="videoFeed"/);
+});
+
+test("public landing explains the platform before account access", () => {
+  const html = read("gaigs/index.html");
+  const story = read("gaigs/platform-story-v1.js");
+  for (const id of ["whyGaigs", "platform", "actionLoop", "networkModel", "governanceModel", "trustModel", "missionVision"]) {
+    assert.match(html, new RegExp(`id=["']${id}["']`));
+  }
+  for (const phrase of ["GAIGS ACTION LOOP", "Android Nearby mesh", "One eligible member, one ballot", "Built in public. Explained honestly."]) {
+    assert.ok(html.includes(phrase), `missing public explanation: ${phrase}`);
+  }
+  assert.match(html, /data-public-auth="signup"/);
+  assert.match(html, /data-public-preview/);
+  assert.match(story, /scrollIntoView/);
+  assert.match(story, /prefers-reduced-motion/);
+  assert.ok(fs.existsSync(path.join(root, "gaigs", "social-preview-v2.png")));
 });
 
 test("personal memory uses non-extractable AES-GCM encryption", () => {
@@ -87,6 +103,6 @@ test("mobile command center uses verified APIs and a reviewed release channel", 
   assert.match(personal, /executeSafeCommand/);
   assert.match(personal, /jarvis-release\.json/);
   assert.match(builder, /\/api\/jarvis-assist/);
-  assert.equal(release.versionCode, 8);
+  assert.equal(release.versionCode, 9);
   assert.match(release.downloadUrl, /^https:\/\/gaigs-jarvis-v2\.qw01\.chatgpt\.site\//);
 });

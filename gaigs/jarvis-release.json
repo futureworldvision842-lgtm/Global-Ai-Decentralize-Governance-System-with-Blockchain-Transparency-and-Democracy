@@ -1,11 +1,12 @@
 {
-  "versionCode": 8,
-  "versionName": "2.5.0-preview",
-  "releasedAt": "2026-08-11T12:08:49Z",
+  "versionCode": 9,
+  "versionName": "2.6.0-preview",
+  "releasedAt": "2026-08-11T12:55:05Z",
   "downloadUrl": "https://gaigs-jarvis-v2.qw01.chatgpt.site/downloads/GAIGS-JARVIS-v2-preview.apk",
-  "sha256": "3DB97800CA29662B411AD86B768CBD620CEAE2CCC39212A037E32CE52AFD18C1",
+  "sha256": "D40A809C94CF35DFB294CCDEEE4F7BA2656375116679232AE077B3D7FA4534AA",
   "channel": "reviewed-preview",
   "notes": [
+    "Complete public platform story covering mission, features, action loop, governance, privacy and live-versus-pilot scope",
     "E2E-encrypted private messages with device-local plaintext and receipt-chain verification",
     "Opt-in Android Nearby Connections messaging over Bluetooth and Wi-Fi without internet",
     "Public auditable city, country, global and proposal discussion rooms",

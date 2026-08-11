@@ -1,6 +1,6 @@
-const CACHE='gaigs-jarvis-v35';
+const CACHE='gaigs-jarvis-v36';
 const FILES=[
-  './','./index.html','./styles.css?v=35','./vendor/ethers.umd.min.js',
+  './','./index.html','./styles.css?v=36','./vendor/ethers.umd.min.js',
   './app.js?v=35','./network-core.js?v=35','./platform-core.js?v=34',
   './social-logic.js','./social-core.js?v=23','./community-logic.js',
   './constitution-logic.js','./community-admin.js','./governance-logic.js',
@@ -13,8 +13,8 @@ const FILES=[
   './creator-library-data.js?v=24','./mission-library-core.js?v=32',
   './peer-mesh-v2.js?v=35','./transparent-feed-v1.js?v=35',
   './hybrid-messaging-v3.js?v=35','./video-feed-v2.js?v=32',
-  './personal-jarvis-v2.js?v=33','./manifest.json','./icon-192.png',
-  './icon-512.png','./icon-maskable.png'
+  './personal-jarvis-v2.js?v=33','./platform-story-v1.js?v=36','./manifest.json','./icon-192.png',
+  './icon-512.png','./icon-maskable.png','./social-preview-v2.png'
 ];
 
 self.addEventListener('install',event=>event.waitUntil(
