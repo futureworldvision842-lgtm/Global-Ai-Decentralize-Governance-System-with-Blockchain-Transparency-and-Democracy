@@ -19,6 +19,7 @@ test('Sites product API exposes durable identity, media and account routes', () 
 
 test('credentials and CNIC use server-side protection', () => {
   assert.match(api, /PBKDF2/);
+  assert.match(api, /PASSWORD_ITERATIONS = 100000/);
   assert.match(api, /APP_KYC_PEPPER/);
   assert.match(api, /HttpOnly; Secure; SameSite=Lax/);
   assert.match(api, /cnic_hash/);

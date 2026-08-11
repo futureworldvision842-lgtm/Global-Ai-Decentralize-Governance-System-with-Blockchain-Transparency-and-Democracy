@@ -6,7 +6,8 @@
 let productSchemaReady = false;
 const PRODUCT_COOKIE = "gaigs_session";
 const SESSION_DAYS = 30;
-const PASSWORD_ITERATIONS = 120000;
+// Cloudflare Workers Web Crypto currently caps PBKDF2 at 100,000 iterations.
+const PASSWORD_ITERATIONS = 100000;
 const ZERO_HASH = "0".repeat(64);
 
 const PRODUCT_SCHEMA = [
