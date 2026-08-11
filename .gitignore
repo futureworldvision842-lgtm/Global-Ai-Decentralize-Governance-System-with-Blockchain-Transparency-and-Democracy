@@ -14,3 +14,11 @@ dist
 *.keystore
 __pycache__/
 *.py[cod]
+tmp/
+output/sites/
+output/screenshots/
+output/imagegen/
+output/pdf/rendered/
+output/presentations/rendered/
+output/presentations/*.inspect.ndjson
+output/presentations/test.*
