@@ -4,24 +4,28 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#07111d" />
-  <title>GAIGS JARVIS v2 — Your World, Your Intelligence</title>
-  <meta name="description" content="GAIGS is a people-owned action network for community decisions, local work, transparent project funds, verified progress and a personal JARVIS assistant." />
+  <title>GAIGS — One Platform from Voice to Verified Action</title>
+  <meta name="description" content="GAIGS connects social action, encrypted messaging, nearby work, communities, democratic decisions, transparent project funds, maps, science missions and personal JARVIS assistance." />
+  <link rel="canonical" href="https://gaigs-jarvis-v2.qw01.chatgpt.site/gaigs/" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="GAIGS — Your World. Your Decisions. Your Power to Act." />
-  <meta property="og:description" content="Share the real problem, connect people and skills, decide together, fund the plan and prove the result." />
-  <meta property="og:image" content="https://gaigs-jarvis-v2.qw01.chatgpt.site/gaigs/social-preview.png" />
-  <meta property="og:image:alt" content="People connected around a luminous Earth in a community-owned global action network." />
+  <meta property="og:description" content="One people-owned platform to post the problem, connect people and skills, decide together, fund the plan and verify the result." />
+  <meta property="og:url" content="https://gaigs-jarvis-v2.qw01.chatgpt.site/gaigs/" />
+  <meta property="og:image" content="https://gaigs-jarvis-v2.qw01.chatgpt.site/gaigs/social-preview-v2.png" />
+  <meta property="og:image:width" content="1664" />
+  <meta property="og:image:height" content="936" />
+  <meta property="og:image:alt" content="GAIGS connects people around a luminous Earth from problem post to community vote, funded project and verified result." />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="GAIGS — Your World. Your Decisions. Your Power to Act." />
   <meta name="twitter:description" content="One people-owned network for community action, local work, transparent projects and personal AI assistance." />
-  <meta name="twitter:image" content="https://gaigs-jarvis-v2.qw01.chatgpt.site/gaigs/social-preview.png" />
+  <meta name="twitter:image" content="https://gaigs-jarvis-v2.qw01.chatgpt.site/gaigs/social-preview-v2.png" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="icon" href="icon-192.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="GAIGS" />
-  <link rel="stylesheet" href="styles.css?v=35" />
+  <link rel="stylesheet" href="styles.css?v=36" />
   <script src="../config.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -36,7 +40,22 @@
 
   <section id="authScreen" class="auth-screen">
     <div class="auth-backdrop"></div>
-    <div class="auth-shell">
+    <header class="public-nav" aria-label="GAIGS public navigation">
+      <a class="public-nav-brand" href="#access" aria-label="GAIGS home"><span>G</span><b>GAIGS</b><small>Humanity in action</small></a>
+      <nav>
+        <a href="#whyGaigs">Why GAIGS</a>
+        <a href="#platform">Platform</a>
+        <a href="#actionLoop">How it works</a>
+        <a href="#governanceModel">Governance</a>
+        <a href="#trustModel">Trust</a>
+      </nav>
+      <div class="public-nav-actions">
+        <button type="button" data-public-preview>Open live preview</button>
+        <button type="button" class="public-nav-primary" data-public-auth="signup">Create account</button>
+      </div>
+    </header>
+
+    <div class="auth-shell" id="access">
       <div class="brand-panel">
         <div class="auth-brandline">
           <span class="auth-logo">G</span>
@@ -58,6 +77,10 @@
         <div class="eyebrow">ONE PLATFORM · PERSONAL JARVIS · PEOPLE IN CONTROL</div>
         <h1>Your world. Your decisions.<br><span>Your power to act.</span></h1>
         <p class="mission-copy">GAIGS brings social connection, local services, work, maps, verified news, community decisions, transparent project funds and your own private JARVIS into one people-owned network. Online or offline, share the real problem, build the solution and follow it all the way to proof.</p>
+        <div class="hero-ctas">
+          <button type="button" class="hero-primary" data-public-auth="signup">Create your GAIGS account <span>→</span></button>
+          <a href="#platformStory">Explore the complete platform ↓</a>
+        </div>
         <div class="mission-promises">
           <div><b>Voice becomes action.</b><span>Post the problem, gather evidence and organize the response.</span></div>
           <div><b>Everything nearby.</b><span>Find people, societies, work, services and missions around you.</span></div>
@@ -146,6 +169,172 @@
         </form>
       </div>
     </div>
+
+    <main class="platform-story" id="platformStory">
+      <section class="story-section story-opening" id="whyGaigs">
+        <div class="story-kicker"><span>01</span> THE MISSING LAYER</div>
+        <div class="opening-grid">
+          <div>
+            <h2>The internet gave everyone a voice.<br><em>GAIGS connects that voice to action.</em></h2>
+          </div>
+          <div class="opening-copy">
+            <p>Today, a problem is posted on one app, discussed on another, funded somewhere else, and then disappears without a public result. GAIGS brings that broken journey into one accountable loop.</p>
+            <p>People discover each other by place, skills and shared needs; communities make visible decisions; approved projects receive transparent accounts; and every milestone can be followed from evidence to outcome.</p>
+          </div>
+        </div>
+        <div class="contrast-strip" aria-label="From attention to action">
+          <div><small>Most platforms</small><b>Post → react → scroll away</b></div>
+          <span>becomes</span>
+          <div class="contrast-positive"><small>GAIGS</small><b>See → connect → decide → fund → verify</b></div>
+        </div>
+      </section>
+
+      <section class="story-section" id="platform">
+        <div class="story-heading">
+          <div><div class="story-kicker"><span>02</span> ONE ACCOUNT · ONE CONNECTED WORLD</div><h2>Everything people already need—organized around real outcomes.</h2></div>
+          <p>GAIGS is not a copy of one company. It connects familiar social, work, service, mapping, messaging and governance journeys under rules members can inspect.</p>
+        </div>
+        <div class="capability-mosaic">
+          <article class="capability-card capability-social"><span class="status live">LIVE</span><div class="capability-icon">◎</div><h3>Social action feed</h3><p>Publish text, images or video with scope and approximate location. Discuss, react, save, follow, report and turn a verified need into a mission.</p><small>Inspired by the ease of social media, designed for evidence and outcomes.</small></article>
+          <article class="capability-card capability-messages"><span class="status live">LIVE</span><div class="capability-icon">✉</div><h3>Private & public messaging</h3><p>End-to-end encrypted private envelopes online, auditable civic rooms, delivery/read receipts and Android Nearby relay when the internet is unavailable.</p><small>Private plaintext stays on participant devices.</small></article>
+          <article class="capability-card"><span class="status live">LIVE</span><div class="capability-icon">↗</div><h3>Skills, work & local services</h3><p>Offer professional, freelance or physical skills; post what you need; discover matches by declared ability, availability and safe location radius.</p><small>Nearby services and global work in one profile.</small></article>
+          <article class="capability-card"><span class="status live">LIVE</span><div class="capability-icon">⌂</div><h3>Societies & communities</h3><p>Discover nearby societies, request membership with private residence evidence, participate in local discussion and see the rules that govern every role.</p><small>Admins coordinate as accountable clerks—not owners.</small></article>
+          <article class="capability-card"><span class="status live">LIVE</span><div class="capability-icon">◇</div><h3>Proposals, votes & projects</h3><p>Raise a structured proposal, discuss evidence, cast an eligible ballot, create a project from an approved result and track milestones to proof.</p><small>AI explains and drafts; people alone decide.</small></article>
+          <article class="capability-card capability-wallet"><span class="status pilot">PILOT</span><div class="capability-icon">◈</div><h3>Wallet & transparent treasury</h3><p>Each account receives an internal pilot wallet and receipt history. Project contributions and releases remain visible and hash-linked for audit.</p><small>Real-money settlement requires licensed rails or a user-controlled wallet.</small></article>
+          <article class="capability-card"><span class="status live">LIVE</span><div class="capability-icon">⌖</div><h3>Maps & emergency response</h3><p>See registered centers, your private device location and opt-in approximate posts. Report emergencies, attach evidence and coordinate verified response.</p><small>Precise private location is not published by default.</small></article>
+          <article class="capability-card capability-jarvis"><span class="status live">LIVE</span><div class="capability-icon">✦</div><h3>Your personal JARVIS</h3><p>Use voice or chat to navigate, understand proposals, inspect funds, find work, draft reports and read approved encrypted preferences on your device.</p><small>JARVIS cannot vote, publish or move funds for you.</small></article>
+          <article class="capability-card"><span class="status live">LIVE</span><div class="capability-icon">⚗</div><h3>Humanity Lab</h3><p>Run deterministic science and resilience missions, compare strategies and submit reproducible evidence for human review.</p><small>A working foundation for the larger science-game vision.</small></article>
+        </div>
+      </section>
+
+      <section class="story-section action-section" id="actionLoop">
+        <div class="story-kicker"><span>03</span> THE GAIGS ACTION LOOP</div>
+        <h2>From a phone video to a verified public result.</h2>
+        <p class="story-lead">A resident can document a broken water line, tag the place safely and start a process that no longer ends at “likes.”</p>
+        <div class="action-rail">
+          <article><b>01</b><span>POST</span><p>Share the problem, evidence, scope and approximate location.</p></article>
+          <article><b>02</b><span>CONNECT</span><p>Notify relevant members, local skills and responsible community roles.</p></article>
+          <article><b>03</b><span>DISCUSS</span><p>Compare evidence, risks, costs and proposed solutions in a visible room.</p></article>
+          <article><b>04</b><span>DECIDE</span><p>Eligible members vote under a published rule and immutable ballot record.</p></article>
+          <article><b>05</b><span>FUND</span><p>An approved project receives a separate transparent pilot account.</p></article>
+          <article><b>06</b><span>EXECUTE</span><p>Providers complete milestones; funds require the configured human approvals.</p></article>
+          <article><b>07</b><span>PROVE</span><p>Evidence, verification and the final outcome close the public loop.</p></article>
+        </div>
+      </section>
+
+      <section class="story-section network-section" id="networkModel">
+        <div class="story-heading">
+          <div><div class="story-kicker"><span>04</span> ONLINE + NEARBY</div><h2>A network designed for both the cloud and the street.</h2></div>
+          <p>Your phone is a participant—not a secretly rented server. GAIGS keeps private working data local where possible and synchronizes only the records needed for shared features.</p>
+        </div>
+        <div class="network-compare">
+          <article>
+            <div class="network-orb cloud-orb"><span></span></div>
+            <small>WHEN INTERNET IS AVAILABLE</small><h3>Shared GAIGS cloud</h3>
+            <ul><li>Account and profile sync</li><li>Encrypted message envelopes</li><li>Shared posts, votes and civic records</li><li>Media upload and cross-device access</li><li>Public receipt-chain verification</li></ul>
+          </article>
+          <div class="network-bridge"><span>↔</span><b>HYBRID SYNC</b><small>consent · encryption · deduplication</small></div>
+          <article>
+            <div class="network-orb mesh-orb"><span></span><i></i><b></b></div>
+            <small>WHEN INTERNET IS UNAVAILABLE</small><h3>Android Nearby mesh</h3>
+            <ul><li>Opt-in Bluetooth and Wi-Fi discovery</li><li>Visible device verification code</li><li>Signed, time-limited store-and-forward packets</li><li>Duplicate protection and acknowledgements</li><li>Automatic online sync when connectivity returns</li></ul>
+          </article>
+        </div>
+        <p class="scope-note"><b>Honest boundary:</b> Nearby mode connects GAIGS Android devices within real radio range and local device density. It is inspired by public mesh designs but is not wire-compatible with independent apps such as bitchat, WhatsApp or Telegram.</p>
+      </section>
+
+      <section class="story-section governance-section" id="governanceModel">
+        <div class="story-kicker"><span>05</span> PEOPLE-OWNED GOVERNANCE</div>
+        <div class="governance-intro"><h2>Power starts with a person and moves upward only when scale demands it.</h2><p>Every level has a visible scope. Society matters stay local; city coordination is delegated by societies; country and global work handle only wider problems. Roles are reviewable, time-bound and recorded.</p></div>
+        <div class="governance-ladder" aria-label="GAIGS governance hierarchy">
+          <article class="level-person"><b>01</b><span>PERSON</span><p>Identity, privacy, skills, wallet consent and one eligible vote.</p></article>
+          <i>→</i>
+          <article class="level-society"><b>02</b><span>SOCIETY</span><p>Residents, local problems, membership rules and community projects.</p></article>
+          <i>→</i>
+          <article class="level-city"><b>03</b><span>CITY</span><p>Federated societies coordinate shared infrastructure and services.</p></article>
+          <i>→</i>
+          <article class="level-country"><b>04</b><span>COUNTRY</span><p>Cross-city policy, national evidence and accountable coordination.</p></article>
+          <i>→</i>
+          <article class="level-global"><b>05</b><span>GLOBAL</span><p>Humanitarian missions and problems that cross every border.</p></article>
+        </div>
+        <div class="governance-rules">
+          <article><span>MEMBERS DECIDE</span><h3>One eligible member, one ballot</h3><p>Eligibility comes from transparent community rules—not payment, popularity or administrator preference.</p></article>
+          <article><span>CLERKS COORDINATE</span><h3>Roles do not own the community</h3><p>Operational access is server-issued, scoped and audited. Members can use defined recall and review processes.</p></article>
+          <article><span>AI INFORMS</span><h3>JARVIS never becomes the ruler</h3><p>AI may summarize evidence, model impact and draft options. It cannot secretly finalize decisions or cast a ballot.</p></article>
+        </div>
+      </section>
+
+      <section class="story-section jarvis-story" id="jarvisModel">
+        <div class="jarvis-story-core" aria-hidden="true"><span>J</span><i></i><b></b></div>
+        <div>
+          <div class="story-kicker"><span>06</span> PERSONAL INTELLIGENCE, HUMAN CONTROL</div>
+          <h2>JARVIS helps each person use the whole platform.</h2>
+          <p>Ask in English or Roman Urdu. JARVIS can open the right workspace, explain a proposal, surface source-backed missions, find nearby work, read the mobile status, prepare a post or help audit a project.</p>
+          <div class="jarvis-abilities"><span>Voice navigation</span><span>Encrypted device memory</span><span>Mission research</span><span>Proposal explanation</span><span>Draft assistance</span><span>Mobile status</span></div>
+          <div class="human-approval"><b>Human approval boundary</b><p>Publishing, joining a society, sharing location, accepting a peer, voting, wallet connection and every sensitive action remain visible user decisions.</p></div>
+        </div>
+      </section>
+
+      <section class="story-section" id="trustModel">
+        <div class="story-heading">
+          <div><div class="story-kicker"><span>07</span> TRUST YOU CAN INSPECT</div><h2>Privacy where life is personal. Transparency where power is public.</h2></div>
+          <p>The system separates private identity and conversation from public civic records. “Blockchain” is used for verifiable receipts and governance—not as a magic word.</p>
+        </div>
+        <div class="trust-grid">
+          <article><span>PRIVATE</span><h3>Identity minimization</h3><p>Full CNIC is never placed on a profile or blockchain. The server stores a protected verification derivative and masked status.</p></article>
+          <article><span>ENCRYPTED</span><h3>Direct messages</h3><p>Participant devices use ECDH, HKDF and AES-GCM. The shared store carries encrypted envelopes, not readable private message bodies.</p></article>
+          <article><span>AUDITABLE</span><h3>Civic receipt chains</h3><p>Votes, project events, public rooms and wallet receipts use append-only records and linked hashes to expose tampering.</p></article>
+          <article><span>EXPLAINABLE</span><h3>Feed ranking</h3><p>Relevance, safe proximity, evidence, trust and freshness have visible weights. Members can choose Latest, Nearby or Verified Impact instead.</p></article>
+          <article><span>USER-OWNED</span><h3>Local device vault</h3><p>Approved JARVIS preferences use non-extractable AES-GCM keys on the device and can be inspected or erased by the user.</p></article>
+          <article><span>SEPARATE CONSENT</span><h3>Money and blockchain</h3><p>Signup does not silently create exportable crypto keys or move funds. User-controlled wallets and compliant settlement activate separately.</p></article>
+        </div>
+      </section>
+
+      <section class="story-section journey-section" id="useGaigs">
+        <div class="story-kicker"><span>08</span> ONE PLATFORM · MANY JOURNEYS</div>
+        <h2>Start with what you need today.</h2>
+        <div class="journey-grid">
+          <article><b>FOR A RESIDENT</b><h3>Improve the place around you</h3><p>Join a nearby society, report an issue, discuss evidence, vote and follow the project account to completion.</p></article>
+          <article><b>FOR A WORKER</b><h3>Turn skills into trusted opportunity</h3><p>Build one professional and personal profile, offer local or global services and respond to verified needs.</p></article>
+          <article><b>FOR A COMMUNITY</b><h3>Run transparent operations</h3><p>Register the society, review members, publish rules, manage proposals and keep every administrative action auditable.</p></article>
+          <article><b>FOR A CREATOR</b><h3>Publish for measurable impact</h3><p>Share video and evidence, organize an audience around a problem and reward verified contributions—not empty reach.</p></article>
+          <article><b>FOR A RESPONDER</b><h3>Coordinate during disruption</h3><p>Use public mission signals, nearby messaging and verified relief workflows while protecting vulnerable location data.</p></article>
+          <article><b>FOR A RESEARCHER</b><h3>Turn unsolved problems into missions</h3><p>Build reproducible Humanity Lab runs, compare approaches and contribute evidence that real communities can review.</p></article>
+        </div>
+      </section>
+
+      <section class="story-section mission-vision" id="missionVision">
+        <div class="mission-word">MISSION</div>
+        <div>
+          <div class="story-kicker"><span>09</span> WHY WE ARE BUILDING</div>
+          <h2>Move humanity from fragmented attention to coordinated, democratic action.</h2>
+          <p>Our mission is to give every person a practical way to connect voice, skills, local community, public decisions, transparent resources and trustworthy assistance—without concentrating authority in one administrator or one AI.</p>
+          <blockquote>“Your world. Your decisions. Your power to act.”</blockquote>
+        </div>
+        <div class="vision-card"><small>THE VISION</small><p>A global federation of self-governing communities that can solve local problems, coordinate wider missions and preserve a public trail from decision to result.</p></div>
+      </section>
+
+      <section class="story-section reality-section">
+        <div class="story-kicker"><span>10</span> WHAT IS LIVE · WHAT COMES NEXT</div>
+        <h2>Built in public. Explained honestly.</h2>
+        <div class="reality-grid">
+          <article><span class="status live">LIVE NOW</span><h3>Working shared MVP</h3><p>Accounts, profiles, uploads, posts, encrypted messaging, Nearby Android relay, communities, proposals, votes, projects, pilot wallets, maps, JARVIS tools, mission feeds and science sandboxes.</p></article>
+          <article><span class="status pilot">CONTROLLED PILOT</span><h3>Trust and settlement</h3><p>Wallet records and DAO contracts are production-direction pilots. Real deposits, withdrawals, escrow and on-chain deployment require licensed partners, security audit and staged rollout.</p></article>
+          <article><span class="status roadmap">ROADMAP</span><h3>Global scale</h3><p>Independent audits, multilingual moderation, larger peer-mesh testing, verified institutions, payment providers, app-store signing and a full-scale collaborative science game.</p></article>
+        </div>
+      </section>
+
+      <section class="story-final">
+        <div><small>THE NETWORK STARTS WITH PEOPLE</small><h2>Don’t just raise your voice.<br><span>Build what happens next.</span></h2><p>Create your place in GAIGS, explore the live product and help test a more accountable way to act together.</p></div>
+        <div class="final-actions"><button type="button" data-public-auth="signup">Create secure account <span>→</span></button><button type="button" data-public-preview>Explore live preview</button><a href="../downloads/GAIGS-JARVIS-v2-preview.apk" download>Download Android APK</a></div>
+      </section>
+    </main>
+
+    <footer class="public-footer">
+      <div><b>GAIGS</b><p>Global AI-enabled decentralized governance, social action and transparent coordination platform.</p></div>
+      <div><a href="../privacy.html" target="_blank" rel="noopener">Privacy</a><a href="../terms.html" target="_blank" rel="noopener">Terms</a><a href="../delete-account.html" target="_blank" rel="noopener">Delete account</a></div>
+      <small>© 2026 Future World Vision · Human decisions remain human.</small>
+    </footer>
   </section>
 
   <div id="app" class="app hidden">
@@ -300,5 +489,6 @@
   <script src="hybrid-messaging-v3.js?v=35"></script>
   <script src="video-feed-v2.js?v=32"></script>
   <script src="personal-jarvis-v2.js?v=33"></script>
+  <script src="platform-story-v1.js?v=36"></script>
 </body>
 </html>

@@ -44,7 +44,7 @@ test('Android nearby transport requires visible verification and modern permissi
   assert.doesNotMatch(native, /onConnectionInitiated[\s\S]{0,500}acceptConnection\(/);
   for (const permission of ['BLUETOOTH_ADVERTISE', 'BLUETOOTH_CONNECT', 'BLUETOOTH_SCAN', 'NEARBY_WIFI_DEVICES']) assert.match(manifest, new RegExp(permission));
   assert.match(gradle, /play-services-nearby:19\.3\.0/);
-  assert.match(gradle, /versionCode 8/);
+  assert.match(gradle, /versionCode 9/);
 });
 
 test('feed ranking is inspectable and excludes sensitive private data', () => {

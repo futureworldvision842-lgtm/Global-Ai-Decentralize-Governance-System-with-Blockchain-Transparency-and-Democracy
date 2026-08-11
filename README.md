@@ -1,8 +1,37 @@
-# GAIGS unified platform clone
+# GAIGS — Global AI-enabled Decentralized Governance System
 
-This is the development clone. The older source applications were not modified.
-Open `gaigs/index.html` through HTTPS or a local web server; `app.html` redirects
-to the same unified interface.
+**Your world. Your decisions. Your power to act.**
+
+GAIGS is a mobile-first social action and civic coordination platform. It brings
+social publishing, encrypted messaging, nearby skills and services, communities,
+maps, democratic proposals, transparent project accounts, emergency workflows,
+science missions and a personal JARVIS assistant into one connected product.
+
+- **Live platform:** <https://gaigs-jarvis-v2.qw01.chatgpt.site/gaigs/>
+- **Android preview:** <https://gaigs-jarvis-v2.qw01.chatgpt.site/downloads/GAIGS-JARVIS-v2-preview.apk>
+- **Privacy:** <https://gaigs-jarvis-v2.qw01.chatgpt.site/privacy.html>
+- **Account deletion:** <https://gaigs-jarvis-v2.qw01.chatgpt.site/delete-account.html>
+
+## Mission
+
+Move humanity from fragmented attention to coordinated, democratic action.
+People should be able to document a real problem, connect the right community
+and skills, make a transparent decision, organize resources and follow the work
+to a verified outcome—without giving an administrator or an AI unchecked power.
+
+## The GAIGS action loop
+
+1. **Post** the problem with evidence, scope and a safe approximate location.
+2. **Connect** relevant members, nearby skills and responsible community roles.
+3. **Discuss** evidence, cost, risk and competing solutions in a visible room.
+4. **Decide** through an eligible, rule-bound member vote.
+5. **Fund** an approved project through its own transparent pilot account.
+6. **Execute** measurable milestones with configured human approvals.
+7. **Prove** the result with evidence, independent verification and an audit trail.
+
+The older GAIGS source applications were not modified. This repository contains
+the isolated, upgraded v2/JARVIS product. Open `gaigs/index.html` through HTTPS
+or a local web server; `app.html` redirects to the same unified interface.
 
 ## What currently works
 
@@ -82,7 +111,7 @@ Run the complete local verification suite:
 
 `npm run verify`
 
-It executes 30 deterministic logic/source tests, compiles all four
+It executes the complete deterministic logic/source test suite, compiles all four
 production-direction Solidity contracts and builds the allow-listed web release.
 
 Deployable Firebase configuration is included in `firebase.json`. Never switch
