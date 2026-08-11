@@ -7,8 +7,8 @@ android {
         applicationId "com.futureworldvision.gaigs.jarvis"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 7
-        versionName "2.4.1-preview"
+        versionCode 8
+        versionName "2.5.0-preview"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -52,6 +52,7 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
+    implementation 'com.google.android.gms:play-services-nearby:19.3.0'
 }
 
 apply from: 'capacitor.build.gradle'

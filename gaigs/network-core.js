@@ -78,6 +78,16 @@
   async function transfer(recipientWalletId,amount,purpose){const result=await request('/api/wallet/transfer',{method:'POST',json:{recipientWalletId,amount,purpose}});if(result.wallet)state.wallet=result.wallet;return result}
   async function verifyLedger(){return request('/api/ledger/verify')}
 
-  window.gaigsApi={base,native,active,request,register,login,logout,me,updateProfile,upload,createPost,createProposal,vote,transfer,verifyLedger,loadShared};
+  async function registerMessagingDevice(device){return request('/api/messaging/devices',{method:'PUT',json:device})}
+  async function messagingContacts(query=''){return request('/api/messaging/contacts'+(query?`?q=${encodeURIComponent(query)}`:''))}
+  async function messagingKeys(userId){return request(`/api/messaging/keys/${encodeURIComponent(userId)}`)}
+  async function messagingMessages(after=0){return request(`/api/messaging/messages?after=${Math.max(0,Number(after)||0)}`)}
+  async function sendEncryptedMessage(message){return request('/api/messaging/messages',{method:'POST',json:message})}
+  async function markMessageRead(messageId){return request(`/api/messaging/messages/${encodeURIComponent(messageId)}/read`,{method:'POST'})}
+  async function verifyConversation(conversationId){return request(`/api/messaging/conversations/${encodeURIComponent(conversationId)}/verify`)}
+  async function roomMessages(type,key=''){const query=new URLSearchParams({type});if(key)query.set('key',key);return request(`/api/messaging/rooms?${query}`)}
+  async function postRoomMessage(message){return request('/api/messaging/rooms',{method:'POST',json:message})}
+
+  window.gaigsApi={base,native,active,request,register,login,logout,me,updateProfile,upload,createPost,createProposal,vote,transfer,verifyLedger,loadShared,registerMessagingDevice,messagingContacts,messagingKeys,messagingMessages,sendEncryptedMessage,markMessageRead,verifyConversation,roomMessages,postRoomMessage};
   queueMicrotask(()=>me().catch(error=>{if(active()){state.user=null;save();render()}console.info('[GAIGS] Shared session:',error.message)}));
 })();

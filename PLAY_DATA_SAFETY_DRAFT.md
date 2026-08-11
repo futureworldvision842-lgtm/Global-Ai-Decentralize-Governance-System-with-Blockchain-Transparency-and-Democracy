@@ -13,14 +13,16 @@ before every Play release.
 | Approximate/precise location | Nearby societies/services and map actions | Precise device location stays private; posts expose only user-approved approximate location |
 | Photos and videos | User posts, evidence, profile/company media | Only when the user publishes to a chosen scope |
 | Audio/voice | JARVIS speech input on device or through the configured AI proxy | Not public; production provider retention must be disclosed |
-| Messages and user content | Direct messages, posts, comments, votes and evidence | Per selected audience; direct messages remain participant-only |
+| Messages and user content | Encrypted direct-message envelopes, public room discussions, posts, votes and evidence | Private-message plaintext stays on participant devices; public rooms and posts use the selected public scope |
 | Professional information | Skills, services, work requests and company pages | User-controlled public or scoped profile fields |
 | Financial activity | Project contribution and settlement receipts when a licensed provider is connected | Aggregate project totals can be public; private provider/payment details cannot |
 | App interactions/diagnostics | Security, abuse prevention and reliability if production diagnostics are enabled | Not public |
 
 GAIGS does not request contacts, SMS, call logs, background location or broad
 photo/video-library access. Android uses the system picker for user-selected
-media and foreground location permission for nearby features.
+media and foreground location permission for nearby features. Optional Nearby
+Mesh also requests Bluetooth scan/connect/advertise and nearby Wi-Fi permissions
+after a user-controlled action; the user can stop that transport at any time.
 
 ## Purpose declarations to verify in Play Console
 
