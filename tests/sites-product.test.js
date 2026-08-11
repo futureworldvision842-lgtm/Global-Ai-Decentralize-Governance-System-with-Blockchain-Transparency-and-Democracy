@@ -7,6 +7,7 @@ const root = path.resolve(__dirname, '..');
 const api = fs.readFileSync(path.join(root, 'sites', 'product-api.js'), 'utf8');
 const app = fs.readFileSync(path.join(root, 'gaigs', 'app.js'), 'utf8');
 const network = fs.readFileSync(path.join(root, 'gaigs', 'network-core.js'), 'utf8');
+const dashboard = fs.readFileSync(path.join(root, 'gaigs', 'dashboard-core.js'), 'utf8');
 const hosting = JSON.parse(fs.readFileSync(path.join(root, '.openai', 'hosting.json'), 'utf8'));
 
 test('Sites product API exposes durable identity, media and account routes', () => {
@@ -44,4 +45,6 @@ test('web and native clients use the same authenticated API', () => {
   assert.match(app, /gaigsApi\.login/);
   assert.match(app, /gaigsApi\.createPost/);
   assert.match(app, /gaigsApi\.updateProfile/);
+  assert.match(dashboard, /gaigsApi\?\.active/);
+  assert.match(dashboard, /Shared account connected/);
 });
