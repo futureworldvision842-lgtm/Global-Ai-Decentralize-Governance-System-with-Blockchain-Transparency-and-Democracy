@@ -10,5 +10,6 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(JarvisSpeechPlugin.class);
         registerPlugin(JarvisBridgePlugin.class);
         registerPlugin(JarvisDevicePlugin.class);
+        registerPlugin(GaigsSecureStorePlugin.class);
     }
 }

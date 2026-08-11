@@ -1,7 +1,8 @@
 /* Production-readiness layer for shared accounts, nearby communities, services and wallet safety. */
 (function(){
   'use strict';
-  const cloudReady=()=>Boolean(firebaseAvailable&&window.NDCONF?.firebaseProductionMode===true&&fbAuth&&fbDb);
+  const sitesReady=()=>Boolean(window.gaigsApi?.active?.());
+  const cloudReady=()=>sitesReady()||Boolean(firebaseAvailable&&window.NDCONF?.firebaseProductionMode===true&&fbAuth&&fbDb);
   const uid=()=>fbAuth?.currentUser?.uid||state.user?.uid||state.user?.email||'offline-user';
   const recordId=(p='record')=>`${p}_${Date.now().toString(36)}_${crypto.getRandomValues(new Uint32Array(1))[0].toString(36)}`;
   const isoNow=()=>new Date().toISOString();
@@ -19,22 +20,24 @@
     if(state.wallet.status==='sandbox')state.wallet.status='preview';
     save();
   }
-  function statusText(){return cloudReady()?'Verified account · shared network':'Interactive preview · private to this device'}
+  function walletText(value){return state.wallet?.currency==='GCR'?`${Number(value||0).toLocaleString()} GCR`:money(value||0)}
+  function statusText(){return cloudReady()?'Shared account · secure network':'Interactive preview · private to this device'}
   function refreshStatus(){
     const status=document.getElementById('platformStatus');
     if(status)status.innerHTML=cloudReady()?'<span class="trust-pulse"></span><div><b>Secure network ready.</b><small>Verified accounts and shared community spaces are connected.</small></div>':'<span class="trust-pulse"></span><div><b>Built around your consent.</b><small>Your identity, location, vote and wallet actions stay under your control.</small></div>';
     const hint=document.getElementById('loginModeHint');
-    if(hint)hint.textContent=cloudReady()?'Email verification is required before login.':'Public account access begins on the secure release. Explore the complete interactive preview now.';
+    if(hint)hint.textContent=cloudReady()?'Shared account login is live. Email verification status remains visible until a mail provider is connected.':'Create a shared account or explore the private preview.';
     const pill=document.querySelector('.status-pill');
     if(pill)pill.innerHTML=`<span></span> ${cloudReady()?'Network online':'Private preview'}`;
     const wallet=document.querySelector('.wallet-chip');
-    if(wallet)wallet.innerHTML=cloudReady()?`<small>Platform account</small><b>${money(state.wallet?.available||0)}</b>`:'<small>Wallet</small><b>Not connected</b>';
+    if(wallet)wallet.innerHTML=cloudReady()?`<small>${esc(state.wallet?.currency||'Platform')} wallet</small><b>${walletText(state.wallet?.available||0)}</b>`:'<small>Wallet</small><b>Not connected</b>';
     const integrity=document.querySelector('.integrity-card');
     if(integrity){const anchored=(state.transactions||[]).filter(item=>item.blockchainTxHash).length;integrity.innerHTML=`<span>${anchored?'✓':'i'}</span><div><b>${anchored?'Anchor receipt available':'Ledger not blockchain-anchored'}</b><small>${anchored?`${anchored} network receipt${anchored===1?'':'s'} to inspect`:'Local/cloud records only'}</small></div>`;}
   }
   async function updatePublicProfile(){
     if(!cloudReady()||!state.user)return;
     const u=state.user;
+    if(sitesReady()){await window.gaigsApi.updateProfile({name:u.name,city:u.city,country:u.country,skills:u.skills,bio:u.bio,locationPublic:Boolean(u.locationPublic),lat:u.lat,lng:u.lng});return}
     await fbDb.collection('publicProfiles').doc(uid()).set({uid:uid(),displayName:u.name||'',city:u.city||'',country:u.country||'',skills:u.skills||'',bio:u.bio||'',avatarUrl:u.avatarUrl||'',companyIds:u.companyIds||[],locationPublic:Boolean(u.locationPublic),updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
   }
   function communities(){
@@ -60,7 +63,7 @@
   views.communities=function(){return `${pageHead('Nearby communities',`Matched by location. Exact residence goes only to selected society reviewers. <b>${statusText()}</b>`,`<button class="ghost-btn" data-live-location>📍 Update location</button><button class="action-btn" data-action="community">＋ Register society</button>`)}<div class="dashboard-grid">${communityCardsReal()}</div>`};
   views.treasury=function(){
     ensureAccount();const w=state.wallet;
-    return `${pageHead('Wallet & transparent ledger','A safe platform account with explicit payment status. This website never generates or stores a crypto private key.',`<button class="action-btn" data-wallet-transfer>Send / transfer</button>`)}<div class="demo-banner">${cloudReady()?'Shared ledger is online. Real settlement remains disabled until a regulated payment or user-owned wallet provider is configured.':'Preview entries demonstrate the flow; they are not money and cannot leave this device.'}</div><div class="dashboard-grid">${card('My platform account',`<div class="wallet-balance"><div><small>Account ID</small><div class="mono">${esc(w.id)}</div><strong>${money(w.available||0)}</strong></div><span class="tag ${w.status==='live'?'green':'gold'}">${esc(w.status.toUpperCase())}</span></div><div class="metric-row"><div class="metric"><small>Available</small><b>${money(w.available||0)}</b></div><div class="metric"><small>Reserved</small><b>${money(w.reserved||0)}</b></div></div><div class="rule-actions" style="margin-top:12px"><button class="ghost-btn" data-wallet-transfer>Send</button><button class="ghost-btn" data-action="verifyChain">Verify ledger</button></div>`,5)}${card('Account safety',`<div class="rule-card"><h4>User approval required</h4><p>JARVIS may prepare a transfer but cannot submit it. Every transfer needs an explicit user confirmation.</p></div><div class="rule-card" style="margin-top:10px"><h4>Settlement boundary</h4><p>Deposits and withdrawals must use a licensed provider or user-controlled wallet.</p></div>`,7)}${card('Transaction history',transactionTable(),12)}</div>`;
+    return `${pageHead('Wallet & tamper-evident ledger','A dedicated GAIGS Credits account with a SHA-256 receipt chain. This app never generates or stores a crypto private key.',`<button class="action-btn" data-wallet-transfer>Send credits</button>`)}<div class="demo-banner">${cloudReady()?'Shared GCR ledger is online. GCR is a closed-loop contribution/reward credit: it is not PKR, cryptocurrency, a deposit or an investment.':'Preview entries are private test records and have no monetary value.'}</div><div class="dashboard-grid">${card('My platform wallet',`<div class="wallet-balance"><div><small>Wallet ID</small><div class="mono">${esc(w.id)}</div><strong>${walletText(w.available||0)}</strong></div><span class="tag ${cloudReady()?'green':'gold'}">${esc(String(w.status||'preview').toUpperCase())}</span></div><div class="metric-row"><div class="metric"><small>Available</small><b>${walletText(w.available||0)}</b></div><div class="metric"><small>Reserved</small><b>${walletText(w.reserved||0)}</b></div></div><div class="rule-actions" style="margin-top:12px"><button class="ghost-btn" data-wallet-transfer>Send GCR</button><button class="ghost-btn" data-ledger-verify>Verify hash chain</button></div>`,5)}${card('Account safety',`<div class="rule-card"><h4>User approval required</h4><p>JARVIS may prepare a transfer but cannot submit it. Every transfer needs explicit confirmation.</p></div><div class="rule-card" style="margin-top:10px"><h4>Public-chain boundary</h4><p>The MVP is an append-only hash chain. Public blockchain anchors and real settlement require independent audits and regulated partners.</p></div>`,7)}${card('Transaction history',transactionTable(),12)}</div>`;
   };
   views.services=function(){
     const skills=String(state.user?.skills||'').toLowerCase().split(',').map(x=>x.trim()).filter(Boolean);
@@ -92,9 +95,10 @@
     });
   }
   function openTransferForm(){
-    openModal(`<h2>Prepare a transfer</h2><p class="muted">${cloudReady()?'Settlement provider is not configured, so this creates a reviewable draft only.':'Preview transfers are private test records and do not move money.'}</p><form id="walletTransferForm" class="form-grid"><label>Recipient account ID<input id="transferRecipient" required placeholder="GAIGS-XXXXXXXX"></label><label>Amount (PKR)<input id="transferAmount" required type="number" min="1" step="1"></label><label>Purpose<input id="transferPurpose" required maxlength="160"></label><label class="consent"><input type="checkbox" required> I reviewed the recipient, amount and purpose.</label><button class="primary">Create transfer draft</button></form>`);
-    $('#walletTransferForm').addEventListener('submit',event=>{
+    openModal(`<h2>Send GAIGS Credits</h2><p class="muted">GCR is a closed-loop contribution credit. It cannot be deposited, withdrawn or traded as money.</p><form id="walletTransferForm" class="form-grid"><label>Recipient wallet ID<input id="transferRecipient" required placeholder="GAIGS-XXXXXXXXXXXX"></label><label>Amount (GCR)<input id="transferAmount" required type="number" min="1" max="100000" step="1"></label><label>Purpose<input id="transferPurpose" required maxlength="160"></label><label class="consent"><input type="checkbox" required> I reviewed the recipient, amount and purpose.</label><button class="primary">Confirm GCR transfer</button></form>`);
+    $('#walletTransferForm').addEventListener('submit',async event=>{
       event.preventDefault();const amount=Number($('#transferAmount').value);if(!Number.isFinite(amount)||amount<=0)return toast('Enter a valid amount.');
+      if(sitesReady()){try{const result=await window.gaigsApi.transfer($('#transferRecipient').value.trim(),amount,$('#transferPurpose').value.trim());state.transactions.unshift({date:'Today',type:'transfer',desc:`To ${$('#transferRecipient').value.trim()}: ${$('#transferPurpose').value.trim()}`,amount:-amount,proof:`SHA-256 ${result.receipt.slice(0,16)}…`,entryHash:result.receipt,currency:'GCR'});save();closeModal();render();toast('GCR transfer recorded with a hash-chain receipt.');}catch(error){toast(error.message||'Transfer failed.')}return}
       state.transactions.unshift({id:recordId('tx'),date:'Today',type:'Draft transfer',desc:`To ${$('#transferRecipient').value.trim()}: ${$('#transferPurpose').value.trim()}`,amount:-amount,proof:'Awaiting regulated settlement',status:'draft',createdAt:isoNow()});
       save();closeModal();render();toast('Transfer draft saved; no money was moved.');
     });
@@ -105,6 +109,7 @@
     $$('[data-live-location]').forEach(button=>button.addEventListener('click',requestLiveLocation));
     $$('[data-community-join]').forEach(button=>button.addEventListener('click',()=>openJoinForm(button.dataset.communityJoin)));
     $$('[data-wallet-transfer]').forEach(button=>button.addEventListener('click',openTransferForm));
+    $$('[data-ledger-verify]').forEach(button=>button.addEventListener('click',async()=>{try{const result=sitesReady()?await window.gaigsApi.verifyLedger():{valid:false,checked:(state.transactions||[]).length,headHash:'none',notice:'Preview records are not on the shared ledger.'};openModal(`<h2>Ledger integrity</h2><div class="rule-card"><p><b>Status:</b> ${result.valid?'VALID HASH CHAIN':'NOT VERIFIED'}</p><p><b>Entries checked:</b> ${result.checked}</p><p><b>Head hash:</b> <span class="mono">${esc(result.headHash)}</span></p><p>${esc(result.notice)}</p></div>`);}catch(error){toast(error.message||'Ledger verification failed.')}}));
     $$('[data-connect-person]').forEach(button=>button.addEventListener('click',()=>connectPerson(button.dataset.connectPerson)));
     $$('[data-message-person]').forEach(button=>button.addEventListener('click',()=>messagePerson(button.dataset.messagePerson)));
   };

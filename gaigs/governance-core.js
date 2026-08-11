@@ -5,7 +5,8 @@
   const Logic=window.GAIGSGovernanceLogic;
   const auditKey='gaigsGovernanceAuditV2';
   const currentUid=()=>fbAuth?.currentUser?.uid||state.user?.uid||state.user?.email||'offline-member';
-  const cloudReady=()=>Boolean(firebaseAvailable&&window.NDCONF?.firebaseProductionMode===true&&fbAuth?.currentUser&&fbDb);
+  const sitesReady=()=>Boolean(window.gaigsApi?.active?.());
+  const cloudReady=()=>sitesReady()||Boolean(firebaseAvailable&&window.NDCONF?.firebaseProductionMode===true&&fbAuth?.currentUser&&fbDb);
   const normalizeScope=value=>String(value||state.scope||'society').toLowerCase();
   const proposalStatus=p=>Logic.normalizeStatus(p?.status);
   const proposalRule=p=>p?.ruleKey||(/rule|constitution/i.test(p?.title||'')?'constitutional':'standard');
@@ -17,6 +18,7 @@
   };
   const eligibleFor=p=>{
     if(!state.user)return false;
+    if(sitesReady())return true;
     if(!cloudReady())return true;
     if(state.user.kycStatus!=='verified')return false;
     if(normalizeScope(p.scope)==='society')return Boolean((state.user?.communityIds||[]).includes(p.scopeId)||(state.communities||[]).some(c=>c.id===p.scopeId&&(c.role==='admin'||c.ownerId===currentUid())));
@@ -74,6 +76,10 @@
     const validation=Logic.validateVote({voterId:currentUid(),choice,status:proposal.status,isEligible:eligibleFor(proposal),closesAt:proposal.closesAt||proposal.votingClosesAt});
     if(!validation.valid)return toast(validation.reason);
     try{
+      if(window.gaigsApi?.active()){
+        const result=await window.gaigsApi.vote(String(id),String(choice).toLowerCase());
+        state.votes[id]=choice;proposal.yes=result.tally.yes;proposal.no=result.tally.no;proposal.abstain=result.tally.abstain;proposal.status=result.status==='approved'?'Approved':'Voting';proposal.projectWalletId=result.projectWalletId||null;save();render();receiptModal({proposalId:String(id),hash:result.receipt},true);return;
+      }
       if(cloudReady()){
         if(!fbAuth.currentUser.emailVerified)throw new Error('Verify your email before voting.');
         const voteRef=fbDb.collection('proposals').doc(String(id)).collection('votes').doc(currentUid()),nonce=crypto.getRandomValues(new Uint32Array(2)).join('-');
@@ -89,11 +95,13 @@
   async function createProposal(event){
     event.preventDefault();event.stopImmediatePropagation();
     const title=$('#proposalTitle').value.trim(),scope=normalizeScope($('#proposalScope').value),ruleKey=$('#proposalRule').value,summary=$('#proposalBody').value.trim(),evidence=$('#proposalEvidence').value.trim(),budget=Number($('#proposalBudget').value||0),rule=Logic.ruleFor(ruleKey),id=`proposal_${Date.now().toString(36)}_${crypto.getRandomValues(new Uint32Array(1))[0].toString(36)}`;
-    if(cloudReady()&&state.user.kycStatus!=='verified')return toast('Identity review must be verified before creating a governance proposal.');
-    if(cloudReady()&&scope==='society'&&!(state.user.communityIds||[]).length&&!(state.communities||[]).some(c=>c.ownerId===currentUid()||c.createdBy===currentUid()))return toast('Join or create a verified society before opening a society proposal.');
+    if(cloudReady()&&!window.gaigsApi?.active()&&state.user.kycStatus!=='verified')return toast('Identity review must be verified before creating a governance proposal.');
+    if(cloudReady()&&!window.gaigsApi?.active()&&scope==='society'&&!(state.user.communityIds||[]).length&&!(state.communities||[]).some(c=>c.ownerId===currentUid()||c.createdBy===currentUid()))return toast('Join or create a verified society before opening a society proposal.');
     const record={id,title,scope,scopeId:scopeIdFor(scope),ruleKey,rulesVersion:Logic.VERSION,status:'discussion',summary,budget,evidence:1,evidenceCount:1,yes:0,no:0,abstain:0,eligibleCount:scope==='society'?1284:1,deadline:`Discussion open for ${rule.discussionHours} hours`,createdBy:currentUid(),createdAt:new Date().toISOString(),discussionClosesAt:new Date(Date.now()+rule.discussionHours*3600000).toISOString()};
     try{
-      if(cloudReady()){
+      if(window.gaigsApi?.active()){
+        const result=await window.gaigsApi.createProposal({title,scope:scope[0].toUpperCase()+scope.slice(1),description:summary,evidence,budget,ruleKey});state.proposals.unshift(result.proposal);
+      }else if(cloudReady()){
         const proposalRef=fbDb.collection('proposals').doc(id),evidenceRef=proposalRef.collection('evidence').doc(`evidence_${Date.now().toString(36)}`),batch=fbDb.batch();
         batch.set(proposalRef,{...record,createdAt:firebase.firestore.FieldValue.serverTimestamp(),discussionClosesAt:firebase.firestore.Timestamp.fromDate(new Date(record.discussionClosesAt)),eligibleCount:null});
         batch.set(evidenceRef,{authorId:currentUid(),summary:evidence,createdAt:firebase.firestore.FieldValue.serverTimestamp(),status:'submitted'});await batch.commit();

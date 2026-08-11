@@ -1,14 +1,14 @@
 {
-  "versionCode": 5,
-  "versionName": "2.3.0-preview",
-  "releasedAt": "2026-08-02T10:58:00Z",
+  "versionCode": 6,
+  "versionName": "2.4.0-preview",
+  "releasedAt": "2026-08-11T09:42:57Z",
   "downloadUrl": "https://gaigs-jarvis-v2.qw01.chatgpt.site/downloads/GAIGS-JARVIS-v2-preview.apk",
-  "sha256": "81434015D53931CF6DD892FDCE949DBA8A3912FD55829B810D72A18AA761DF6A",
+  "sha256": "FD61347B2C0B845AD9332ECA38676DD8A416F668175B2B5C55B85E17B05CE15D",
   "channel": "reviewed-preview",
   "notes": [
-    "Visible Android mobile core with pause and refresh controls",
-    "Real device status and allow-listed settings commands",
-    "Connected mission assistant and verified public disaster signals",
-    "Reviewed APK update channel with a published checksum"
+    "Shared GAIGS account registration, login and dedicated GCR wallet",
+    "Android Keystore AES-GCM protection for the native account session",
+    "Profile photos, media posts, governance votes and receipt-chain verification",
+    "Visible JARVIS background presence with user-controlled pause and refresh"
   ]
 }
