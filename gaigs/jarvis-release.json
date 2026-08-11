@@ -1,14 +1,15 @@
 {
-  "versionCode": 7,
-  "versionName": "2.4.1-preview",
-  "releasedAt": "2026-08-11T10:20:39Z",
+  "versionCode": 8,
+  "versionName": "2.5.0-preview",
+  "releasedAt": "2026-08-11T12:08:49Z",
   "downloadUrl": "https://gaigs-jarvis-v2.qw01.chatgpt.site/downloads/GAIGS-JARVIS-v2-preview.apk",
-  "sha256": "F7A65EA6A269ADF36F6A7F87234705CE3D1D754713A740BBA8FAD4D947E88853",
+  "sha256": "3DB97800CA29662B411AD86B768CBD620CEAE2CCC39212A037E32CE52AFD18C1",
   "channel": "reviewed-preview",
   "notes": [
-    "Shared GAIGS account registration, login and dedicated GCR wallet",
-    "Android Keystore AES-GCM protection for the native account session",
-    "Profile photos, media posts, governance votes and receipt-chain verification",
-    "Visible JARVIS background presence with user-controlled pause and refresh"
+    "E2E-encrypted private messages with device-local plaintext and receipt-chain verification",
+    "Opt-in Android Nearby Connections messaging over Bluetooth and Wi-Fi without internet",
+    "Public auditable city, country, global and proposal discussion rooms",
+    "Transparent feed ranking with For You, Nearby, Latest and Verified Impact controls",
+    "Shared GAIGS accounts, GCR pilot wallet, media posts, governance and visible JARVIS controls"
   ]
 }

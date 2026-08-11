@@ -9,6 +9,10 @@ const path = require("node:path");
   assert.match(source, /\/api\/auth\/login/);
   assert.match(source, /\/api\/wallet\/transfer/);
   assert.match(source, /\/api\/ledger\/verify/);
+  assert.match(source, /\/api\/messaging\/devices/);
+  assert.match(source, /\/api\/messaging\/messages/);
+  assert.match(source, /gaigs_private_messages/);
+  assert.match(source, /ECDH-P256-AESGCM/);
   assert.match(source, /env\.UPLOADS\.put/);
   const encoded = Buffer.from(source).toString("base64");
   const { default: worker } = await import(`data:text/javascript;base64,${encoded}`);
@@ -122,7 +126,7 @@ const path = require("node:path");
 
   assert.equal(response.status, 200);
   assert.match(await response.text(), /<title>GAIGS<\/title>/);
-  console.log("Sites worker serves GAIGS accounts, media, ledger, mission briefs, and JARVIS heartbeat APIs.");
+  console.log("Sites worker serves GAIGS accounts, encrypted messaging, media, ledger, mission briefs, and JARVIS heartbeat APIs.");
 })().catch((error) => {
   console.error(error);
   process.exitCode = 1;

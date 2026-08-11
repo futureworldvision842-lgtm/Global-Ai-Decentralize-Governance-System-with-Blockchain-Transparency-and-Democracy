@@ -11,7 +11,15 @@ to the same unified interface.
   configured; CNIC is reduced to last-four display metadata pending a real KYC
   provider.
 - Profiles, approximate-location posts, media upload, scoped feed, comments,
-  reactions, follow/save/report/block, messages and community discovery.
+  reactions, follow/save/report/block and community discovery.
+- Hybrid messaging: E2E-encrypted private envelopes online, device-local
+  plaintext, delivery/read receipts, hash-chained conversation receipts,
+  public auditable civic rooms, and opt-in Android Nearby Connections relay
+  over Bluetooth/Wi-Fi when internet is unavailable.
+- A transparent recommendation model with visible weights for declared-interest
+  relevance, coarse proximity, evidence, trust and freshness, plus Latest,
+  Nearby and Verified Impact controls. Private chats, CNIC and contacts are
+  excluded from ranking.
 - Society registration, private residence join requests, membership review,
   scoped roles, moderation and append-only admin audit entries.
 - Deterministic proposal rules, one immutable private ballot per eligible cloud
@@ -46,6 +54,13 @@ to the same unified interface.
 
 - The local/offline account and wallet are sandbox records, not a bank or crypto
   wallet.
+- Nearby mode is a GAIGS protocol inspired by public store-and-forward mesh
+  designs; it is not wire-compatible with the independent bitchat app. Nearby
+  peers must compare Android's verification code, and radio use remains subject
+  to OS permissions, battery controls and real device range/density.
+- Private DMs are encrypted on participant devices. City/country/global and
+  proposal rooms are deliberately public/auditable and must never be presented
+  as private chat.
 - Real deposits, transfers, donations, escrow and withdrawals require a licensed
   provider or user-controlled wallet integration plus webhooks, idempotency,
   double-entry reconciliation, disputes, KYC/AML and legal/security review.
