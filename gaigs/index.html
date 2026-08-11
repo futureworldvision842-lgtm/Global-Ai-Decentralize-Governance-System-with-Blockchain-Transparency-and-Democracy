@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="GAIGS" />
-  <link rel="stylesheet" href="styles.css?v=33" />
+  <link rel="stylesheet" href="styles.css?v=34" />
   <script src="../config.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -82,7 +82,7 @@
           </div>
           <label>Email<input id="signupEmail" type="email" required autocomplete="email" /></label>
           <div class="two-col">
-            <label>Password<input id="signupPassword" type="password" minlength="8" required autocomplete="new-password" /></label>
+            <label>Password<input id="signupPassword" type="password" minlength="10" required autocomplete="new-password" /></label>
             <label>CNIC<input id="signupCnic" inputmode="numeric" pattern="[0-9-]{13,15}" placeholder="XXXXX-XXXXXXX-X" required /></label>
           </div>
           <div class="identity-shield"><span>✓</span><div><b>Private identity check</b><small>Your full CNIC is never shown on your profile or written to blockchain. Only masked verification status is retained.</small></div></div>
@@ -111,7 +111,7 @@
           <button class="primary wide" type="submit">Log in</button>
           <button class="secondary wide" id="forgotPasswordBtn" type="button">Forgot password?</button>
           <button class="secondary wide" id="resendVerificationBtn" type="button">Resend verification email</button>
-          <p class="micro" id="loginModeHint">Email verification protects every account before it can join shared spaces.</p>
+          <p class="micro" id="loginModeHint">Secure shared accounts are live. Email verification remains visibly pending until the free mail provider is connected.</p>
         </form>
 
         <form id="otpForm" class="auth-form">
@@ -256,8 +256,9 @@
   </div>
 
   <script src="vendor/ethers.umd.min.js"></script>
-  <script src="app.js"></script>
-  <script src="platform-core.js?v=23"></script>
+  <script src="app.js?v=34"></script>
+  <script src="network-core.js?v=34"></script>
+  <script src="platform-core.js?v=34"></script>
   <script src="social-logic.js"></script>
   <script src="social-core.js?v=23"></script>
   <script src="community-logic.js"></script>

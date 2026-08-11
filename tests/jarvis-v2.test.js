@@ -65,6 +65,15 @@ test("Android background mode is visible and never always-listening", () => {
   assert.equal(config.android.webContentsDebuggingEnabled, false);
 });
 
+test("Android account sessions use hardware-backed encrypted storage", () => {
+  const secureStore = read("mobile/android/app/src/main/java/com/futureworldvision/gaigs/GaigsSecureStorePlugin.java");
+  const activity = read("mobile/android/app/src/main/java/com/futureworldvision/gaigs/MainActivity.java");
+  assert.match(secureStore, /AndroidKeyStore/);
+  assert.match(secureStore, /AES\/GCM\/NoPadding/);
+  assert.match(secureStore, /setRandomizedEncryptionRequired\(true\)/);
+  assert.match(activity, /registerPlugin\(GaigsSecureStorePlugin\.class\)/);
+});
+
 test("mobile command center uses verified APIs and a reviewed release channel", () => {
   const personal = read("gaigs/personal-jarvis-v2.js");
   const builder = read("scripts/build-sites.js");
@@ -74,6 +83,6 @@ test("mobile command center uses verified APIs and a reviewed release channel", 
   assert.match(personal, /executeSafeCommand/);
   assert.match(personal, /jarvis-release\.json/);
   assert.match(builder, /\/api\/jarvis-assist/);
-  assert.equal(release.versionCode, 5);
+  assert.equal(release.versionCode, 6);
   assert.match(release.downloadUrl, /^https:\/\/gaigs-jarvis-v2\.qw01\.chatgpt\.site\//);
 });

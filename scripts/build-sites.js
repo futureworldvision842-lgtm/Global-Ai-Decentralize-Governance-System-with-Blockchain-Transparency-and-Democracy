@@ -6,6 +6,7 @@ const source = path.join(root, "dist-web");
 const output = path.join(root, "dist");
 const client = path.join(output, "client");
 const server = path.join(output, "server");
+const productApi = fs.readFileSync(path.join(root, "sites", "product-api.js"), "utf8");
 
 if (!fs.existsSync(path.join(source, "index.html"))) {
   throw new Error("dist-web is missing. Run npm run build:web first.");
@@ -316,9 +317,13 @@ async function missionBrief(request) {
   return response;
 }
 
+${productApi}
+
 const worker = {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const productResponse = await handleProductRequest(request, env);
+    if (productResponse) return productResponse;
     if (url.pathname === "/api/jarvis-heartbeat" && request.method === "POST") {
       return receiveHeartbeat(request, env);
     }
