@@ -1,9 +1,9 @@
 {
-  "versionCode": 6,
-  "versionName": "2.4.0-preview",
-  "releasedAt": "2026-08-11T09:42:57Z",
+  "versionCode": 7,
+  "versionName": "2.4.1-preview",
+  "releasedAt": "2026-08-11T10:20:39Z",
   "downloadUrl": "https://gaigs-jarvis-v2.qw01.chatgpt.site/downloads/GAIGS-JARVIS-v2-preview.apk",
-  "sha256": "FD61347B2C0B845AD9332ECA38676DD8A416F668175B2B5C55B85E17B05CE15D",
+  "sha256": "F7A65EA6A269ADF36F6A7F87234705CE3D1D754713A740BBA8FAD4D947E88853",
   "channel": "reviewed-preview",
   "notes": [
     "Shared GAIGS account registration, login and dedicated GCR wallet",

@@ -87,6 +87,6 @@ test("mobile command center uses verified APIs and a reviewed release channel", 
   assert.match(personal, /executeSafeCommand/);
   assert.match(personal, /jarvis-release\.json/);
   assert.match(builder, /\/api\/jarvis-assist/);
-  assert.equal(release.versionCode, 6);
+  assert.equal(release.versionCode, 7);
   assert.match(release.downloadUrl, /^https:\/\/gaigs-jarvis-v2\.qw01\.chatgpt\.site\//);
 });
