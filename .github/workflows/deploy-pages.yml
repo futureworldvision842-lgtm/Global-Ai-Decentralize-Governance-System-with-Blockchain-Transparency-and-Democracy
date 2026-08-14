@@ -35,12 +35,20 @@ jobs:
           path: dist-web
 
   deploy:
+    # Ensure the deploy job has explicit permissions too so the deploy step
+    # definitely runs with pages write access.
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Download Pages artifact
+        uses: actions/download-pages-artifact@v2
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
