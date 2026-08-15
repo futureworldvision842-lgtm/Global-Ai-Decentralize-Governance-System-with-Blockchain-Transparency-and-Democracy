@@ -27,16 +27,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:pages
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist-web
 
   deploy:
-    # Ensure the deploy job has explicit permissions too so the deploy step
-    # definitely runs with pages write access.
     permissions:
       contents: read
       pages: write
@@ -49,6 +44,12 @@ jobs:
     steps:
       - name: Download Pages artifact
         uses: actions/download-pages-artifact@v2
+
+      - name: Configure GitHub Pages (ensure site enabled)
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
