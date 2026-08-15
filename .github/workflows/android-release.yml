@@ -25,9 +25,15 @@ jobs:
       - name: Sync native project
         working-directory: mobile
         run: npm run sync:android
+
+      - name: Make gradlew executable
+        working-directory: mobile/android
+        run: chmod +x ./gradlew
+
       - name: Build unsigned release bundle for QA
         working-directory: mobile/android
         run: ./gradlew bundleRelease
+
       - uses: actions/upload-artifact@v4
         with:
           name: gaigs-release-candidate-aab
