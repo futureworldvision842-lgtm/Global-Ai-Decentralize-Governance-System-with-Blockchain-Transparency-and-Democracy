@@ -41,6 +41,9 @@ jobs:
         run: npm --prefix mobile ci
       - name: Build production web assets and sync Android
         run: npm run package:android:production
+      - name: Make gradlew executable
+        working-directory: mobile/android
+        run: chmod +x ./gradlew
       - name: Restore protected upload keystore
         env:
           GAIGS_UPLOAD_KEYSTORE_B64: ${{ secrets.GAIGS_UPLOAD_KEYSTORE_B64 }}
