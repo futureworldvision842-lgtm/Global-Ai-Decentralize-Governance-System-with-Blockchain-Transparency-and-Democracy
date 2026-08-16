@@ -25,37 +25,52 @@ jobs:
       GAIGS_UPLOAD_KEY_ALIAS: ${{ secrets.GAIGS_UPLOAD_KEY_ALIAS }}
       GAIGS_UPLOAD_KEY_PASSWORD: ${{ secrets.GAIGS_UPLOAD_KEY_PASSWORD }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - uses: actions/setup-java@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
-      - uses: android-actions/setup-android@v3
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Install and verify platform
         run: npm ci && npm run verify
+
       - name: Install Android dependencies
         run: npm --prefix mobile ci
+
       - name: Build production web assets and sync Android
         run: npm run package:android:production
+
       - name: Make gradlew executable
         working-directory: mobile/android
         run: chmod +x ./gradlew
+
       - name: Restore protected upload keystore
         env:
           GAIGS_UPLOAD_KEYSTORE_B64: ${{ secrets.GAIGS_UPLOAD_KEYSTORE_B64 }}
         run: |
           test -n "$GAIGS_UPLOAD_KEYSTORE_B64"
           echo "$GAIGS_UPLOAD_KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/gaigs-upload.jks"
+
       - name: Build signed release bundle
         working-directory: mobile/android
         env:
           GAIGS_UPLOAD_STORE_FILE: ${{ runner.temp }}/gaigs-upload.jks
         run: ./gradlew bundleRelease
-      - uses: actions/upload-artifact@v4
+
+      - name: Upload signed AAB
+        uses: actions/upload-artifact@v4
         with:
           name: gaigs-play-signed-aab
           path: mobile/android/app/build/outputs/bundle/release/*.aab
