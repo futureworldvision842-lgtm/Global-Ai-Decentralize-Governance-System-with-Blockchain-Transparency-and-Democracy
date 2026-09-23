@@ -3,8 +3,14 @@ name: Android release candidate
 on:
   workflow_dispatch:
   push:
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/android-release.yml'
     branches: ["main", "codex/**", "agent/play-ready-gaigs"]
   pull_request:
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/android-release.yml'
     branches: ["main"]
 
 permissions:
@@ -27,10 +33,13 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
+          java-version: 17
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Configure Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses || true
 
       - name: Verify web logic and contracts
         run: npm ci && npm run verify
