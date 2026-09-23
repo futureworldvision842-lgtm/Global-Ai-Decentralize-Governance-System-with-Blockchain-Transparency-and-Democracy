@@ -2,16 +2,6 @@ name: Android release candidate
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'mobile/**'
-      - '.github/workflows/android-release.yml'
-    branches: ["main", "codex/**", "agent/play-ready-gaigs"]
-  pull_request:
-    paths:
-      - 'mobile/**'
-      - '.github/workflows/android-release.yml'
-    branches: ["main"]
 
 permissions:
   contents: read
