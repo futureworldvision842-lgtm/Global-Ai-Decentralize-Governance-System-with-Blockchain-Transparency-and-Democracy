@@ -1,41 +1,46 @@
-# Deploy the GAIGS API to your Cloudflare account
+# Deploy the GAIGS API
 
-GitHub Pages keeps serving the site. This Worker is only the account API (`gaigs-api`): sign-up, login, profiles, posts, wallet, governance, and messaging. It uses D1 for records and R2 for uploads.
+The account API is live at <https://gaigs-api.gaigs.workers.dev>. GitHub Pages serves the app and calls that origin for sign-in, posts, and proposals. `config.js` sets `platformApiBase` to that URL. `jarvisProxyUrl` stays on the current assist host.
 
-`account_id` is not in the repo. `database_id` is the placeholder `00000000-0000-0000-0000-000000000000` until you replace it.
+The Worker name is `gaigs-api`. D1 database name is `gaigs`. `database_id` in `wrangler.toml` is `9852a8b3-ab59-4f73-a3ec-a5b6870ad214`. `account_id` stays out of the file; deploys use the `CLOUDFLARE_ACCOUNT_ID` secret or `wrangler login`.
 
-## Values to fill in
+Media uploads are off. R2 is not enabled on the account, so the `UPLOADS` binding is commented out in `wrangler.toml` and `/api/profile/avatar`, `/api/uploads`, and `/api/media` return 503. Account, post, and proposal routes do not need R2.
 
-| Where | Name | Required | Notes |
-| --- | --- | --- | --- |
-| Cloudflare dashboard or `wrangler whoami` | Account ID | yes | GitHub secret `CLOUDFLARE_ACCOUNT_ID`. Do not commit it. |
-| GitHub repo secret | `CLOUDFLARE_API_TOKEN` | yes for Actions | API token with Workers Scripts Edit, D1 Edit, and Workers R2 Storage Edit. |
-| `wrangler.toml` | `database_id` | yes | Printed by `npx wrangler d1 create gaigs`. This id is not a secret. |
-| Worker secret | `APP_KYC_PEPPER` | yes | Long random string. Registration returns 503 without it. Never commit it. |
-| `config.js` | `platformApiBase` | after deploy | Replace `https://gaigs-api.YOUR_SUBDOMAIN.workers.dev` with the origin `wrangler deploy` prints. No trailing slash. |
-| `wrangler.toml` `[vars]` | `GAIGS_ALLOWED_ORIGINS` | no | Comma-separated extra origins for a custom domain. No `*`. |
-| R2 | bucket `gaigs-uploads` | yes for media | Account routes work after the bucket exists because the binding is declared. |
+## Re-enable R2
 
-`GEMINI_KEY` is not used by this Worker. JARVIS assist stays on `jarvisProxyUrl` (the current host) until you point that separate value at a host you control.
-
-## Commands
-
-From the repository root, after `npx wrangler login` (or with `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` exported):
-
-```bash
-npx wrangler d1 create gaigs
-```
-
-Paste the printed database id into `database_id` in `wrangler.toml`.
+1. Turn on R2 in the Cloudflare dashboard.
+2. Create the bucket and uncomment the binding:
 
 ```bash
 npx wrangler r2 bucket create gaigs-uploads
-npx wrangler d1 migrations apply gaigs --remote
-openssl rand -hex 32 | npx wrangler secret put APP_KYC_PEPPER
+```
+
+In `wrangler.toml`, uncomment:
+
+```toml
+[[r2_buckets]]
+binding = "UPLOADS"
+bucket_name = "gaigs-uploads"
+```
+
+3. Deploy again:
+
+```bash
 npx wrangler deploy
 ```
 
-Copy the `https://gaigs-api.<subdomain>.workers.dev` origin into `config.js` `platformApiBase`, commit, and let the Pages workflow publish it. Until `YOUR_SUBDOMAIN` is replaced, the Pages app keeps calling the current backend.
+## Redeploy the API
+
+From the repository root, with `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` set, or after `npx wrangler login`:
+
+```bash
+npx wrangler d1 migrations apply gaigs --remote
+npx wrangler deploy
+```
+
+`APP_KYC_PEPPER` is a Worker secret. Registration returns 503 without it. Set it once with `openssl rand -hex 32 | npx wrangler secret put APP_KYC_PEPPER`. Later deploys keep it. Do not commit it. `GEMINI_KEY` is not used by this Worker.
+
+Optional extra browser origins go in `GAIGS_ALLOWED_ORIGINS` in `wrangler.toml`. Do not use `*`.
 
 Local check:
 
@@ -45,11 +50,15 @@ npx wrangler d1 migrations apply gaigs --local
 npx wrangler dev
 ```
 
-Edit `.dev.vars` and set `APP_KYC_PEPPER` before trying registration. `.dev.vars` is gitignored.
+Put a real `APP_KYC_PEPPER` in `.dev.vars` before trying registration. `.dev.vars` is gitignored.
 
 ## GitHub Actions
 
-`.github/workflows/deploy-cloudflare.yml` runs only from the Actions tab (**Run workflow**). It applies the remote D1 migrations, then runs `wrangler deploy`. Set repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` first, and commit the real `database_id`. Create the R2 bucket and `APP_KYC_PEPPER` before the first run (`wrangler secret put` once; later deploys keep the secret).
+**Deploy GAIGS API** (`.github/workflows/deploy-cloudflare.yml`) runs only from the Actions tab. It applies remote D1 migrations, then runs `wrangler deploy`. It needs repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. The token needs Workers Scripts Edit and D1 Edit. Add Workers R2 Storage Edit before uncommenting the bucket binding.
+
+## Pages and Capacitor
+
+`platformApiBase` in the root `config.js` is what GitHub Pages and the Capacitor web bundle use (`mobile/scripts/sync-web.js` copies that file). A production config generated by `scripts/prepare-production.js` keeps the same default unless `GAIGS_PLATFORM_API_BASE` is set. `jarvisProxyUrl` is separate and is unchanged in `config.js`.
 
 ## CORS and cookies
 
@@ -61,6 +70,6 @@ Allowed browser origins:
 - `capacitor://localhost` and `ionic://localhost`
 - each origin in `GAIGS_ALLOWED_ORIGINS`
 
-Any other `Origin` is rejected and is not reflected. Responses that allow an origin set `Access-Control-Allow-Credentials: true`. Preflight allows `authorization`, `content-type`, `x-gaigs-request`, and `x-gaigs-client`, so bearer tokens from the Android app pass the preflight.
+Any other `Origin` is rejected and is not reflected. Responses that allow an origin set `Access-Control-Allow-Credentials: true`. Preflight allows `authorization`, `content-type`, `x-gaigs-request`, and `x-gaigs-client`.
 
-Web sign-in stores an HttpOnly cookie. On a cross-site call the cookie is `Secure; SameSite=None; Partitioned`, which is what a Pages page needs in order to send it to `workers.dev`. Same-origin calls keep `Secure; SameSite=Lax`. The native app also receives `sessionToken` and sends `Authorization: Bearer`.
+Web sign-in stores an HttpOnly cookie. On a cross-site call the cookie is `Secure; SameSite=None; Partitioned`. Same-origin calls keep `Secure; SameSite=Lax`. The native app also receives `sessionToken` and sends `Authorization: Bearer`.

@@ -12,15 +12,19 @@ workers_dev = true
 [[d1_databases]]
 binding = "DB"
 database_name = "gaigs"
-# Replace this placeholder with the id printed by `npx wrangler d1 create gaigs`.
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "9852a8b3-ab59-4f73-a3ec-a5b6870ad214"
 migrations_dir = "cloudflare/d1/migrations"
 
-# Media uploads. Create the bucket before the first deploy:
-#   npx wrangler r2 bucket create gaigs-uploads
-[[r2_buckets]]
-binding = "UPLOADS"
-bucket_name = "gaigs-uploads"
+# R2 is off on this account, so the UPLOADS binding is commented out.
+# An uncommented binding makes `wrangler deploy` fail until the bucket exists.
+# Media routes return 503 while this stays commented. To turn uploads back on:
+#   1. Enable R2 in the Cloudflare dashboard.
+#   2. npx wrangler r2 bucket create gaigs-uploads
+#   3. Uncomment the block below.
+#   4. npx wrangler deploy
+# [[r2_buckets]]
+# binding = "UPLOADS"
+# bucket_name = "gaigs-uploads"
 
 [vars]
 # Optional extra browser origins for a future custom domain, comma-separated.
