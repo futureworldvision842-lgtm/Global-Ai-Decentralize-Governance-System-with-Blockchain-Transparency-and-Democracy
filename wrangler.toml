@@ -1,0 +1,30 @@
+# GAIGS account API. Deploy from the repo root:
+#   npx wrangler d1 migrations apply gaigs --remote
+#   npx wrangler deploy
+#
+# account_id is omitted on purpose. Wrangler reads CLOUDFLARE_ACCOUNT_ID,
+# `wrangler login`, or the GitHub Actions accountId input. Do not commit it.
+name = "gaigs-api"
+main = "cloudflare/src/index.js"
+compatibility_date = "2026-10-24"
+workers_dev = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "gaigs"
+# Replace this placeholder with the id printed by `npx wrangler d1 create gaigs`.
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "cloudflare/d1/migrations"
+
+# Media uploads. Create the bucket before the first deploy:
+#   npx wrangler r2 bucket create gaigs-uploads
+[[r2_buckets]]
+binding = "UPLOADS"
+bucket_name = "gaigs-uploads"
+
+[vars]
+# Optional extra browser origins for a future custom domain, comma-separated.
+# The GitHub Pages origin, localhost, 127.0.0.1, and Capacitor are always allowed.
+# Do not use "*": credentialed responses must name an exact origin.
+# GAIGS_ALLOWED_ORIGINS = "https://gaigs.example"
+GAIGS_ALLOWED_ORIGINS = ""

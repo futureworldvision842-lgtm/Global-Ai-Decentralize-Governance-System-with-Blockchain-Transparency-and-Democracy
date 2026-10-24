@@ -1,5 +1,7 @@
 # Local Netlify folder
 .netlify
+.wrangler/
+.dev.vars
 cloud-jarvis/auth
 cloud-jarvis/node_modules
 node_modules
