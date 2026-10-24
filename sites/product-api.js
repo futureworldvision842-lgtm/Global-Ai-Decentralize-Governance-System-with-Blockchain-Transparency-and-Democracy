@@ -4,7 +4,9 @@
  */
 
 let productSchemaReady = false;
+const requestEnv = new WeakMap();
 const PRODUCT_COOKIE = "gaigs_session";
+const PAGES_ORIGIN = "https://futureworldvision842-lgtm.github.io";
 const SESSION_DAYS = 30;
 // Cloudflare Workers Web Crypto currently caps PBKDF2 at 100,000 iterations.
 const PASSWORD_ITERATIONS = 100000;
@@ -118,23 +120,67 @@ const PRODUCT_SCHEMA = [
   `CREATE UNIQUE INDEX IF NOT EXISTS idx_gaigs_rooms_chain_tip ON gaigs_room_messages(room_type, room_key, previous_hash)`,
 ];
 
+function bindProductEnv(request, env) {
+  if (request) requestEnv.set(request, env || {});
+}
+
+function configuredOrigins(request) {
+  const env = requestEnv.get(request) || {};
+  return String(env.GAIGS_ALLOWED_ORIGINS || "")
+    .split(",")
+    .map(item => item.trim().replace(/\/$/, ""))
+    .filter(item => item && item !== "*");
+}
+
+function isLocalDevOrigin(origin) {
+  let url;
+  try { url = new URL(origin); } catch (error) { return false; }
+  const host = url.hostname.replace(/^\[|\]$/g, "");
+  if (host !== "localhost" && host !== "127.0.0.1" && host !== "::1") return false;
+  return url.protocol === "http:" || url.protocol === "https:" || url.protocol === "capacitor:" || url.protocol === "ionic:";
+}
+
 function allowedProductOrigin(request) {
   const origin = request.headers.get("origin") || "";
-  const own = new URL(request.url).origin;
-  return origin === own || origin === "https://localhost" || origin === "capacitor://localhost" || origin === "http://localhost" ? origin : own;
+  if (!origin || origin === "null") return "";
+  let own = "";
+  try { own = new URL(request.url).origin; } catch (error) { own = ""; }
+  if (origin === own || origin === PAGES_ORIGIN || isLocalDevOrigin(origin) || configuredOrigins(request).includes(origin)) return origin;
+  return "";
 }
 
 function productHeaders(request, extra = {}) {
-  return {
+  const origin = allowedProductOrigin(request);
+  const headers = {
     "content-type": "application/json; charset=utf-8",
     "cache-control": "no-store",
     "x-content-type-options": "nosniff",
     "referrer-policy": "no-referrer",
-    "access-control-allow-origin": allowedProductOrigin(request),
-    "access-control-allow-credentials": "true",
-    "vary": "Origin",
+    vary: "Origin",
     ...extra,
   };
+  if (origin) {
+    headers["access-control-allow-origin"] = origin;
+    headers["access-control-allow-credentials"] = "true";
+  } else {
+    delete headers["access-control-allow-origin"];
+    delete headers["access-control-allow-credentials"];
+  }
+  return headers;
+}
+
+function productCorsHeaders(request, env, extra = {}) {
+  bindProductEnv(request, env);
+  return productHeaders(request, extra);
+}
+
+function enforceProductOrigin(request, env) {
+  bindProductEnv(request, env);
+  const origin = request.headers.get("origin") || "";
+  if (origin && allowedProductOrigin(request) !== origin) {
+    return productJson(request, { error: "Origin is not allowed." }, 403);
+  }
+  return null;
 }
 
 function productJson(request, value, status = 200, extra = {}) {
@@ -190,7 +236,19 @@ async function ensureProductSchema(env) {
   productSchemaReady = true;
 }
 
-function sessionCookie(token, maxAge) {
+function isCrossSiteRequest(request) {
+  const origin = request?.headers?.get?.("origin") || "";
+  if (!origin) return false;
+  try { return origin !== new URL(request.url).origin; } catch (error) { return true; }
+}
+
+function sessionCookie(token, maxAge, request) {
+  // Cross-site Pages and Capacitor calls only store the session when the
+  // cookie is SameSite=None; Secure. Partitioned keeps it scoped to the
+  // calling site. Same-origin hosting keeps HttpOnly; Secure; SameSite=Lax.
+  if (isCrossSiteRequest(request)) {
+    return `${PRODUCT_COOKIE}=${token}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=${maxAge}; Partitioned`;
+  }
   return `${PRODUCT_COOKIE}=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
 }
 
@@ -318,7 +376,7 @@ async function registerAccount(request, env) {
   }
   const userRow = await env.DB.prepare(`SELECT u.*,p.display_name,p.bio,p.skills,p.avatar_key,p.location_public,p.lat_approx,p.lng_approx FROM gaigs_users u JOIN gaigs_profiles p ON p.user_id=u.id WHERE u.id=?`).bind(userId).first();
   const payload = { ok: true, user: publicUser(userRow), wallet: publicWallet({ id: walletId, currency: "GCR", available: 100, reserved: 0, status: "mvp", created_at: now }), verification: { email: "pending-provider", identity: "pending-review" }, ...(request.headers.get("x-gaigs-client") === "native" ? { sessionToken } : {}) };
-  return productJson(request, payload, 201, { "set-cookie": sessionCookie(sessionToken, SESSION_DAYS * 86400) });
+  return productJson(request, payload, 201, { "set-cookie": sessionCookie(sessionToken, SESSION_DAYS * 86400, request) });
 }
 
 async function loginAccount(request, env) {
@@ -332,7 +390,7 @@ async function loginAccount(request, env) {
   const session = await createSession(env, row.id);
   await env.DB.prepare("UPDATE gaigs_users SET last_login_at=? WHERE id=?").bind(Date.now(), row.id).run();
   const wallet = await walletForUser(env, row.id);
-  return productJson(request, { ok: true, user: publicUser(row), wallet: publicWallet(wallet), ...(request.headers.get("x-gaigs-client") === "native" ? { sessionToken: session.token } : {}) }, 200, { "set-cookie": sessionCookie(session.token, SESSION_DAYS * 86400) });
+  return productJson(request, { ok: true, user: publicUser(row), wallet: publicWallet(wallet), ...(request.headers.get("x-gaigs-client") === "native" ? { sessionToken: session.token } : {}) }, 200, { "set-cookie": sessionCookie(session.token, SESSION_DAYS * 86400, request) });
 }
 
 async function accountSnapshot(request, env, user) {
@@ -699,7 +757,9 @@ async function handleProductRequest(request, env) {
   if (!url.pathname.startsWith("/api/")) return null;
   const productRoute = /^\/api\/(auth|profile|uploads|posts|wallet|ledger|governance|media|messaging)(\/|$)/.test(url.pathname);
   if (!productRoute) return null;
-  if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: productHeaders(request, { "access-control-allow-methods": "GET,POST,PUT,PATCH,OPTIONS", "access-control-allow-headers": "authorization,content-type,x-gaigs-request,x-gaigs-client" }) });
+  const denied = enforceProductOrigin(request, env);
+  if (denied) return denied;
+  if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: productHeaders(request, { "access-control-allow-methods": "GET,POST,PUT,PATCH,OPTIONS", "access-control-allow-headers": "authorization,content-type,x-gaigs-request,x-gaigs-client", "access-control-max-age": "86400" }) });
   try { await ensureProductSchema(env); } catch (error) { return productJson(request, { error: "Shared product database is unavailable." }, 503); }
 
   if (url.pathname === "/api/media" || url.pathname.startsWith("/api/media/")) return serveMedia(request, env, url.pathname.slice("/api/media/".length));
@@ -715,7 +775,7 @@ async function handleProductRequest(request, env) {
   if (url.pathname === "/api/auth/me" && request.method === "GET") return accountSnapshot(request, env, user);
   if (url.pathname === "/api/auth/logout" && request.method === "POST") {
     await env.DB.prepare("DELETE FROM gaigs_sessions WHERE token_hash=?").bind(user.sessionHash).run();
-    return productJson(request, { ok: true }, 200, { "set-cookie": sessionCookie("", 0) });
+    return productJson(request, { ok: true }, 200, { "set-cookie": sessionCookie("", 0, request) });
   }
   if (url.pathname === "/api/profile" && request.method === "PATCH") return updateProfile(request, env, user);
   if (url.pathname === "/api/profile/avatar" && request.method === "POST") return uploadMedia(request, env, user, "avatar");
@@ -741,3 +801,12 @@ async function handleProductRequest(request, env) {
   if (url.pathname === "/api/messaging/rooms" && request.method === "POST") return postRoomMessage(request, env, user);
   return productJson(request, { error: "Not found." }, 404);
 }
+
+export {
+  PAGES_ORIGIN,
+  allowedProductOrigin,
+  enforceProductOrigin,
+  handleProductRequest,
+  productCorsHeaders,
+  sessionCookie,
+};

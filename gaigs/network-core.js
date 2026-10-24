@@ -1,9 +1,12 @@
 /* Same-origin GAIGS account/data client with native bearer-token fallback. */
 (function(){
   'use strict';
-  const configured=String(window.NDCONF?.platformApiBase||'').replace(/\/$/,'');
+  const LEGACY_PLATFORM_API='https://gaigs-jarvis-v2.qw01.chatgpt.site';
+  const configuredRaw=String(window.NDCONF?.platformApiBase||'').replace(/\/$/,'');
+  const placeholderApi=/YOUR_SUBDOMAIN|YOUR_ACCOUNT|REPLACE_WITH_WORKERS_URL/.test(configuredRaw);
+  const configured=placeholderApi?'':configuredRaw;
   const hosted=/^https?:$/i.test(location.protocol)&&!['localhost','127.0.0.1'].includes(location.hostname);
-  const base=configured||(hosted?'':'https://gaigs-jarvis-v2.qw01.chatgpt.site');
+  const base=placeholderApi?LEGACY_PLATFORM_API:(configured||(hosted?'':LEGACY_PLATFORM_API));
   const native=Boolean(window.Capacitor?.isNativePlatform?.()||window.Capacitor?.getPlatform?.()==='android'||location.hostname==='localhost');
   const tokenKey='gaigsNativeSessionV1';
   const secureStore=window.Capacitor?.Plugins?.GaigsSecureStore;

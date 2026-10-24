@@ -1,0 +1,4 @@
+# Copy this file to the repository root as .dev.vars for `npx wrangler dev`.
+# Wrangler reads .dev.vars from the directory that contains wrangler.toml.
+# Never commit .dev.vars. Generate the pepper with: openssl rand -hex 32
+APP_KYC_PEPPER=replace-with-openssl-rand-hex-32

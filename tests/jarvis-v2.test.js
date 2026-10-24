@@ -11,8 +11,8 @@ test("JARVIS v2 scripts are wired into the isolated app shell", () => {
   const html = read("gaigs/index.html");
   const worker = read("gaigs/sw.js");
   for (const asset of ["peer-mesh-v2.js", "video-feed-v2.js", "personal-jarvis-v2.js"]) assert.match(html, new RegExp(asset.replaceAll(".", "\\.")));
-  assert.match(worker, /gaigs-jarvis-v36/);
-  assert.match(worker, /network-core\.js\?v=35/);
+  assert.match(worker, /gaigs-jarvis-v37/);
+  assert.match(worker, /network-core\.js\?v=37/);
   assert.match(worker, /request\.mode==='navigate'/);
   assert.match(html, /data-view="jarvisHub"/);
   assert.match(html, /data-view="videoFeed"/);

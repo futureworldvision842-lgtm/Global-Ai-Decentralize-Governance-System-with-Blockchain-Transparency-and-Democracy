@@ -1,7 +1,7 @@
-const CACHE='gaigs-jarvis-v36';
+const CACHE='gaigs-jarvis-v37';
 const FILES=[
   './','./index.html','./styles.css?v=36','./vendor/ethers.umd.min.js',
-  './app.js?v=35','./network-core.js?v=35','./platform-core.js?v=34',
+  './app.js?v=35','./network-core.js?v=37','./platform-core.js?v=34',
   './social-logic.js','./social-core.js?v=23','./community-logic.js',
   './constitution-logic.js','./community-admin.js','./governance-logic.js',
   './access-logic.js','./governance-core.js','./operations-core.js',
