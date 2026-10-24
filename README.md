@@ -7,7 +7,8 @@ social publishing, encrypted messaging, nearby skills and services, communities,
 maps, democratic proposals, transparent project accounts, emergency workflows,
 science missions and a personal JARVIS assistant into one connected product.
 
-- **Live platform:** <https://gaigs-jarvis-v2.qw01.chatgpt.site/gaigs/>
+- **Public app:** <https://futureworldvision842-lgtm.github.io/Global-Ai-Decentralize-Governance-System-with-Blockchain-Transparency-and-Democracy/gaigs/index.html>
+- **Account API:** <https://gaigs-api.gaigs.workers.dev> (`platformApiBase` in `config.js`; see `DEPLOY.md`)
 - **Android preview:** <https://gaigs-jarvis-v2.qw01.chatgpt.site/downloads/GAIGS-JARVIS-v2-preview.apk>
 - **Privacy:** <https://gaigs-jarvis-v2.qw01.chatgpt.site/privacy.html>
 - **Account deletion:** <https://gaigs-jarvis-v2.qw01.chatgpt.site/delete-account.html>

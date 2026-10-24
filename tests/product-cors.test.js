@@ -217,10 +217,14 @@ test("worker entrypoint applies the same origin rules", async () => {
   assert.equal(missing.headers.get("access-control-allow-origin"), PAGES);
 });
 
-test("platformApiBase is the single switch and the placeholder keeps the current API", () => {
-  const config = read("config.js");
-  assert.match(config, /platformApiBase:'https:\/\/gaigs-api\.YOUR_SUBDOMAIN\.workers\.dev'/);
-  assert.match(config, /jarvisProxyUrl:'https:\/\/gaigs-jarvis-v2\.qw01\.chatgpt\.site\/api\/jarvis-assist'/);
+test("platformApiBase points Pages at the live Worker and a placeholder still falls back", () => {
+  const configContext = { window: {} };
+  vm.createContext(configContext);
+  vm.runInContext(read("config.js"), configContext);
+  const live = "https://gaigs-api.gaigs.workers.dev";
+  assert.equal(configContext.window.NDCONF.platformApiBase, live);
+  assert.equal(configContext.window.NDCONF.jarvisProxyUrl, "https://gaigs-jarvis-v2.qw01.chatgpt.site/api/jarvis-assist");
+  assert.match(read("scripts/prepare-production.js"), /platformApiBase:optional\('GAIGS_PLATFORM_API_BASE','https:\/\/gaigs-api\.gaigs\.workers\.dev'\)/);
 
   function baseFor(ndconf, location) {
     const context = {
@@ -239,11 +243,13 @@ test("platformApiBase is the single switch and the placeholder keeps the current
   }
 
   const legacy = "https://gaigs-jarvis-v2.qw01.chatgpt.site";
-  assert.equal(baseFor({ platformApiBase: "https://gaigs-api.YOUR_SUBDOMAIN.workers.dev" }, { protocol: "https:", hostname: "futureworldvision842-lgtm.github.io" }), legacy);
-  assert.equal(baseFor({ platformApiBase: "https://gaigs-api.real-name.workers.dev" }, { protocol: "https:", hostname: "futureworldvision842-lgtm.github.io" }), "https://gaigs-api.real-name.workers.dev");
+  const pages = { protocol: "https:", hostname: "futureworldvision842-lgtm.github.io" };
+  assert.equal(baseFor(configContext.window.NDCONF, pages), live);
+  assert.equal(baseFor({ platformApiBase: "https://gaigs-api.YOUR_SUBDOMAIN.workers.dev" }, pages), legacy);
   assert.equal(baseFor({ platformApiBase: "https://gaigs-api.real-name.workers.dev/" }, { protocol: "https:", hostname: "localhost" }), "https://gaigs-api.real-name.workers.dev");
   assert.equal(baseFor({}, { protocol: "https:", hostname: "example.com" }), "");
   assert.equal(baseFor({}, { protocol: "http:", hostname: "localhost" }), legacy);
+  assert.match(read("gaigs/index.html"), /config\.js\?v=2/);
   assert.match(read("gaigs/index.html"), /network-core\.js\?v=37/);
   assert.match(read("gaigs/sw.js"), /network-core\.js\?v=37/);
 });
@@ -257,8 +263,11 @@ test("Cloudflare config, migration, and workflow are ready to fill in", () => {
   assert.match(toml, /name = "gaigs-api"/);
   assert.match(toml, /binding = "DB"/);
   assert.match(toml, /database_name = "gaigs"/);
-  assert.match(toml, /database_id = "00000000-0000-0000-0000-000000000000"/);
-  assert.match(toml, /binding = "UPLOADS"/);
+  assert.match(toml, /database_id = "9852a8b3-ab59-4f73-a3ec-a5b6870ad214"/);
+  assert.match(toml, /# \[\[r2_buckets\]\]/);
+  assert.match(toml, /# binding = "UPLOADS"/);
+  assert.match(toml, /# bucket_name = "gaigs-uploads"/);
+  assert.doesNotMatch(toml, /^\[\[r2_buckets\]\]/m);
   assert.match(toml, /GAIGS_ALLOWED_ORIGINS/);
   assert.doesNotMatch(toml, /^account_id\s*=/m);
   assert.match(workflow, /workflow_dispatch/);
@@ -269,7 +278,9 @@ test("Cloudflare config, migration, and workflow are ready to fill in", () => {
   assert.match(guide, /npx wrangler d1 migrations apply gaigs --remote/);
   assert.match(guide, /npx wrangler deploy/);
   assert.match(guide, /APP_KYC_PEPPER/);
-  assert.match(guide, /platformApiBase/);
+  assert.match(guide, /https:\/\/gaigs-api\.gaigs\.workers\.dev/);
+  assert.match(guide, /gaigs-uploads/);
+  assert.match(read("README.md"), /https:\/\/gaigs-api\.gaigs\.workers\.dev/);
   for (const table of ["gaigs_users", "gaigs_profiles", "gaigs_sessions", "gaigs_wallets", "gaigs_ledger_entries", "gaigs_uploads", "gaigs_posts", "gaigs_reward_events", "gaigs_proposals", "gaigs_votes", "gaigs_project_wallets", "gaigs_device_keys", "gaigs_private_messages", "gaigs_room_messages"]) {
     assert.match(migration, new RegExp(`CREATE TABLE IF NOT EXISTS ${table}\\b`));
     assert.match(apiSource, new RegExp(`CREATE TABLE IF NOT EXISTS ${table}\\b`));

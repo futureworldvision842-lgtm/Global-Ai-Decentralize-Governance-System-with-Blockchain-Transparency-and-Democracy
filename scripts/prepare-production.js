@@ -11,6 +11,7 @@ if(!fs.existsSync(path.join(target,'gaigs','index.html')))throw new Error('Run b
 
 const config={
   jarvisProxyUrl:optional('GAIGS_JARVIS_PROXY_URL','/.netlify/functions/jarvis-v2'),
+  platformApiBase:optional('GAIGS_PLATFORM_API_BASE','https://gaigs-api.gaigs.workers.dev'),
   showSampleData:false,
   firebaseDemoSync:false,
   firebaseProductionMode:true,
