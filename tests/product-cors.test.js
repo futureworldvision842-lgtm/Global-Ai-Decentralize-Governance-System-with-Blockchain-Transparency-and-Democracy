@@ -69,9 +69,7 @@ function preflight(origin, extraHeaders = {}) {
 const account = {
   fullName: "Ada Lovelace",
   email: "ada@example.com",
-  phone: "+923001234567",
   password: "long-password-1",
-  cnic: "1234567890123",
   country: "Pakistan",
   city: "Lahore",
 };
@@ -120,15 +118,7 @@ test("product preflight rejects origins outside the allowlist", async () => {
 });
 
 test("cross-site register and login set a credentialed cookie and bearer preflight still works", async () => {
-  const env = { DB: memoryDb(), APP_KYC_PEPPER: "test-pepper" };
-  const missingPepper = await api.handleProductRequest(new Request(`${WORKER}/api/auth/register`, {
-    method: "POST",
-    headers: { origin: PAGES, "content-type": "application/json" },
-    body: JSON.stringify(account),
-  }), { DB: env.DB });
-  assert.equal(missingPepper.status, 503);
-  assert.equal(missingPepper.headers.get("access-control-allow-origin"), PAGES);
-
+  const env = { DB: memoryDb() };
   const registered = await api.handleProductRequest(new Request(`${WORKER}/api/auth/register`, {
     method: "POST",
     headers: {
@@ -150,8 +140,11 @@ test("cross-site register and login set a credentialed cookie and bearer preflig
   assert.match(cookie, /Partitioned/);
   const payload = await registered.json();
   assert.equal(payload.user.email, account.email);
+  assert.equal(payload.user.phone, null);
+  assert.equal(payload.user.cnicLast4, null);
   assert.equal(payload.wallet.available, 100);
   assert.equal(payload.sessionToken, undefined);
+  assert.equal(JSON.stringify(payload).includes("1234512345123"), false);
 
   const token = /gaigs_session=([^;]+)/.exec(cookie)[1];
   const me = await api.handleProductRequest(new Request(`${WORKER}/api/auth/me`, {
@@ -159,6 +152,46 @@ test("cross-site register and login set a credentialed cookie and bearer preflig
   }), env);
   assert.equal(me.status, 200);
   assert.equal((await me.json()).user.email, account.email);
+
+  const withIdentity = await api.handleProductRequest(new Request(`${WORKER}/api/auth/register`, {
+    method: "POST",
+    headers: { origin: PAGES, "content-type": "application/json", "x-gaigs-request": "app" },
+    body: JSON.stringify({ ...account, email: "ada-extra@example.com", cnic: "1234512345123", phone: "12" }),
+  }), env);
+  assert.equal(withIdentity.status, 201);
+  const extra = await withIdentity.json();
+  assert.equal(extra.user.cnicLast4, null);
+  assert.equal(extra.user.phone, null);
+  assert.equal(JSON.stringify(extra).includes("1234512345123"), false);
+  const extraToken = /gaigs_session=([^;]+)/.exec(withIdentity.headers.get("set-cookie"))[1];
+  const proposed = await api.handleProductRequest(new Request(`${WORKER}/api/governance/proposals`, {
+    method: "POST",
+    headers: { origin: PAGES, "content-type": "application/json", "x-gaigs-request": "app", cookie: `gaigs_session=${extraToken}` },
+    body: JSON.stringify({
+      title: "Repair the shared water point",
+      scope: "Society",
+      description: "Document the broken water point and publish the repair evidence.",
+      evidence: "Photos from the street",
+      budget: 0,
+    }),
+  }), env);
+  assert.equal(proposed.status, 201);
+  const proposal = (await proposed.json()).proposal;
+  assert.equal(proposal.eligibleCount, null);
+  assert.equal(proposal.turnout, null);
+  assert.equal(proposal.votesCast, 0);
+  assert.equal(proposal.yes, 0);
+  assert.equal(proposal.no, 0);
+  assert.equal(proposal.abstain, 0);
+  assert.match(proposal.eligibilityNote, /not tracked/i);
+  const listed = await api.handleProductRequest(new Request(`${WORKER}/api/governance/proposals`, {
+    headers: { origin: PAGES },
+  }), env);
+  const rows = (await listed.json()).proposals;
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].eligibleCount, null);
+  assert.equal(rows[0].turnout, null);
+  assert.equal(rows[0].votesCast, 0);
 
   const loggedIn = await api.handleProductRequest(new Request(`${WORKER}/api/auth/login`, {
     method: "POST",
@@ -219,7 +252,7 @@ test("worker entrypoint applies the same origin rules", async () => {
 
 test("platformApiBase is the single switch and the placeholder keeps the current API", () => {
   const config = read("config.js");
-  assert.match(config, /platformApiBase:'https:\/\/gaigs-api\.YOUR_SUBDOMAIN\.workers\.dev'/);
+  assert.match(config, /platformApiBase:'https:\/\/gaigs-api\.gaigs\.workers\.dev'/);
   assert.match(config, /jarvisProxyUrl:'https:\/\/gaigs-jarvis-v2\.qw01\.chatgpt\.site\/api\/jarvis-assist'/);
 
   function baseFor(ndconf, location) {
@@ -240,6 +273,7 @@ test("platformApiBase is the single switch and the placeholder keeps the current
 
   const legacy = "https://gaigs-jarvis-v2.qw01.chatgpt.site";
   assert.equal(baseFor({ platformApiBase: "https://gaigs-api.YOUR_SUBDOMAIN.workers.dev" }, { protocol: "https:", hostname: "futureworldvision842-lgtm.github.io" }), legacy);
+  assert.equal(baseFor({ platformApiBase: "https://gaigs-api.gaigs.workers.dev" }, { protocol: "https:", hostname: "futureworldvision842-lgtm.github.io" }), "https://gaigs-api.gaigs.workers.dev");
   assert.equal(baseFor({ platformApiBase: "https://gaigs-api.real-name.workers.dev" }, { protocol: "https:", hostname: "futureworldvision842-lgtm.github.io" }), "https://gaigs-api.real-name.workers.dev");
   assert.equal(baseFor({ platformApiBase: "https://gaigs-api.real-name.workers.dev/" }, { protocol: "https:", hostname: "localhost" }), "https://gaigs-api.real-name.workers.dev");
   assert.equal(baseFor({}, { protocol: "https:", hostname: "example.com" }), "");

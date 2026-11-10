@@ -105,10 +105,10 @@ button:hover{transform:translateY(-1px)}
 
   <div id="app" style="display:none">
     <div class="tabs">
-      <div class="tab on" data-p="proposals" onclick="tab(this)">🗳️ Proposals &amp; Votes</div>
-      <div class="tab" data-p="ledger" onclick="tab(this)">📖 Open Ledger</div>
-      <div class="tab" data-p="funds" onclick="tab(this)">💰 Society Funds</div>
-      <div class="tab" data-p="hier" onclick="tab(this)">🏛️ Hierarchy</div>
+      <div class="tab on" data-p="proposals" onclick="tab(this)">🗳️ Proposals &amp; Votes · INTERACTIVE DEMO</div>
+      <div class="tab" data-p="ledger" onclick="tab(this)">📖 Open Ledger · ROADMAP</div>
+      <div class="tab" data-p="funds" onclick="tab(this)">💰 Society Funds · SANDBOX</div>
+      <div class="tab" data-p="hier" onclick="tab(this)">🏛️ Hierarchy · INTERACTIVE DEMO</div>
     </div>
 
     <!-- PROPOSALS -->
@@ -130,7 +130,7 @@ button:hover{transform:translateY(-1px)}
     <div class="pane" id="p-ledger">
       <div class="card">
         <h3>📖 The Open Ledger — every action, by everyone, forever visible</h3>
-        <p class="note" style="margin-bottom:10px">This is the heart of radical transparency: votes, proposals,
+        <p class="note" style="margin-bottom:10px">ROADMAP for a future blockchain. This browser ledger is local demo data: votes, proposals,
         funds in, funds out — nothing happens off the record. (In the full platform this becomes an
         immutable blockchain ledger.)</p>
         <div class="ledger" id="ledgerList"></div>
@@ -143,7 +143,7 @@ button:hover{transform:translateY(-1px)}
         <div class="card">
           <h3>💰 <span id="socName2"></span> treasury</h3>
           <div class="funds" id="fundBal">Rs 0</div>
-          <div class="note">Every rupee below is traceable on the ledger. Passed proposals draw from this treasury automatically.</div>
+          <div class="note">SIMULATION — NOT REAL MONEY. Passed proposals draw from this sample treasury automatically.</div>
         </div>
         <div class="card">
           <h3>🤲 Contribute (demo)</h3>
@@ -160,9 +160,8 @@ button:hover{transform:translateY(-1px)}
     <div class="pane" id="p-hier">
       <div class="card">
         <h3>🏛️ Bottom-up federation — society → city → country → global</h3>
-        <p class="note" style="margin-bottom:12px">Decisions start at YOUR society's own center (masjid /
-        community hall). Societies federate upward; each level only handles what the level below
-        can't. This inverts the colonial model — power flows up from people, not down from capitals.</p>
+        <p class="note" style="margin-bottom:12px">Decisions start at your community's own meeting place (a community hall or
+        local hub). Communities federate upward; each level only handles what the level below can't.</p>
         <div class="hier" id="hierView"></div>
       </div>
     </div>
@@ -174,7 +173,7 @@ button:hover{transform:translateY(-1px)}
 <script>
 /* ---------------- state ---------------- */
 const SOCIETIES=[
-  {id:'g11',  name:'G-11/4 Society (Masjid-e-Nabawi Qureshi Hashmi)', city:'Islamabad', country:'Pakistan'},
+  {id:'isb',  name:'Sample Community (Islamabad)', city:'Islamabad', country:'Pakistan'},
   {id:'f10',  name:'F-10 Community Society',  city:'Islamabad', country:'Pakistan'},
   {id:'joh',  name:'Johar Town Society',      city:'Lahore',    country:'Pakistan'},
   {id:'glb',  name:'Global Online Society',   city:'—',         country:'Global'},
@@ -185,12 +184,12 @@ function load(){
   try{const d=JSON.parse(localStorage.getItem(LS));if(d&&d.societies)return d}catch(e){}
   // seed
   const soc={};
-  for(const s of SOCIETIES){soc[s.id]={funds:s.id==='g11'?50000:20000,proposals:[],ledger:[
-    {t:Date.now()-864e5*3,actor:'system',what:'Society treasury opened',amt:s.id==='g11'?50000:20000}
+  for(const s of SOCIETIES){soc[s.id]={funds:s.id==='isb'?50000:20000,proposals:[],ledger:[
+    {t:Date.now()-864e5*3,actor:'system',what:'Society treasury opened',amt:s.id==='isb'?50000:20000}
   ]}}
-  soc['g11'].proposals.push({
+  soc['isb'].proposals.push({
     id:1,title:'Water filtration plant for the street',author:'Community',cost:35000,
-    desc:'Clean drinking water point at the masjid gate, maintained by volunteers.',
+    desc:'Clean drinking water point for the street, maintained by volunteers. (SAMPLE DATA)',
     votes:{yes:['Ali','Fatima','Usman'],no:['Bilal'],veto:[]},comments:[
       {by:'Ali',txt:'Long overdue — the nearest filtered water is 2km away.'}],status:'open'});
   return {user:null,societies:soc,seq:2}

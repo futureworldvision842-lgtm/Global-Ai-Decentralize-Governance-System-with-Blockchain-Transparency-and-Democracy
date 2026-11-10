@@ -2,15 +2,18 @@
 
 **Your world. Your decisions. Your power to act.**
 
+Solo-founder interactive MVP. Planned community pilot in Islamabad, Pakistan. Seeking technical co-founders, pilot partners, grants and pre-seed.
+
 GAIGS is a mobile-first social action and civic coordination platform. It brings
 social publishing, encrypted messaging, nearby skills and services, communities,
 maps, democratic proposals, transparent project accounts, emergency workflows,
 science missions and a personal JARVIS assistant into one connected product.
 
-- **Live platform:** <https://gaigs-jarvis-v2.qw01.chatgpt.site/gaigs/>
+- **GitHub Pages (primary):** [interactive demo](https://futureworldvision842-lgtm.github.io/Global-Ai-Decentralize-Governance-System-with-Blockchain-Transparency-and-Democracy/gaigs/) and [governance MVP](https://futureworldvision842-lgtm.github.io/Global-Ai-Decentralize-Governance-System-with-Blockchain-Transparency-and-Democracy/mvp.html)
+- **External demo host (secondary):** <https://gaigs-jarvis-v2.qw01.chatgpt.site/gaigs/> — the AI explainer on this host is an external demo and may be unavailable
 - **Android preview:** <https://gaigs-jarvis-v2.qw01.chatgpt.site/downloads/GAIGS-JARVIS-v2-preview.apk>
-- **Privacy:** <https://gaigs-jarvis-v2.qw01.chatgpt.site/privacy.html>
-- **Account deletion:** <https://gaigs-jarvis-v2.qw01.chatgpt.site/delete-account.html>
+- **Privacy:** [privacy.html](https://futureworldvision842-lgtm.github.io/Global-Ai-Decentralize-Governance-System-with-Blockchain-Transparency-and-Democracy/privacy.html)
+- **Account deletion:** [delete-account.html](https://futureworldvision842-lgtm.github.io/Global-Ai-Decentralize-Governance-System-with-Blockchain-Transparency-and-Democracy/delete-account.html)
 
 ## Mission
 
@@ -33,51 +36,44 @@ The older GAIGS source applications were not modified. This repository contains
 the isolated, upgraded v2/JARVIS product. Open `gaigs/index.html` through HTTPS
 or a local web server; `app.html` redirects to the same unified interface.
 
-## What currently works
+## What you can try today (status labelled)
 
-- Installable, mobile-first PWA shell with explicit offline and cloud modes.
-- Email/password account creation and email verification when Firebase is
-  configured; CNIC is reduced to last-four display metadata pending a real KYC
-  provider.
-- Profiles, approximate-location posts, media upload, scoped feed, comments,
+Status words used below: **INTERACTIVE DEMO** (you can click through it), **SANDBOX** (simulated records, including “SIMULATION — NOT REAL MONEY” for credits), and **ROADMAP** (not available as a live service). There is no live pilot.
+
+- **INTERACTIVE DEMO.** Installable, mobile-first PWA shell with explicit offline and cloud modes.
+- **INTERACTIVE DEMO.** Email/password account creation. This demo does not collect a CNIC or a phone number. Email verification still needs a mail provider.
+- **INTERACTIVE DEMO.** Profiles, approximate-location posts, media upload, scoped feed, comments,
   reactions, follow/save/report/block and community discovery.
-- Hybrid messaging: E2E-encrypted private envelopes online, device-local
+- **INTERACTIVE DEMO.** Hybrid messaging: E2E-encrypted private envelopes online, device-local
   plaintext, delivery/read receipts, hash-chained conversation receipts,
   public auditable civic rooms, and opt-in Android Nearby Connections relay
   over Bluetooth/Wi-Fi when internet is unavailable.
-- A transparent recommendation model with visible weights for declared-interest
+- **INTERACTIVE DEMO.** A transparent recommendation model with visible weights for declared-interest
   relevance, coarse proximity, evidence, trust and freshness, plus Latest,
-  Nearby and Verified Impact controls. Private chats, CNIC and contacts are
-  excluded from ranking.
-- Society registration, private residence join requests, membership review,
+  Nearby and Verified Impact controls. Private chats and contacts are
+  excluded from ranking. The demo does not collect CNIC or phone numbers.
+- **INTERACTIVE DEMO.** Society registration, membership review,
   scoped roles, moderation and append-only admin audit entries.
-- Deterministic proposal rules, one immutable private ballot per eligible cloud
-  account, server aggregate tally and scheduled lifecycle finalization.
-- A versioned people-first constitution: verified resident formation petitions,
+- **INTERACTIVE DEMO.** Proposal records and one ballot per account. Turnout and eligibility stay empty unless a real eligible count is stored. A two-ballot approval path is labelled a demo rule.
+- **INTERACTIVE DEMO.** A versioned people-first constitution: formation petitions,
   boundary evidence, elected clerk mandates, recall and society-to-city federation.
-- Role-scoped society/city/country/global/system operations access. Viewing a
+- **INTERACTIVE DEMO.** Role-scoped society/city/country/global/system operations access. Viewing a
   scope does not grant operator authority.
-- Real Leaflet/OpenStreetMap rendering for registered centers, the private device
-  location and opt-in approximate post pins. Fake global map counters are not
-  used by the map workspace.
-- Voice-first JARVIS navigation commands plus an authenticated server proxy for
-  AI explanations. JARVIS cannot vote, publish, approve or move money.
-- An interactive Three.js/Cannon-es Humanity Lab physics run with touch controls,
+- **INTERACTIVE DEMO.** Leaflet/OpenStreetMap rendering for registered centers, the private device
+  location and opt-in approximate post pins. The map does not invent member or turnout totals.
+- **INTERACTIVE DEMO.** Voice-first JARVIS navigation commands plus an external explainer proxy.
+  The AI explainer may be unavailable. JARVIS cannot vote, publish, approve or move money.
+- **SANDBOX.** An interactive Three.js/Cannon-es Humanity Lab physics run with touch controls,
   reproducible run hash and review submission. Completion does not mint money or
   certify science.
-- Emergency report, evidence upload, two-person independent verification,
-  server-created zero-balance relief account and scoped notifications.
-- Transparent civic projects created from approved proposals, with confirmed
-  contributions, evidence-hashed milestones, independent verification and
-  vote-authorized releases.
-- Company/public pages and a scoped news-and-evidence workspace.
-- A non-custodial Ethereum DAO gateway for the configured testnet. The included
-  contracts implement verified membership, one-address-one-ballot governance,
-  timelocked execution, pull-based milestone withdrawals and aggregate anchoring.
-- Two interactive Humanity Lab sandboxes, including the deterministic Daily
+- **SANDBOX.** Emergency report, evidence upload, two-person independent verification,
+  and a zero-balance relief account. SIMULATION — NOT REAL MONEY.
+- **SANDBOX.** Civic project records created from approved proposals. SIMULATION — NOT REAL MONEY.
+- **INTERACTIVE DEMO.** Company/public pages and a scoped news-and-evidence workspace.
+- **ROADMAP.** A non-custodial Ethereum DAO gateway and the included contracts. They are not a live network, coin, or settlement rail.
+- **SANDBOX.** Two interactive Humanity Lab sandboxes, including the deterministic Daily
   Resilience World for flood, water, shelter and energy planning.
-- In-app privacy controls and authenticated account-deletion workflow, plus the
-  public privacy and deletion pages needed for Play Console declarations.
+- **INTERACTIVE DEMO.** In-app privacy controls and an account-deletion page. The mobile app, global network and people-owned coin remain roadmap items.
 
 ## Capability boundaries
 
@@ -117,3 +113,9 @@ production-direction Solidity contracts and builds the allow-listed web release.
 Deployable Firebase configuration is included in `firebase.json`. Never switch
 `firebaseProductionMode` to true until Auth, rules, indexes, Storage and Functions
 have been deployed and exercised in staging.
+
+## Licence
+
+The code in this repository is released under the MIT License. Copyright (c) 2026 Muhammad Qureshi. See `LICENSE` and `NOTICE`.
+
+Documentation and images created by Muhammad Qureshi are available under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Third-party assets, decks and images he does not own are excluded from that grant. GAIGS / Future World Vision is not an incorporated company.

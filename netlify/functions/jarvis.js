@@ -8,7 +8,7 @@ const https = require('https');
 const LOCAL_RAG_KNOWLEDGE = [
   {
     topic: "proposals and voting",
-    text: "G.A.I.G.S. utilizes a bottom-up governance hierarchy: Global -> Country -> City -> Society. Proposals are submitted at the society center (e.g. Masjid/Church/Community Hall). Votes require a quorum and a simple majority to pass. Crucially, a 33% citizen veto threshold instantly blocks any proposal from execution, neutralizing centralized lobby groups."
+    text: "G.A.I.G.S. utilizes a bottom-up governance hierarchy: Global -> Country -> City -> Society. Proposals are submitted at the community's own meeting place (a community hall or local hub). Votes require a quorum and a simple majority to pass. Crucially, a 33% citizen veto threshold instantly blocks any proposal from execution, neutralizing centralized lobby groups."
   },
   {
     topic: "wallet and ownership shares",

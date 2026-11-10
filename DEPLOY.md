@@ -11,8 +11,8 @@ GitHub Pages keeps serving the site. This Worker is only the account API (`gaigs
 | Cloudflare dashboard or `wrangler whoami` | Account ID | yes | GitHub secret `CLOUDFLARE_ACCOUNT_ID`. Do not commit it. |
 | GitHub repo secret | `CLOUDFLARE_API_TOKEN` | yes for Actions | API token with Workers Scripts Edit, D1 Edit, and Workers R2 Storage Edit. |
 | `wrangler.toml` | `database_id` | yes | Printed by `npx wrangler d1 create gaigs`. This id is not a secret. |
-| Worker secret | `APP_KYC_PEPPER` | yes | Long random string. Registration returns 503 without it. Never commit it. |
-| `config.js` | `platformApiBase` | after deploy | Replace `https://gaigs-api.YOUR_SUBDOMAIN.workers.dev` with the origin `wrangler deploy` prints. No trailing slash. |
+| Worker secret | `APP_KYC_PEPPER` | no | Optional leftover secret. Sign-up does not read it and does not collect CNIC or phone. Never commit it. |
+| `config.js` | `platformApiBase` | set | `https://gaigs-api.gaigs.workers.dev` with no trailing slash. A placeholder such as `YOUR_SUBDOMAIN` still falls back to the older host. |
 | `wrangler.toml` `[vars]` | `GAIGS_ALLOWED_ORIGINS` | no | Comma-separated extra origins for a custom domain. No `*`. |
 | R2 | bucket `gaigs-uploads` | yes for media | Account routes work after the bucket exists because the binding is declared. |
 
@@ -35,7 +35,7 @@ openssl rand -hex 32 | npx wrangler secret put APP_KYC_PEPPER
 npx wrangler deploy
 ```
 
-Copy the `https://gaigs-api.<subdomain>.workers.dev` origin into `config.js` `platformApiBase`, commit, and let the Pages workflow publish it. Until `YOUR_SUBDOMAIN` is replaced, the Pages app keeps calling the current backend.
+`config.js` already points `platformApiBase` at `https://gaigs-api.gaigs.workers.dev`. A placeholder such as `YOUR_SUBDOMAIN` still falls back to the older host. Do not deploy from this change until the D1 schema is confirmed; existing rows keep any identity hashes already stored.
 
 Local check:
 
@@ -45,7 +45,7 @@ npx wrangler d1 migrations apply gaigs --local
 npx wrangler dev
 ```
 
-Edit `.dev.vars` and set `APP_KYC_PEPPER` before trying registration. `.dev.vars` is gitignored.
+`.dev.vars` is gitignored. `APP_KYC_PEPPER` is not required for sign-up.
 
 ## GitHub Actions
 

@@ -30,11 +30,11 @@ export const seedPosts = [
     tags: ["Water", "Needs evidence"], support: 38, comments: 12, saves: 9, priority: "urgent", lat: 33.643, lng: 73.033,
   },
   {
-    id: "post-masjid-1", type: "community", scope: "city", authorId: "masjid-nabvi", author: "Jamia Masjid Nabvi Qureshi Hashmi", initials: "MN",
-    time: "1 hr", location: "Islamabad", title: "A mosque-centred community model",
-    body: "Construction, learning and community welfare updates can be followed through the community's public record. Join requests remain subject to local verification.",
-    tags: ["Community", "Transparent project"], support: 124, comments: 31, saves: 42, priority: "community",
-    source: "https://masjidenabvimodel.netlify.app/", image: "https://masjidenabvimodel.netlify.app/images/new-masjid-hero.png", lat: 33.684, lng: 73.047,
+    id: "post-isb-pilot", type: "community", scope: "city", authorId: "isb-pilot", author: "Islamabad pilot community (planned)", initials: "IP",
+    time: "1 hr", location: "Islamabad", title: "A planned community pilot",
+    body: "SAMPLE DATA. A consenting Islamabad community is planned. This record is not a live membership roll.",
+    tags: ["Community", "Sample"], support: 0, comments: 0, saves: 0, priority: "community",
+    lat: 33.684, lng: 73.047,
   },
   {
     id: "post-job-1", type: "job", scope: "nearby", authorId: "muhammad-qureshi", author: "Muhammad Qureshi", initials: "MQ",
@@ -59,18 +59,17 @@ export const seedServices = [
 
 export const seedCommunities = [
   {
-    id: "masjid-nabvi", name: "Jamia Masjid Nabvi Qureshi Hashmi", level: "Community", city: "Islamabad", members: 86,
-    status: "public-source", purpose: "Spiritual, educational and community development centred on a transparent mosque institution.",
-    source: "https://masjidenabvimodel.netlify.app/", hero: "https://masjidenabvimodel.netlify.app/images/new-masjid-hero.png",
-    project: { title: "Construction & community centre record", raised: 38, target: 100, unit: "% evidence complete" },
+    id: "isb-pilot", name: "Islamabad pilot community (planned)", level: "Community", city: "Islamabad", members: null,
+    status: "planned", purpose: "SAMPLE DATA. A future pilot community in Islamabad. Not open yet.",
+    project: { title: "Pilot preparation record", raised: 0, target: 100, unit: "% evidence complete" },
   },
-  { id: "i10-neighbours", name: "I-10 Neighbourhood Circle", level: "Society", city: "Islamabad", members: 214, status: "forming", purpose: "Shared problems, evidence, proposals and local service coordination.", project: { title: "Water pressure investigation", raised: 24, target: 100, unit: "% evidence complete" } },
-  { id: "islamabad-skills", name: "Islamabad Skills Exchange", level: "City", city: "Islamabad", members: 1240, status: "open", purpose: "Connect verified local needs with nearby professional and physical skills." },
+  { id: "i10-neighbours", name: "I-10 Neighbourhood Circle", level: "Society", city: "Islamabad", members: null, status: "forming", purpose: "SAMPLE DATA. Shared problems, evidence, proposals and local service coordination. Membership is not counted.", project: { title: "Water pressure investigation", raised: 0, target: 100, unit: "% evidence complete" } },
+  { id: "islamabad-skills", name: "Islamabad Skills Exchange", level: "City", city: "Islamabad", members: null, status: "open", purpose: "SAMPLE DATA. Connect local needs with nearby skills. Membership is not counted." },
 ];
 
 export const seedProposals = [
-  { id: "vote-water", scope: "society", title: "Fund an independent water-pressure inspection", summary: "Release PKR 18,000 only after a signed inspection report is attached.", yes: 72, no: 11, abstain: 8, eligible: 214, closes: "2d 4h", status: "voting", rule: "One verified resident · one vote" },
-  { id: "vote-library", scope: "city", title: "Open unused community room as evening study space", summary: "A 30-day trial with attendance and energy-use reporting.", yes: 418, no: 96, abstain: 41, eligible: 1240, closes: "5d", status: "discussion", rule: "City members · quorum 25%" },
+  { id: "vote-water", scope: "society", title: "Fund an independent water-pressure inspection", summary: "SAMPLE DATA. Release a sample amount only after a signed inspection report is attached.", yes: 0, no: 0, abstain: 0, eligible: null, closes: "2d 4h", status: "voting", rule: "Demo rule" },
+  { id: "vote-library", scope: "city", title: "Open unused community room as evening study space", summary: "SAMPLE DATA. A 30-day trial with attendance and energy-use reporting.", yes: 0, no: 0, abstain: 0, eligible: null, closes: "5d", status: "discussion", rule: "Demo rule" },
 ];
 
 export const driveCollections = [

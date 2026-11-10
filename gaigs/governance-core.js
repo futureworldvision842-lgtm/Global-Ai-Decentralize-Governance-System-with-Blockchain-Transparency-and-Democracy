@@ -24,36 +24,45 @@
     if(normalizeScope(p.scope)==='society')return Boolean((state.user?.communityIds||[]).includes(p.scopeId)||(state.communities||[]).some(c=>c.id===p.scopeId&&(c.role==='admin'||c.ownerId===currentUid())));
     return true; // Firestore rules make the final verified-jurisdiction decision.
   };
-  const eligibleCount=p=>Math.max(1,Number(p.eligibleCount||p.eligible||1284));
+  function knownEligible(p){
+    const raw=p?.eligibleCount??p?.eligible;
+    if(raw==null||raw==='')return null;
+    const num=Number(raw);
+    return Number.isFinite(num)&&num>=0?Math.floor(num):null;
+  }
   const countsFor=p=>{
     const mine=state.votes[p.id];
     return {yes:Number(p.yes||p.tally?.yes||0)+(mine==='yes'?1:0),no:Number(p.no||p.tally?.no||0)+(mine==='no'?1:0),abstain:Number(p.abstain||p.tally?.abstain||0)+(mine==='abstain'?1:0)};
   };
-  function governanceTally(p){return Logic.tally(countsFor(p),eligibleCount(p),proposalRule(p));}
+  function governanceTally(p){const eligible=knownEligible(p);return eligible==null?null:Logic.tally(countsFor(p),eligible,proposalRule(p));}
   function lifecycleBadge(p){
     const status=proposalStatus(p),classes=['approved','completed','implementation'].includes(status)?'green':['rejected','canceled','disputed'].includes(status)?'red':'gold';
     return `<span class="tag ${classes}">${esc(status.replace(/_/g,' ').toUpperCase())}</span>`;
   }
   function governanceCard(p){
-    const tally=governanceTally(p),rule=Logic.ruleFor(proposalRule(p)),mine=state.votes[p.id],status=proposalStatus(p),open=status==='voting';
+    const tally=governanceTally(p),counts=countsFor(p),rule=Logic.ruleFor(proposalRule(p)),mine=state.votes[p.id],status=proposalStatus(p),open=status==='voting';
     const closes=p.closesAt||p.votingClosesAt||p.deadline||'Server-controlled phase';
-    const result=open?`${tally.turnoutPercent}% turnout · ${tally.approvalPercent}% approval`:`${tally.cast.toLocaleString()} aggregate ballots`;
+    const yes=tally?tally.yes:counts.yes,no=tally?tally.no:counts.no,abstain=tally?tally.abstain:counts.abstain;
+    const turnoutText=tally&&tally.eligible>0?`${tally.turnoutPercent}% turnout`:'—';
+    const result=tally?(open?`${turnoutText} · ${tally.approvalPercent}% approval`:`${tally.cast.toLocaleString()} aggregate ballots`):'Turnout — · eligibility is not tracked yet';
+    const width=tally&&tally.eligible>0?Math.min(100,tally.turnoutPercent):0;
     return `<article class="proposal-item governance-record">
       <div class="governance-record-head"><div><div class="meta-row"><span class="tag">${esc(normalizeScope(p.scope).toUpperCase())}</span>${lifecycleBadge(p)}<span class="tag">${esc(rule.label)}</span></div><h3>${esc(p.title)}</h3></div><span class="tag">${esc(String(closes))}</span></div>
       <p class="muted">${esc(p.summary||p.description||'No summary supplied.')}</p>
-      <div class="metric-row"><div class="metric"><small>Eligible snapshot</small><b>${tally.eligible.toLocaleString()}</b></div><div class="metric"><small>Quorum</small><b>${rule.quorumPercent}%</b></div><div class="metric"><small>Approval rule</small><b>${rule.approvalPercent}%</b></div></div>
-      <div class="progress" style="margin-top:12px"><span style="width:${Math.min(100,tally.turnoutPercent)}%"></span></div>
-      <div class="meta-row"><span class="tag green">Yes ${tally.yes}</span><span class="tag red">No ${tally.no}</span><span class="tag">Abstain ${tally.abstain}</span><span class="tag ${tally.quorumMet?'green':'gold'}">${esc(result)}</span></div>
+      <div class="metric-row"><div class="metric"><small>Eligible snapshot</small><b>${tally?tally.eligible.toLocaleString():'—'}</b></div><div class="metric"><small>Quorum</small><b>${tally?rule.quorumPercent+'%':'—'}</b></div><div class="metric"><small>Approval rule</small><b>${tally?rule.approvalPercent+'%':'demo rule'}</b></div></div>
+      <div class="progress" style="margin-top:12px"><span style="width:${width}%"></span></div>
+      <div class="meta-row"><span class="tag green">Yes ${yes}</span><span class="tag red">No ${no}</span><span class="tag">Abstain ${abstain}</span><span class="tag ${tally&&tally.quorumMet?'green':'gold'}">${esc(result)}</span></div>
+      ${tally?'':`<p class="muted">${esc(p.eligibilityNote||'Eligibility is not tracked yet. Vote totals above are recorded ballots only.')}</p>`}
       <div class="governance-proof"><b>Rules ${esc(Logic.VERSION)}</b><span>Ballots are one-per-account and private. Public totals are server aggregated; blockchain anchoring is a separate receipt.</span></div>
       <div class="rule-actions"><button class="mini-btn" data-action="jarvis">Explain with JARVIS</button><button class="mini-btn" data-governance-proof="${esc(p.id)}">Audit details</button>${open?`<button class="action-btn" data-vote="${esc(p.id)}" data-choice="yes" ${mine?'disabled':''}>${mine?'Vote recorded':'Vote yes'}</button><button class="ghost-btn" data-vote="${esc(p.id)}" data-choice="no" ${mine?'disabled':''}>Vote no</button><button class="ghost-btn" data-vote="${esc(p.id)}" data-choice="abstain" ${mine?'disabled':''}>Abstain</button>`:''}</div>
     </article>`;
   }
   proposalCard=governanceCard;
-  rulesPanel=function(){return Object.values(Logic.rules).map(rule=>`<div class="rule-card"><h4>${esc(rule.label)}</h4><p>${rule.discussionHours}h discussion · ${rule.votingHours}h voting · ${rule.quorumPercent}% quorum · ${rule.approvalPercent}% approval · ${rule.minEvidence} evidence minimum.</p></div>`).join('')+`<div class="rule-card"><h4>Authority boundary</h4><p>JARVIS explains. Operators run the workflow. Eligible people vote. No administrator can edit a ballot or declare an outcome from the browser.</p></div>`};
+  rulesPanel=function(){return Object.values(Logic.rules).map(rule=>`<div class="rule-card"><h4>${esc(rule.label)}</h4><p>${rule.discussionHours}h discussion · ${rule.votingHours}h voting · ${rule.quorumPercent}% quorum · ${rule.approvalPercent}% approval · ${rule.minEvidence} evidence minimum.</p></div>`).join('')+`<div class="rule-card"><h4>Demo rule</h4><p>On the account API, a proposal can be marked approved after two ballots when yes is greater than no. That is a demo rule, not a published quorum.</p></div><div class="rule-card"><h4>Authority boundary</h4><p>JARVIS explains. Operators run the workflow. Eligible people vote. No administrator can edit a ballot or declare an outcome from the browser. The AI explainer is an external demo and may be unavailable.</p></div>`};
   views.governance=function(){
     const records=state.proposals||[],open=records.filter(p=>proposalStatus(p)==='voting').length,connected=cloudReady();
     return `${pageHead(`${getScopeLabel()} governance`,'Evidence becomes discussion; time-bound rules open voting; the server closes and tallies the decision.',`<button class="action-btn" data-action="proposal">＋ New proposal</button>`)}
-      <div class="capability-strip"><span class="tag ${connected?'green':'gold'}">${connected?'LIVE PILOT DATA':'INTERACTIVE PREVIEW'}</span><b>${open} vote${open===1?'':'s'} open</b><span>Individual ballots stay private; aggregate results remain inspectable.</span></div>
+      <div class="capability-strip"><span class="tag gold">INTERACTIVE DEMO</span><b>${open} vote${open===1?'':'s'} open</b><span>${connected?'Shared account connected. Eligibility is not invented when the API leaves it empty.':'Private preview. Turnout stays blank until a real eligible count exists.'}</span></div>
       <div class="dashboard-grid"><section class="span-8"><div class="proposal-list">${records.length?records.map(governanceCard).join(''):'<div class="empty-state"><h3>No proposals in this scope</h3><p>Create a proposal to begin structured discussion.</p></div>'}</div></section>${card('Published decision rules',rulesPanel(),4)}</div>`;
   };
   async function sha256(value){
@@ -97,7 +106,7 @@
     const title=$('#proposalTitle').value.trim(),scope=normalizeScope($('#proposalScope').value),ruleKey=$('#proposalRule').value,summary=$('#proposalBody').value.trim(),evidence=$('#proposalEvidence').value.trim(),budget=Number($('#proposalBudget').value||0),rule=Logic.ruleFor(ruleKey),id=`proposal_${Date.now().toString(36)}_${crypto.getRandomValues(new Uint32Array(1))[0].toString(36)}`;
     if(cloudReady()&&!window.gaigsApi?.active()&&state.user.kycStatus!=='verified')return toast('Identity review must be verified before creating a governance proposal.');
     if(cloudReady()&&!window.gaigsApi?.active()&&scope==='society'&&!(state.user.communityIds||[]).length&&!(state.communities||[]).some(c=>c.ownerId===currentUid()||c.createdBy===currentUid()))return toast('Join or create a verified society before opening a society proposal.');
-    const record={id,title,scope,scopeId:scopeIdFor(scope),ruleKey,rulesVersion:Logic.VERSION,status:'discussion',summary,budget,evidence:1,evidenceCount:1,yes:0,no:0,abstain:0,eligibleCount:scope==='society'?1284:1,deadline:`Discussion open for ${rule.discussionHours} hours`,createdBy:currentUid(),createdAt:new Date().toISOString(),discussionClosesAt:new Date(Date.now()+rule.discussionHours*3600000).toISOString()};
+    const record={id,title,scope,scopeId:scopeIdFor(scope),ruleKey,rulesVersion:Logic.VERSION,status:'discussion',summary,budget,evidence:1,evidenceCount:1,yes:0,no:0,abstain:0,eligibleCount:null,turnout:null,eligibilityNote:'Eligibility is not tracked yet (no community membership in this demo).',deadline:`Discussion open for ${rule.discussionHours} hours`,createdBy:currentUid(),createdAt:new Date().toISOString(),discussionClosesAt:new Date(Date.now()+rule.discussionHours*3600000).toISOString()};
     try{
       if(window.gaigsApi?.active()){
         const result=await window.gaigsApi.createProposal({title,scope:scope[0].toUpperCase()+scope.slice(1),description:summary,evidence,budget,ruleKey});state.proposals.unshift(result.proposal);
@@ -112,7 +121,7 @@
   const priorBindModal=bindModal;
   bindModal=function(){priorBindModal();const form=$('#proposalCreateForm');if(form&&!form.dataset.governanceBound){form.dataset.governanceBound='1';form.addEventListener('submit',createProposal,true);}};
   const priorBindDynamic=bindDynamic;
-  bindDynamic=function(){priorBindDynamic();$$('[data-governance-proof]').forEach(button=>button.addEventListener('click',()=>{const p=(state.proposals||[]).find(x=>String(x.id)===button.dataset.governanceProof),t=p?governanceTally(p):null;if(!p||!t)return;openModal(`<h2>Governance audit details</h2><div class="rule-card"><p><b>Rules version:</b> ${esc(t.rulesVersion)}</p><p><b>Scope:</b> ${esc(normalizeScope(p.scope))} · ${esc(p.scopeId||'scope snapshot pending')}</p><p><b>Eligible snapshot:</b> ${t.eligible}</p><p><b>Aggregate ballots:</b> ${t.cast}</p><p><b>Turnout:</b> ${t.turnoutPercent}%</p><p><b>Current calculated outcome:</b> ${esc(t.outcome.replace('_',' '))}</p></div><p class="muted">Only the scheduled server lifecycle can finalize an outcome after the voting deadline.</p>`);}));};
+  bindDynamic=function(){priorBindDynamic();$$('[data-governance-proof]').forEach(button=>button.addEventListener('click',()=>{const p=(state.proposals||[]).find(x=>String(x.id)===button.dataset.governanceProof);if(!p)return;const t=governanceTally(p),counts=countsFor(p);openModal(`<h2>Governance audit details</h2><div class="rule-card"><p><b>Rules version:</b> ${esc(t?.rulesVersion||Logic.VERSION)}</p><p><b>Scope:</b> ${esc(normalizeScope(p.scope))} · ${esc(p.scopeId||'scope snapshot pending')}</p><p><b>Eligible snapshot:</b> ${t?t.eligible:'—'}</p><p><b>Aggregate ballots:</b> ${t?t.cast:counts.yes+counts.no+counts.abstain}</p><p><b>Turnout:</b> ${t&&t.eligible>0?t.turnoutPercent+'%':'— (eligibility is not tracked yet)'}</p><p><b>Current calculated outcome:</b> ${t?esc(t.outcome.replace('_',' ')):'not calculated'}</p><p><b>Demo rule:</b> the account API can mark a proposal approved after two ballots when yes is greater than no. That is not a quorum.</p></div><p class="muted">Only the scheduled server lifecycle can finalize an outcome after the voting deadline.</p>`);}));};
   let governanceStops=[];
   async function startScopedGovernance(user){
     governanceStops.forEach(stop=>stop());governanceStops=[];if(!user||!window.NDCONF?.firebaseProductionMode)return;

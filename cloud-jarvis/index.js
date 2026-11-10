@@ -2,6 +2,12 @@
 // Boss messages his own number "jarvis <anything>" -> JARVIS (Gemini) replies.
 // Sends a daily report. Auto-reconnects. NO PC needed — this stays online 24/7.
 // (PC-control tasks still need PC-JARVIS; this handles chat, Q&A, reports.)
+// BOSS_NUMBER must come from the environment. Never commit a phone number.
+const BOSS = String(process.env.BOSS_NUMBER || '').replace(/\D/g, '');
+if (!BOSS) {
+  console.error('Set BOSS_NUMBER in the environment.');
+  process.exit(1);
+}
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } =
   require('@whiskeysockets/baileys');
 const qrcode = require('qrcode-terminal');
@@ -16,10 +22,9 @@ http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/html' });
   res.end('<h2>🤖 Cloud JARVIS</h2><p>Status: ' + (ready ? 'ONLINE ✅' : 'connecting…') +
     '</p>' + (lastQR && !ready ? '<p>Scan pending — check server logs for QR.</p>' : ''));
-}).listen(process.env.PORT || 3000, () => console.log('[JARVIS] keep-alive HTTP up'));
+}).listen(process.env.PORT || 3000, '0.0.0.0', () => console.log('[JARVIS] keep-alive HTTP up'));
 
 const KEY = process.env.GEMINI_KEY || '';
-const BOSS = (process.env.BOSS_NUMBER || '923468053268').replace(/\D/g, '');
 const AUTH = './auth';
 let sock, ready = false;
 
@@ -27,7 +32,7 @@ const BRAIN =
   "You are J.A.R.V.I.S., Muhammad Qureshi's personal AI, replying on WhatsApp. " +
   "Answer in his language (English/Roman-Urdu). Mission: a people-owned platform — " +
   "decentralized governance, blockchain transparency, AI that informs not decides, a science " +
-  "game, education that frees; started from Masjid-e-Nabawi Qureshi Hashmi, Islamabad. " +
+  "game, education that frees; built by a solo founder in Islamabad, Pakistan. " +
   "Warm, concise, decisive. Demo: onepiecejourney-crew.netlify.app. Never invent facts.";
 
 function gemini(prompt) {

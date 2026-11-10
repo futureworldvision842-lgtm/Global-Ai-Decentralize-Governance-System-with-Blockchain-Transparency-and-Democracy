@@ -40,7 +40,7 @@ Then:
 ```
 npm install
 export GEMINI_KEY="YOUR_GEMINI_KEY"
-export BOSS_NUMBER="923468053268"
+export BOSS_NUMBER="<your number in international format, digits only>"
 node index.js
 ```
 A **QR code** appears. On your phone: WhatsApp → Settings → **Linked Devices →

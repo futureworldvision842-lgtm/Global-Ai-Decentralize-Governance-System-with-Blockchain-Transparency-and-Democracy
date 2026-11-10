@@ -43,8 +43,8 @@ normal social network.
 
 ## Capability status language
 
-- **Live pilot**: connected, multi-user, enforced by server rules, monitored, and
-  suitable for a bounded real community pilot.
+- **Interactive demo**: a clickable public build. This is the current public status. It is not a live community pilot.
+- **Live pilot**: reserved for a future consenting community that is connected, multi-user, enforced by server rules, and monitored. Do not use this label until that pilot exists.
 - **Connected sandbox**: talks to real test infrastructure but cannot move real
   money or create legally binding outcomes.
 - **Offline sandbox**: stored on one device for safe exploration.
