@@ -3,7 +3,7 @@
  * closed-loop GAIGS Credits (GCR), never fiat, deposits, withdrawals or crypto.
  */
 
-let productSchemaReady = false;
+const productSchemaReady = new WeakSet();
 const requestEnv = new WeakMap();
 const PRODUCT_COOKIE = "gaigs_session";
 const PAGES_ORIGIN = "https://futureworldvision842-lgtm.github.io";
@@ -230,10 +230,10 @@ async function constantEqual(left, right) {
 }
 
 async function ensureProductSchema(env) {
-  if (productSchemaReady) return;
   if (!env.DB) throw new Error("Product database is unavailable.");
+  if (productSchemaReady.has(env.DB)) return;
   await env.DB.batch(PRODUCT_SCHEMA.map(statement => env.DB.prepare(statement)));
-  productSchemaReady = true;
+  productSchemaReady.add(env.DB);
 }
 
 function isCrossSiteRequest(request) {
@@ -293,7 +293,6 @@ function publicUser(row) {
     uid: row.id,
     name: row.display_name || row.full_name,
     email: row.email,
-    phone: row.phone,
     country: row.country,
     city: row.city,
     skills: row.skills || "",
@@ -302,7 +301,8 @@ function publicUser(row) {
     locationPublic: Boolean(row.location_public),
     lat: row.lat_approx == null ? null : Number(row.lat_approx),
     lng: row.lng_approx == null ? null : Number(row.lng_approx),
-    cnicLast4: row.cnic_last4,
+    cnicLast4: row.cnic_last4 || null,
+    phone: row.phone || null,
     emailVerified: Boolean(row.email_verified),
     kycStatus: row.kyc_status,
     accountMode: "sites",
@@ -345,27 +345,28 @@ function requireAppRequest(request) {
 }
 
 async function registerAccount(request, env) {
-  if (!env.APP_KYC_PEPPER) return productJson(request, { error: "Identity protection is not configured." }, 503);
   let body;
   try { body = await requestBody(request); } catch (error) { return productJson(request, { error: error.message || "Invalid registration." }, 400); }
-  const fullName = clean(body.fullName, 100), email = normalizedEmail(body.email), phone = clean(body.phone, 30);
-  const password = String(body.password || ""), cnic = String(body.cnic || "").replace(/\D/g, "");
+  const fullName = clean(body.fullName, 100), email = normalizedEmail(body.email);
+  const suppliedPhone = clean(body.phone, 30);
+  const phone = suppliedPhone.length >= 7 ? suppliedPhone : "";
+  const password = String(body.password || "");
   const country = clean(body.country, 80), city = clean(body.city, 80);
-  if (fullName.length < 2 || !/^\S+@\S+\.\S+$/.test(email) || phone.length < 7 || password.length < 10 || cnic.length !== 13 || !country || !city) {
-    return productJson(request, { error: "Use a valid name, email, phone, 13-digit CNIC, city and a password of at least 10 characters." }, 400);
+  if (fullName.length < 2 || !/^\S+@\S+\.\S+$/.test(email) || password.length < 10 || !country || !city) {
+    return productJson(request, { error: "Use a valid name, email, city and a password of at least 10 characters." }, 400);
   }
-  const cnicHash = await hmacHex(env.APP_KYC_PEPPER, cnic);
-  const existing = await env.DB.prepare("SELECT id FROM gaigs_users WHERE email=? OR cnic_hash=?").bind(email, cnicHash).first();
-  if (existing) return productJson(request, { error: "An account already exists for this email or identity." }, 409);
+  const existing = await env.DB.prepare("SELECT id FROM gaigs_users WHERE email=?").bind(email).first();
+  if (existing) return productJson(request, { error: "An account already exists for this email." }, 409);
   const now = Date.now(), userId = productId("usr"), walletId = `GAIGS-${randomHex(6).toUpperCase()}`;
   const salt = randomHex(16), passwordHash = await passwordDigest(password, salt);
   const sessionToken = randomHex(32), sessionHash = await sha256(sessionToken), sessionExpiry = now + SESSION_DAYS * 86400000;
+  const cnicHash = `none:${userId}`;
   const genesis = await ledgerRecord({ id: productId("led"), walletId, direction: "credit", amount: 100, type: "welcome", referenceId: userId, description: "Founding account impact credits", previousHash: ZERO_HASH, createdAt: now });
   try {
     await env.DB.batch([
       env.DB.prepare(`INSERT INTO gaigs_users
         (id,email,password_hash,password_salt,password_iterations,full_name,phone,cnic_hash,cnic_last4,country,city,email_verified,kyc_status,created_at)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(userId, email, passwordHash, salt, PASSWORD_ITERATIONS, fullName, phone, cnicHash, cnic.slice(-4), country, city, 0, "pending", now),
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(userId, email, passwordHash, salt, PASSWORD_ITERATIONS, fullName, phone, cnicHash, "", country, city, 0, "not-collected", now),
       env.DB.prepare("INSERT INTO gaigs_profiles (user_id,display_name,bio,skills,location_public,updated_at) VALUES (?,?,?,?,?,?)").bind(userId, fullName, "", "", 0, now),
       env.DB.prepare("INSERT INTO gaigs_wallets (id,user_id,currency,available,reserved,status,created_at) VALUES (?,?,?,?,?,?,?)").bind(walletId, userId, "GCR", 100, 0, "mvp", now),
       ledgerInsert(env, genesis),
@@ -375,7 +376,7 @@ async function registerAccount(request, env) {
     return productJson(request, { error: "Account could not be created. Check whether the email is already registered." }, 409);
   }
   const userRow = await env.DB.prepare(`SELECT u.*,p.display_name,p.bio,p.skills,p.avatar_key,p.location_public,p.lat_approx,p.lng_approx FROM gaigs_users u JOIN gaigs_profiles p ON p.user_id=u.id WHERE u.id=?`).bind(userId).first();
-  const payload = { ok: true, user: publicUser(userRow), wallet: publicWallet({ id: walletId, currency: "GCR", available: 100, reserved: 0, status: "mvp", created_at: now }), verification: { email: "pending-provider", identity: "pending-review" }, ...(request.headers.get("x-gaigs-client") === "native" ? { sessionToken } : {}) };
+  const payload = { ok: true, user: publicUser(userRow), wallet: publicWallet({ id: walletId, currency: "GCR", available: 100, reserved: 0, status: "mvp", created_at: now }), verification: { email: "pending-provider", identity: "not-collected" }, ...(request.headers.get("x-gaigs-client") === "native" ? { sessionToken } : {}) };
   return productJson(request, payload, 201, { "set-cookie": sessionCookie(sessionToken, SESSION_DAYS * 86400, request) });
 }
 
@@ -536,12 +537,15 @@ async function createProposalRecord(request, env, user) {
   await env.DB.prepare(`INSERT INTO gaigs_proposals
     (id,user_id,title,scope,description,evidence,budget_credits,rules_version,status,created_at,closes_at)
     VALUES (?,?,?,?,?,?,?,?,?,?,?)`).bind(id, user.id, title, scope, description, evidence, budget, "GAIGS-GOV-2026-1", "voting", now, closes).run();
-  return productJson(request, { ok: true, proposal: { id, title, scope, summary: description, evidence: 1, budget, rulesVersion: "GAIGS-GOV-2026-1", status: "Voting", yes: 0, no: 0, abstain: 0, eligibleCount: 0, turnout: 0, deadline: new Date(closes).toLocaleString("en-GB"), closesAt: new Date(closes).toISOString(), risk: "JARVIS review pending" } }, 201);
+  return productJson(request, { ok: true, proposal: { id, title, scope, summary: description, evidence: 1, budget, rulesVersion: "GAIGS-GOV-2026-1", status: "Voting", yes: 0, no: 0, abstain: 0, votesCast: 0, eligibleCount: null, turnout: null, eligibilityNote: "Eligibility is not tracked yet (no community membership in this demo).", deadline: new Date(closes).toLocaleString("en-GB"), closesAt: new Date(closes).toISOString(), risk: "JARVIS review pending" } }, 201);
 }
 
 async function listProposals(request, env) {
   const rows = await env.DB.prepare("SELECT * FROM gaigs_proposals ORDER BY created_at DESC LIMIT 100").all();
-  return productJson(request, { proposals: (rows.results || []).map(row => ({ id: row.id, title: row.title, scope: row.scope, summary: row.description, evidence: 1, budget: Number(row.budget_credits), rulesVersion: row.rules_version, status: row.status === "voting" ? "Voting" : row.status === "approved" ? "Approved" : row.status, yes: Number(row.yes_count), no: Number(row.no_count), abstain: Number(row.abstain_count), eligibleCount: Math.max(2, Number(row.yes_count) + Number(row.no_count) + Number(row.abstain_count)), turnout: 0, deadline: new Date(Number(row.closes_at)).toLocaleString("en-GB"), closesAt: new Date(Number(row.closes_at)).toISOString(), risk: "Rules engine", projectWalletId: row.project_wallet_id || null })) });
+  return productJson(request, { proposals: (rows.results || []).map(row => {
+    const yes = Number(row.yes_count), no = Number(row.no_count), abstain = Number(row.abstain_count);
+    return { id: row.id, title: row.title, scope: row.scope, summary: row.description, evidence: 1, budget: Number(row.budget_credits), rulesVersion: row.rules_version, status: row.status === "voting" ? "Voting" : row.status === "approved" ? "Approved" : row.status, yes, no, abstain, votesCast: yes + no + abstain, eligibleCount: null, turnout: null, eligibilityNote: "Eligibility is not tracked yet (no community membership in this demo).", deadline: new Date(Number(row.closes_at)).toLocaleString("en-GB"), closesAt: new Date(Number(row.closes_at)).toISOString(), risk: "Rules engine", projectWalletId: row.project_wallet_id || null };
+  }) });
 }
 
 async function castVote(request, env, user, proposalId) {

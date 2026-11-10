@@ -106,19 +106,12 @@
         </div>
 
         <form id="signupForm" class="auth-form active">
-          <div class="auth-steps" aria-label="Account setup steps"><span class="active">1</span><i></i><span>2</span><i></i><span>3</span><small>Identity</small><small>Verify</small><small>Personalize</small></div>
+          <div class="auth-steps" aria-label="Account setup steps"><span class="active">1</span><i></i><span>2</span><i></i><span>3</span><small>Account</small><small>Verify</small><small>Personalize</small></div>
           <h2>Create your place in the world</h2>
-          <p class="muted">One secure identity for your community, work, decisions and positive impact.</p>
-          <div class="two-col">
-            <label>Full name<input id="signupName" required autocomplete="name" /></label>
-            <label>Mobile number<input id="signupPhone" required autocomplete="tel" placeholder="+92 300 1234567" /></label>
-          </div>
+          <p class="muted">One account for your community, work, decisions and positive impact. This demo does not collect a CNIC or phone number.</p>
+          <label>Full name<input id="signupName" required autocomplete="name" /></label>
           <label>Email<input id="signupEmail" type="email" required autocomplete="email" /></label>
-          <div class="two-col">
-            <label>Password<input id="signupPassword" type="password" minlength="10" required autocomplete="new-password" /></label>
-            <label>CNIC<input id="signupCnic" inputmode="numeric" pattern="[0-9-]{13,15}" placeholder="XXXXX-XXXXXXX-X" required /></label>
-          </div>
-          <div class="identity-shield"><span>✓</span><div><b>Private identity check</b><small>Your full CNIC is never shown on your profile or written to blockchain. Only masked verification status is retained.</small></div></div>
+          <label>Password<input id="signupPassword" type="password" minlength="10" required autocomplete="new-password" /></label>
           <div class="account-foundation">
             <div><span>ID</span><p><b>One verified profile</b><small>For social action, work, communities and decisions.</small></p></div>
             <div><span>DV</span><p><b>User-owned device vault</b><small>Your phone keeps a private local workspace and can sync approved records.</small></p></div>
@@ -144,7 +137,7 @@
           <button class="primary wide" type="submit">Log in</button>
           <button class="secondary wide" id="forgotPasswordBtn" type="button">Forgot password?</button>
           <button class="secondary wide" id="resendVerificationBtn" type="button">Resend verification email</button>
-          <p class="micro" id="loginModeHint">Secure shared accounts are live. Email verification remains visibly pending until the free mail provider is connected.</p>
+          <p class="micro" id="loginModeHint">Shared accounts are an interactive demo. Email verification remains visibly pending until the free mail provider is connected.</p>
         </form>
 
         <form id="otpForm" class="auth-form">
@@ -161,9 +154,9 @@
           <label>What do you want help with?<select id="missionSelect"><option>Building communities and governance</option><option>Finding nearby work and services</option><option>Understanding news and public policy</option><option>Learning AI and science</option><option>Creating content and missions</option></select></label>
           <div class="nearby-preview">
             <div class="section-label">Suggested nearby communities</div>
-            <label class="community-option"><input type="radio" name="community" value="Jamia Masjid Nabvi Qureshi Hashmi" checked /><span><b>Jamia Masjid Nabvi Qureshi Hashmi</b><small>G-11/4 · 0.8 km · 1,284 members</small></span></label>
-            <label class="community-option"><input type="radio" name="community" value="G-11 Citizens Forum" /><span><b>G-11 Citizens Forum</b><small>G-11 Markaz · 1.4 km · 842 members</small></span></label>
-            <label class="community-option"><input type="radio" name="community" value="Islamabad AI Builders" /><span><b>Islamabad AI Builders</b><small>F-10 · 3.8 km · 516 members</small></span></label>
+            <label class="community-option"><input type="radio" name="community" value="Islamabad pilot community (planned)" checked /><span><b>Islamabad pilot community (planned)</b><small>Not open yet · pilot by invitation</small></span></label>
+            <label class="community-option"><input type="radio" name="community" value="Sample community hub" /><span><b>Sample community hub</b><small>Islamabad · members —</small></span></label>
+            <label class="community-option"><input type="radio" name="community" value="Islamabad AI Builders" /><span><b>Islamabad AI Builders</b><small>SAMPLE DATA · members —</small></span></label>
           </div>
           <button class="primary wide" type="submit">Create my dashboard</button>
         </form>
@@ -195,15 +188,15 @@
           <p>GAIGS is not a copy of one company. It connects familiar social, work, service, mapping, messaging and governance journeys under rules members can inspect.</p>
         </div>
         <div class="capability-mosaic">
-          <article class="capability-card capability-social"><span class="status live">LIVE</span><div class="capability-icon">◎</div><h3>Social action feed</h3><p>Publish text, images or video with scope and approximate location. Discuss, react, save, follow, report and turn a verified need into a mission.</p><small>Inspired by the ease of social media, designed for evidence and outcomes.</small></article>
-          <article class="capability-card capability-messages"><span class="status live">LIVE</span><div class="capability-icon">✉</div><h3>Private & public messaging</h3><p>End-to-end encrypted private envelopes online, auditable civic rooms, delivery/read receipts and Android Nearby relay when the internet is unavailable.</p><small>Private plaintext stays on participant devices.</small></article>
-          <article class="capability-card"><span class="status live">LIVE</span><div class="capability-icon">↗</div><h3>Skills, work & local services</h3><p>Offer professional, freelance or physical skills; post what you need; discover matches by declared ability, availability and safe location radius.</p><small>Nearby services and global work in one profile.</small></article>
-          <article class="capability-card"><span class="status live">LIVE</span><div class="capability-icon">⌂</div><h3>Societies & communities</h3><p>Discover nearby societies, request membership with private residence evidence, participate in local discussion and see the rules that govern every role.</p><small>Admins coordinate as accountable clerks—not owners.</small></article>
-          <article class="capability-card"><span class="status live">LIVE</span><div class="capability-icon">◇</div><h3>Proposals, votes & projects</h3><p>Raise a structured proposal, discuss evidence, cast an eligible ballot, create a project from an approved result and track milestones to proof.</p><small>AI explains and drafts; people alone decide.</small></article>
-          <article class="capability-card capability-wallet"><span class="status pilot">PILOT</span><div class="capability-icon">◈</div><h3>Wallet & transparent treasury</h3><p>Each account receives an internal pilot wallet and receipt history. Project contributions and releases remain visible and hash-linked for audit.</p><small>Real-money settlement requires licensed rails or a user-controlled wallet.</small></article>
-          <article class="capability-card"><span class="status live">LIVE</span><div class="capability-icon">⌖</div><h3>Maps & emergency response</h3><p>See registered centers, your private device location and opt-in approximate posts. Report emergencies, attach evidence and coordinate verified response.</p><small>Precise private location is not published by default.</small></article>
-          <article class="capability-card capability-jarvis"><span class="status live">LIVE</span><div class="capability-icon">✦</div><h3>Your personal JARVIS</h3><p>Use voice or chat to navigate, understand proposals, inspect funds, find work, draft reports and read approved encrypted preferences on your device.</p><small>JARVIS cannot vote, publish or move funds for you.</small></article>
-          <article class="capability-card"><span class="status live">LIVE</span><div class="capability-icon">⚗</div><h3>Humanity Lab</h3><p>Run deterministic science and resilience missions, compare strategies and submit reproducible evidence for human review.</p><small>A working foundation for the larger science-game vision.</small></article>
+          <article class="capability-card capability-social"><span class="status demo">INTERACTIVE DEMO</span><div class="capability-icon">◎</div><h3>Social action feed</h3><p>Publish text, images or video with scope and approximate location. Discuss, react, save, follow, report and turn a verified need into a mission.</p><small>Inspired by the ease of social media, designed for evidence and outcomes.</small></article>
+          <article class="capability-card capability-messages"><span class="status demo">INTERACTIVE DEMO</span><div class="capability-icon">✉</div><h3>Private & public messaging</h3><p>End-to-end encrypted private envelopes online, auditable civic rooms, delivery/read receipts and Android Nearby relay when the internet is unavailable.</p><small>Private plaintext stays on participant devices.</small></article>
+          <article class="capability-card"><span class="status sandbox">SANDBOX</span><div class="capability-icon">↗</div><h3>Skills, work & local services</h3><p>Offer professional, freelance or physical skills; post what you need; discover matches by declared ability, availability and safe location radius.</p><small>Nearby services and global work in one profile.</small></article>
+          <article class="capability-card"><span class="status demo">INTERACTIVE DEMO</span><div class="capability-icon">⌂</div><h3>Societies & communities</h3><p>Discover nearby societies, request membership with private residence evidence, participate in local discussion and see the rules that govern every role.</p><small>Admins coordinate as accountable clerks—not owners.</small></article>
+          <article class="capability-card"><span class="status demo">INTERACTIVE DEMO</span><div class="capability-icon">◇</div><h3>Proposals, votes & projects</h3><p>Raise a structured proposal, discuss evidence, cast an eligible ballot, create a project from an approved result and track milestones to proof.</p><small>AI explains and drafts; people alone decide.</small></article>
+          <article class="capability-card capability-wallet"><span class="status sandbox">SANDBOX</span><div class="capability-icon">◈</div><h3>Wallet & transparent treasury</h3><p>SIMULATION — NOT REAL MONEY. Each account receives an internal credit wallet and receipt history. Project contributions and releases remain visible and hash-linked for audit.</p><small>Real-money settlement requires licensed rails or a user-controlled wallet.</small></article>
+          <article class="capability-card"><span class="status sandbox">SANDBOX</span><div class="capability-icon">⌖</div><h3>Maps & emergency response</h3><p>See registered centers, your private device location and opt-in approximate posts. Report emergencies, attach evidence and coordinate verified response.</p><small>Precise private location is not published by default.</small></article>
+          <article class="capability-card capability-jarvis"><span class="status demo">INTERACTIVE DEMO</span><div class="capability-icon">✦</div><h3>Your personal JARVIS</h3><p>Use voice or chat to navigate, understand proposals, inspect funds, find work, draft reports and read approved encrypted preferences on your device.</p><small>JARVIS cannot vote, publish or move funds for you.</small></article>
+          <article class="capability-card"><span class="status sandbox">SANDBOX</span><div class="capability-icon">⚗</div><h3>Humanity Lab</h3><p>Run deterministic science and resilience missions, compare strategies and submit reproducible evidence for human review.</p><small>A working foundation for the larger science-game vision.</small></article>
         </div>
       </section>
 
@@ -281,7 +274,7 @@
           <p>The system separates private identity and conversation from public civic records. “Blockchain” is used for verifiable receipts and governance—not as a magic word.</p>
         </div>
         <div class="trust-grid">
-          <article><span>PRIVATE</span><h3>Identity minimization</h3><p>Full CNIC is never placed on a profile or blockchain. The server stores a protected verification derivative and masked status.</p></article>
+          <article><span>PRIVATE</span><h3>Identity minimization</h3><p>GAIGS does not collect CNIC or phone numbers in this demo.</p></article>
           <article><span>ENCRYPTED</span><h3>Direct messages</h3><p>Participant devices use ECDH, HKDF and AES-GCM. The shared store carries encrypted envelopes, not readable private message bodies.</p></article>
           <article><span>AUDITABLE</span><h3>Civic receipt chains</h3><p>Votes, project events, public rooms and wallet receipts use append-only records and linked hashes to expose tampering.</p></article>
           <article><span>EXPLAINABLE</span><h3>Feed ranking</h3><p>Relevance, safe proximity, evidence, trust and freshness have visible weights. Members can choose Latest, Nearby or Verified Impact instead.</p></article>
@@ -318,15 +311,15 @@
         <div class="story-kicker"><span>10</span> WHAT IS LIVE · WHAT COMES NEXT</div>
         <h2>Built in public. Explained honestly.</h2>
         <div class="reality-grid">
-          <article><span class="status live">LIVE NOW</span><h3>Working shared MVP</h3><p>Accounts, profiles, uploads, posts, encrypted messaging, Nearby Android relay, communities, proposals, votes, projects, pilot wallets, maps, JARVIS tools, mission feeds and science sandboxes.</p></article>
-          <article><span class="status pilot">CONTROLLED PILOT</span><h3>Trust and settlement</h3><p>Wallet records and DAO contracts are production-direction pilots. Real deposits, withdrawals, escrow and on-chain deployment require licensed partners, security audit and staged rollout.</p></article>
+          <article><span class="status demo">INTERACTIVE DEMO</span><h3>Working shared MVP</h3><p>Accounts, profiles, uploads, posts, encrypted messaging, Nearby Android relay, communities, proposals, votes, maps and JARVIS tools.</p></article>
+          <article><span class="status sandbox">SANDBOX</span><h3>Trust and settlement</h3><p>SIMULATION — NOT REAL MONEY. Wallet records and project accounts are a sandbox. Real deposits, withdrawals, escrow and on-chain deployment are roadmap items and require licensed partners, a security audit and a staged rollout.</p></article>
           <article><span class="status roadmap">ROADMAP</span><h3>Global scale</h3><p>Independent audits, multilingual moderation, larger peer-mesh testing, verified institutions, payment providers, app-store signing and a full-scale collaborative science game.</p></article>
         </div>
       </section>
 
       <section class="story-final">
-        <div><small>THE NETWORK STARTS WITH PEOPLE</small><h2>Don’t just raise your voice.<br><span>Build what happens next.</span></h2><p>Create your place in GAIGS, explore the live product and help test a more accountable way to act together.</p></div>
-        <div class="final-actions"><button type="button" data-public-auth="signup">Create secure account <span>→</span></button><button type="button" data-public-preview>Explore live preview</button><a href="../downloads/GAIGS-JARVIS-v2-preview.apk" download>Download Android APK</a></div>
+        <div><small>THE NETWORK STARTS WITH PEOPLE</small><h2>Don’t just raise your voice.<br><span>Build what happens next.</span></h2><p>Create your place in GAIGS, explore the interactive demo and help test a more accountable way to act together.</p></div>
+        <div class="final-actions"><button type="button" data-public-auth="signup">Create secure account <span>→</span></button><button type="button" data-public-preview>Explore interactive demo</button><a href="../downloads/GAIGS-JARVIS-v2-preview.apk" download>Download Android APK</a></div>
       </section>
     </main>
 
@@ -432,7 +425,7 @@
         <input id="jarvisInput" placeholder="Ask JARVIS to explain or help..." />
         <button type="submit">➤</button>
       </form>
-      <div class="jarvis-disclaimer">Voice AI explains and assists. People approve every publication, vote and transfer.</div>
+      <div class="jarvis-disclaimer">Voice AI explains and assists. People approve every publication, vote and transfer. The AI explainer is an external demo and may be unavailable.</div>
     </aside>
 
     <button class="jarvis-fab" id="jarvisFab"><div class="jarvis-orb"><span></span></div><small>Ask JARVIS</small></button>

@@ -1,10 +1,9 @@
 // Safe local defaults. AI credentials belong only in the Netlify/Firebase/server environment.
-// platformApiBase is the one switch for account sign-in. Leave YOUR_SUBDOMAIN in
-// place to keep the current backend. After `wrangler deploy`, replace the whole
-// URL with the printed workers.dev origin and no trailing slash. See DEPLOY.md.
+// platformApiBase: live GAIGS account API (Cloudflare Worker + D1). No trailing slash.
+// jarvisProxyUrl stays on the external explainer. The UI calls that host an external demo that may be unavailable.
 window.NDCONF={
   jarvisProxyUrl:'https://gaigs-jarvis-v2.qw01.chatgpt.site/api/jarvis-assist',
-  platformApiBase:'https://gaigs-api.YOUR_SUBDOMAIN.workers.dev',
+  platformApiBase:'https://gaigs-api.gaigs.workers.dev',
   showSampleData:false,
   firebaseDemoSync:false,
   firebaseProductionMode:false,

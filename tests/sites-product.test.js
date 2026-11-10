@@ -18,15 +18,33 @@ test('Sites product API exposes durable identity, media and account routes', () 
   assert.equal(hosting.r2, 'UPLOADS');
 });
 
-test('credentials and CNIC use server-side protection', () => {
+test('credentials stay server-side and sign-up does not require CNIC or phone', () => {
   assert.match(api, /PBKDF2/);
   assert.match(api, /PASSWORD_ITERATIONS = 100000/);
-  assert.match(api, /APP_KYC_PEPPER/);
   assert.match(api, /HttpOnly; Secure; SameSite=Lax/);
-  assert.match(api, /cnic_hash/);
-  assert.match(api, /cnic_last4/);
+  assert.doesNotMatch(api, /cnic\.length !== 13/);
+  assert.doesNotMatch(api, /phone\.length < 7/);
+  assert.doesNotMatch(api, /Math\.max\(2/);
+  assert.match(api, /eligibleCount: null/);
+  assert.match(api, /turnout: null/);
   assert.doesNotMatch(api, /raw CNIC/i);
 });
+
+test('the demo client does not ask for CNIC or phone and does not invent turnout', () => {
+  assert.doesNotMatch(app, /signupCnic/);
+  assert.doesNotMatch(app, /signupPhone/);
+  assert.doesNotMatch(readHtml(), /signupCnic|signupPhone|name="cnic"/);
+  const turnout = [...app.matchAll(/64% turnout/g)];
+  assert.ok(turnout.length > 0);
+  for (const hit of turnout) {
+    const nearby = app.slice(Math.max(0, hit.index - 500), hit.index + 500);
+    assert.match(nearby, /showSampleData|SAMPLE DATA/);
+  }
+});
+
+function readHtml() {
+  return fs.readFileSync(path.join(root, 'gaigs', 'index.html'), 'utf8');
+}
 
 test('wallet is closed-loop and tamper-evident rather than fake cryptocurrency', () => {
   assert.match(api, /closed-loop GAIGS Credits/i);

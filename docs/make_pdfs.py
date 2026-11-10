@@ -76,7 +76,7 @@ def cover(title, subtitle, tag):
     el.append(Spacer(1, 26))
     el.append(HRFlowable(width="40%", thickness=1.2, color=CYAN, hAlign="CENTER"))
     el.append(Spacer(1, 20))
-    el.append(Paragraph("Muhammad Qureshi — Naib Imam, Jamia Masjid-e-Nabawi Qureshi Hashmi, G-11/4 Islamabad<br/>"
+    el.append(Paragraph("Muhammad Qureshi — solo founder, Islamabad, Pakistan<br/>"
                         "AI researcher · author · founder", S("cova", fontSize=10, textColor=MUTED, alignment=TA_CENTER, leading=15)))
     el.append(Spacer(1, 6))
     el.append(Paragraph("Live demo: onepiecejourney-crew.netlify.app", S("covl", fontSize=10, textColor=CYAN, alignment=TA_CENTER)))
@@ -289,9 +289,9 @@ def build_pitch():
     e.append(Paragraph("4 · Traction & Proof", H1))
     e.append(chip_table([
         ["Working demo", "Full interactive platform live: onepiecejourney-crew.netlify.app"],
-        ["Content reach", "9M+ organic views on the founder's Afkaar shorts channel; 3K+ subscribers"],
+        ["Content reach", "Afkaar shorts channel exists. View and subscriber counts are not claimed here."],
         ["Execution proof", "JARVIS — a real, open-source AI operating system, built solo with AI"],
-        ["Real community", "The Medina-model community running physically at the founder's mosque"],
+        ["Community", "A community pilot in Islamabad is planned and is not open yet."],
         ["Live AI ambassador", "A public JARVIS on the site that pitches and answers 24/7"],
     ], ["", ""], [90, 300]))
 
@@ -337,7 +337,7 @@ def build_pitch():
     e.append(HRFlowable(width="100%", thickness=0.8, color=CYAN))
     e.append(Spacer(1, 8))
     e.append(Paragraph("Muhammad Qureshi · Founder", H2))
-    e.append(Paragraph("WhatsApp REDACTED · linkedin.com/in/muhammad-qureshi-9939b1383<br/>"
+    e.append(Paragraph("linkedin.com/in/muhammad-qureshi-9939b1383<br/>"
         "Demo: onepiecejourney-crew.netlify.app · JARVIS: onepiecejourney-crew.netlify.app/jarvis.html", BODY))
 
     doc.build(e, onLaterPages=footer)

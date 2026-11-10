@@ -13,4 +13,4 @@ services:
       - key: GEMINI_KEY
         sync: false          # set this yourself in the dashboard (kept secret)
       - key: BOSS_NUMBER
-        value: "REDACTED"
+        sync: false          # set this yourself in the dashboard (kept secret)

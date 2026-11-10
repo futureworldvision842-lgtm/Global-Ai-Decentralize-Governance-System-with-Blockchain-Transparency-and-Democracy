@@ -205,10 +205,10 @@ function buildInvestor(hero, overview) {
   notes(s, ["GAIGS production smoke test, 2026-08-11", "Current repository and release manifest"], "This slide is the diligence anchor. Do not collapse pilot or roadmap items into the live column.");
 
   s = p.slides.add(); base(s, "Start with one community, prove the loop, then copy the institution.", "Go-to-market", 14);
-  const stages = [["01", "BEACHHEAD", "Jamia Masjid Nabvi Qureshi Hashmi", C.cyan], ["02", "NEARBY SOCIETIES", "Resident identity + local service liquidity", C.blue], ["03", "CITY NETWORK", "Shared missions and interoperable reputation", C.green], ["04", "COUNTRY / GLOBAL", "Federated standards and public proof", C.yellow]];
+  const stages = [["01", "BEACHHEAD", "Islamabad pilot community (planned)", C.cyan], ["02", "NEARBY SOCIETIES", "Resident identity + local service liquidity", C.blue], ["03", "CITY NETWORK", "Shared missions and interoperable reputation", C.green], ["04", "COUNTRY / GLOBAL", "Federated standards and public proof", C.yellow]];
   stages.forEach((v,i)=>{const x=70+i*300; txt(s,v[0],x,185,70,36,20,v[3],true); rule(s,x,230,250,v[3],4); txt(s,v[1],x,260,250,38,19,C.ink,true); txt(s,v[2],x,315,245,100,19,C.muted);});
   metric(s,"1", "working community first", 160, 500, C.cyan); metric(s,"30%+", "weekly action completion target", 470, 500, C.green); metric(s,"< 24h", "time-to-first useful match target", 800, 500, C.yellow);
-  notes(s, ["GAIGS Investor Pitch Memorandum v1 (founder-supplied)", "Founder-provided Jamia Masjid Nabvi model site"], "Targets are proposed pilot goals, not achieved traction.");
+  notes(s, ["GAIGS Investor Pitch Memorandum v1 (founder-supplied)", "Islamabad community pilot is planned and not open yet"], "Targets are proposed pilot goals, not achieved traction.");
 
   s = p.slides.add(); base(s, "The business can monetize coordination without selling civic trust.", "Business model", 15);
   const rev = [["SERVICE FEES", "Optional fee on completed commercial work"], ["ORGANIZATION TOOLS", "Verified company and society workspaces"], ["AI ASSISTANCE", "Paid advanced JARVIS workflows"], ["PUBLIC-GOOD FUNDING", "Grants and mission partnerships"]];

@@ -38,7 +38,7 @@ nano package.json  # paste package.json contents, save
 ```
 npm install
 export GEMINI_KEY="YOUR_GEMINI_KEY"
-export BOSS_NUMBER="REDACTED"
+export BOSS_NUMBER="<your number in international format, digits only>"
 node index.js
 ```
 A **QR code** shows in Termux. On your MAIN phone:
